@@ -1,16 +1,13 @@
-package FunData.Controller;
+package fundata.control;
 
-//import Repository.UserRepository;
-import FunData.Model.Dataer;
-import FunData.Repository.DataerRepository;
+//import repository.UserRepository;
+import fundata.model.Dataer;
+import fundata.repository.DataerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-import java.util.function.IntToLongFunction;
 
 /**
  * Created by ocean on 16-11-24.

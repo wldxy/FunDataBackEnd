@@ -1,14 +1,13 @@
-package FunData;
+package fundata;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.ComponentScans;
 
 /**
  * Created by ocean on 16-11-23.
  */
-@ComponentScan({"FunData.Controller", "FunData.Repository", "FunData.Service"})
+@ComponentScan({"fundata.control", "fundata.repository", "fundata.service"})
 @SpringBootApplication
 public class Application {
     public static void main(String[] args) {
