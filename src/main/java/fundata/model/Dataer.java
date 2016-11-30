@@ -1,6 +1,7 @@
 package fundata.model;
 
 import javax.persistence.*;
+import java.util.Set;
 
 /**
  * Created by ocean on 16-11-24.
@@ -21,6 +22,9 @@ public class Dataer {
 
     @Column(name = "name", length = 100)
     private String name;
+
+    @ManyToMany
+    private Set<Dataset> datasets;
 
     public Long getId() {
         return id;
@@ -48,5 +52,13 @@ public class Dataer {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Set<Dataset> getDatasets() {
+        return datasets;
+    }
+
+    public void setDatasets(Set<Dataset> datasets) {
+        this.datasets = datasets;
     }
 }
