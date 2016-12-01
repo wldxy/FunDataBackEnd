@@ -1,6 +1,7 @@
 package fundata.model;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -11,20 +12,28 @@ import java.util.Set;
 public class Dataer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "password", length = 20)
+    @Column(name = "password", length = 20, nullable = false)
     private String password;
 
-    @Column(name = "email", length = 100)
+    @Column(name = "email", length = 100, nullable = false)
     private String email;
 
-    @Column(name = "name", length = 100)
+    @Column(name = "name", length = 100, nullable = false)
     private String name;
 
     @ManyToMany
-    private Set<Dataset> datasets;
+    private Set<Dataset> datasets = new HashSet<>();
+
+    public Dataer() { }
+
+    public Dataer(String name, String password, String email) {
+        this.name = name;
+        this.password = password;
+        this.email = email;
+    }
 
     public Long getId() {
         return id;

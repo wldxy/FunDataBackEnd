@@ -21,6 +21,6 @@ public class FileController {
 
     @RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
     public UpFileInfo getUpload() {
-        return new UpFileInfo(qiniuService.createUploadToken(), "key.txt");
+        return new UpFileInfo(qiniuService.createUploadToken("key.txt"), "key.txt");
     }
 }

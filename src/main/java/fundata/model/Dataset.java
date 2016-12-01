@@ -1,7 +1,10 @@
-package FunData.Model;
+package fundata.model;
 
+
+import fundata.model.DataFile;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -20,11 +23,16 @@ public class Dataset {
     private String name;
 
     @ManyToMany
-    private Set<Dataer> Dataers;
+    private Set<Dataer> dataers = new HashSet<>();
 
     @ManyToMany
     private Set<DataFile> files;
 
+    public Dataset() { }
+
+    public Dataset(String name) {
+        this.name = name;
+    }
 
     public Long getId() {
         return id;
@@ -44,11 +52,11 @@ public class Dataset {
 
 
     public Set<Dataer> getDataers() {
-        return Dataers;
+        return dataers;
     }
 
     public void setDataers(Set<Dataer> dataers) {
-        Dataers = dataers;
+        dataers = dataers;
     }
 
 

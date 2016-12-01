@@ -1,4 +1,4 @@
-package FunData.Model;
+package fundata.model;
 
 import oracle.sql.TIMESTAMP;
 

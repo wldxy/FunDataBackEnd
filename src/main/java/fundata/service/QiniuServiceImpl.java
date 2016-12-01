@@ -1,6 +1,11 @@
 package fundata.service;
 
+import com.qiniu.common.QiniuException;
+import com.qiniu.common.Zone;
+import com.qiniu.storage.BucketManager;
+import com.qiniu.storage.Configuration;
 import com.qiniu.util.Auth;
+import com.qiniu.util.StringMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -16,19 +21,32 @@ public class QiniuServiceImpl implements QiniuService {
     private QiniuProperties qiniuProperties;
 
     private Auth auth;
+    private Zone zone;
+    private Configuration configuration;
+    private BucketManager bucketManager;
 
     @PostConstruct
     public void init() {
         this.auth = Auth.create(qiniuProperties.getAccess_key(), qiniuProperties.getSecret_key());
+        this.zone = Zone.autoZone();
+        this.configuration = new Configuration(zone);
+        this.bucketManager = new BucketManager(auth, configuration);
     }
 
     @Override
-    public String createUploadToken() {
-        return auth.uploadToken(qiniuProperties.getBucket());
+    public String createUploadToken(String key) {
+        return auth.uploadToken(qiniuProperties.getBucket(), key, 3600,
+                new StringMap().put("insertOnly", 1));
     }
 
     @Override
-    public String createDownloadUrl() {
-        return auth.privateDownloadUrl(qiniuProperties.getDomain());
+    public String createDownloadUrl(String key) {
+        String url = qiniuProperties.getDomain() + key;
+        return auth.privateDownloadUrl(url, 3600);
+    }
+
+    @Override
+    public void deleteFile(String fileName) throws QiniuException {
+        bucketManager.delete(qiniuProperties.getBucket(), fileName);
     }
 }
