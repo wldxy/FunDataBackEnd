@@ -1,21 +1,16 @@
 package fundata.control;
 
 import fundata.model.Course;
-import fundata.service.CourseService;
+import fundata.service.CourseServiceImpl;
+import fundata.service.QiniuServiceImpl;
 import fundata.viewmodel.BCourse;
 import fundata.viewmodel.TopClass;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
-import sun.net.httpserver.HttpServerImpl;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by stanforxc on 2016/12/2.
@@ -24,7 +19,10 @@ import java.util.Set;
 @RequestMapping("/course")
 public class CourseController {
     @Autowired
-    CourseService courseServiceImpl;
+    CourseServiceImpl courseServiceImpl;
+
+    @Autowired
+    QiniuServiceImpl qiniuServiceImpl;
 
     @ResponseBody
     @RequestMapping("/screen_hot_course")
@@ -34,7 +32,7 @@ public class CourseController {
 
     @ResponseBody
     @RequestMapping("/boutique_course/{page}/{size}")
-    public Object boutique_course(@PathVariable int page,@PathVariable int size,Model model)throws IOException{
+    public BCourse boutique_course(@PathVariable int page,@PathVariable int size,Model model)throws IOException{
         BCourse bc = new BCourse();
         List<TopClass> topClasses = new ArrayList<TopClass>();
         List<Course> courses = courseServiceImpl.findHotest(page,size);
@@ -43,6 +41,46 @@ public class CourseController {
         }
         bc.setBoutique_course(topClasses);
         return bc;
+    }
+
+    /*
+    * 注册课程
+    * */
+    @ResponseBody
+    @RequestMapping(value = "/add/{courseId}/{courseName}/{description}/{teacher}/{overview}",method = RequestMethod.GET)
+    public boolean registerCourse(@PathVariable Long courseId, @PathVariable String courseName,@PathVariable String overview,@PathVariable String description,@PathVariable String teacher){
+        try {
+            courseServiceImpl.save(new Course(courseId,courseName,teacher,description,overview,0,"",0));
+            return true;
+        }catch (Exception e){
+            return false;
+        }
+    }
+
+    /*
+    * 删除课程
+    * */
+    @ResponseBody
+    @RequestMapping(value = "/delete/{courseId}",method = RequestMethod.GET)
+    public boolean deleteCourse(@PathVariable Long courseId){
+        try {
+            courseServiceImpl.deleteCourseById(courseId);
+            return true;
+        }catch (Exception e){
+            return false;
+        }
+    }
+
+    /*
+    * 添加step*/
+    @ResponseBody
+    @RequestMapping(value = "/{courseId}/step{num}",method = RequestMethod.GET)
+    public boolean addStep(@PathVariable Long courseId,@PathVariable int num){
+       try {
+           return true;
+       }catch (Exception ex){
+           return false;
+       }
     }
 
     @ResponseBody

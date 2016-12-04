@@ -24,27 +24,39 @@ public class Course {
     @Column(name = "description",length = 50)
     private String description;
 
-    @Column(name = "overviewUrl",length = 50)
-    private String overviewUrl;
+    @Column(name = "overview",length = 50)
+    private String overview;
 
-    @Column(name = "questionUrl",length = 50)
-    private String questionUrl;
-
-    @Column(name = "stepUrl",length = 50)
-    private String stepUrl;
-
-    @Column(name = "commentUrl",length = 50)
-    private String commentUrl;
+    @Column(name = "step")
+    private  int step;
 
     @Column(name = "pictureUrl",length = 50)
     private String pictureUrl;
 
     @Column(name = "registerNum")
-    private int registerNum = 0;
+    private int registerNum;
 
     @ManyToMany
    private Set<Dataer> dataers = new HashSet<>();
 
+    @OneToMany
+    private Set<Commentcs> courseComments = new HashSet<>();
+
+    @OneToMany
+    private Set<Question> questions = new HashSet<>();
+
+    public Course(){}
+
+    public Course(Long id, String name, String teacher, String description, String overview,int step, String pictureUrl,int registerNum) {
+        this.id = id;
+        this.name = name;
+        this.teacher = teacher;
+        this.description = description;
+        this.overview = overview;
+        this.step = step;
+        this.pictureUrl = pictureUrl;
+        this.registerNum = registerNum;
+    }
 
     public Long getId() {
         return id;
@@ -62,6 +74,14 @@ public class Course {
         this.name = name;
     }
 
+    public String getTeacher() {
+        return teacher;
+    }
+
+    public void setTeacher(String teacher) {
+        this.teacher = teacher;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -70,44 +90,20 @@ public class Course {
         this.description = description;
     }
 
-    public String getOverviewUrl() {
-        return overviewUrl;
+    public String getOverview() {
+        return overview;
     }
 
-    public void setOverviewUrl(String overviewUrl) {
-        this.overviewUrl = overviewUrl;
+    public void setOverview(String overview) {
+        this.overview = overview;
     }
 
-    public String getQuestionUrl() {
-        return questionUrl;
+    public int getStep() {
+        return step;
     }
 
-    public void setQuestionUrl(String questionUrl) {
-        this.questionUrl = questionUrl;
-    }
-
-    public String getStepUrl() {
-        return stepUrl;
-    }
-
-    public void setStepUrl(String stepUrl) {
-        this.stepUrl = stepUrl;
-    }
-
-    public String getCommentUrl() {
-        return commentUrl;
-    }
-
-    public void setCommentUrl(String commentUrl) {
-        this.commentUrl = commentUrl;
-    }
-
-    public Set<Dataer> getDataers() {
-        return dataers;
-    }
-
-    public void setDataers(Set<Dataer> dataers) {
-        this.dataers = dataers;
+    public void setStep(int step) {
+        this.step = step;
     }
 
     public String getPictureUrl() {
@@ -124,13 +120,5 @@ public class Course {
 
     public void setRegisterNum(int registerNum) {
         this.registerNum = registerNum;
-    }
-
-    public String getTeacher() {
-        return teacher;
-    }
-
-    public void setTeacher(String teacher) {
-        this.teacher = teacher;
     }
 }

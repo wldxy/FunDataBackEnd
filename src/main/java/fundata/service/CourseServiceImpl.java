@@ -26,10 +26,29 @@ public class CourseServiceImpl implements CourseService{
         return courseRepository.findByName(course_name);
     }
 
+    @Override
+    public Set<Course> findById(Long id) {
+        return courseRepository.findById(id);
+    }
+
     @Transactional
     @Override
     public void save(Course course) {
         courseRepository.save(course);
+    }
+
+    @Override
+    public void deleteCourseById(Long id) {
+        courseRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean increaseStep(Long id) {
+        if(findById(id) != null){
+            courseRepository.increaseStep(id);
+            return true;
+        }
+        return false;
     }
 
     @Override
