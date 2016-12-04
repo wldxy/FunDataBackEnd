@@ -27,6 +27,9 @@ public class Dataer {
     @ManyToMany
     private Set<Dataset> datasets = new HashSet<>();
 
+    @ManyToMany
+   private Set<Course> courses = new HashSet<>();  //dataer_course表
+
     public Dataer() { }
 
     public Dataer(String name, String password, String email) {
@@ -70,4 +73,13 @@ public class Dataer {
     public void setDatasets(Set<Dataset> datasets) {
         this.datasets = datasets;
     }
+/*
+    public Set<Course> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(Set<Course> courses) {
+        this.courses = courses;
+    }
+    */
 }
