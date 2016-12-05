@@ -18,7 +18,10 @@ import java.util.Set;
 public interface CourseRepository extends JpaRepository<Course,Long> {
     Set<Course> findByName(String name);
 
-    Set<Course> findById(Long id);
+    Course findById(Long id);
+
+    @Query("select c.step from Course c where c.id = ?1")
+    int getStepNum(Long id);
 
     @Query("select c from Course c order by c.registerNum DESC")
     List<Course> findHotest(Pageable pagable);
@@ -26,8 +29,8 @@ public interface CourseRepository extends JpaRepository<Course,Long> {
     @Transactional
     Long deleteById(Long id);
 
-
+    @Transactional
     @Modifying
     @Query("update Course c set c.step = c.step +1 where c.id = ?1")
-    boolean increaseStep(Long id);
+    int increaseStep(Long id);
 }

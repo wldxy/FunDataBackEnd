@@ -1,8 +1,10 @@
 package fundata.control;
 
 import fundata.model.Course;
+import fundata.model.Step;
 import fundata.service.CourseServiceImpl;
 import fundata.service.QiniuServiceImpl;
+import fundata.service.StepServiceImpl;
 import fundata.viewmodel.BCourse;
 import fundata.viewmodel.TopClass;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +24,7 @@ public class CourseController {
     CourseServiceImpl courseServiceImpl;
 
     @Autowired
-    QiniuServiceImpl qiniuServiceImpl;
+    StepServiceImpl stepServiceImpl;
 
     @ResponseBody
     @RequestMapping("/screen_hot_course")
@@ -72,16 +74,67 @@ public class CourseController {
     }
 
     /*
-    * 添加step*/
+    * 添加step
+    * */
     @ResponseBody
-    @RequestMapping(value = "/{courseId}/step{num}",method = RequestMethod.GET)
-    public boolean addStep(@PathVariable Long courseId,@PathVariable int num){
+    @RequestMapping(value = "/{courseId}/step{num}/{stepname}/{content}",method = RequestMethod.GET)
+    public boolean addStep(@PathVariable Long courseId,@PathVariable String num,@PathVariable String stepname,@PathVariable String content){
        try {
+           int number = Integer.parseInt(num);
+           if(number > courseServiceImpl.getStepNum(courseId)){
+               /*设置step内容*/
+               Step step = new Step();
+               step.setStepname(stepname);
+               step.setContent(content);
+               int key = Integer.parseInt(courseId.toString()+ num);
+               step.setStepid(key);
+               /*找到对应course*/
+               Course course = courseServiceImpl.findById(courseId);
+               step.setCourse(course);
+               stepServiceImpl.save(step);
+               courseServiceImpl.increaseStep(courseId);
+           }else {
+               stepServiceImpl.updateStepContent(content,number);
+           }
            return true;
        }catch (Exception ex){
            return false;
        }
     }
+
+    /*
+    * 返回courseDetail
+    * */
+    @ResponseBody
+    @RequestMapping("/{courseId}/{courseName}/detail")
+    public Map course_detail(@PathVariable Long courseId,@PathVariable String courseName){
+        Map stepmap = StepMap(courseId);
+        return stepmap;
+    }
+
+    private Map StepMap(Long courseId){
+        HashMap course_steps = new HashMap();
+
+        /*获得课程信息*/
+        Course course = courseServiceImpl.findById(courseId);
+
+        /*获得所有step*/
+        HashMap course_step = new HashMap();
+        List<HashMap>  stepList = new ArrayList<HashMap>();
+        Set<Step> stepSet = stepServiceImpl.findByCourse(course);
+        Iterator<Step> iter = stepSet.iterator();
+        while (iter.hasNext()){
+            Step t = iter.next();
+            HashMap st = new HashMap();
+            st.put("step_header",t.getStepname());
+            st.put("step_content",t.getContent());
+            st.put("step_pic_url",t.getPictureUrl());
+            stepList.add(st);
+        }
+        course_step.put("course_steps",stepList);
+        return course_step;
+    }
+
 
     @ResponseBody
     @RequestMapping("/Insert")

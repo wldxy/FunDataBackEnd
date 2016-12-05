@@ -27,7 +27,7 @@ public class CourseServiceImpl implements CourseService{
     }
 
     @Override
-    public Set<Course> findById(Long id) {
+    public Course findById(Long id) {
         return courseRepository.findById(id);
     }
 
@@ -37,11 +37,13 @@ public class CourseServiceImpl implements CourseService{
         courseRepository.save(course);
     }
 
+    @Transactional
     @Override
     public void deleteCourseById(Long id) {
         courseRepository.deleteById(id);
     }
 
+    @Transactional
     @Override
     public boolean increaseStep(Long id) {
         if(findById(id) != null){
@@ -49,6 +51,11 @@ public class CourseServiceImpl implements CourseService{
             return true;
         }
         return false;
+    }
+
+    @Override
+    public int getStepNum(Long id) {
+        return courseRepository.getStepNum(id);
     }
 
     @Override

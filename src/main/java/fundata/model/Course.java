@@ -45,6 +45,9 @@ public class Course {
     @OneToMany
     private Set<Question> questions = new HashSet<>();
 
+
+
+
     public Course(){}
 
     public Course(Long id, String name, String teacher, String description, String overview,int step, String pictureUrl,int registerNum) {
@@ -120,5 +123,29 @@ public class Course {
 
     public void setRegisterNum(int registerNum) {
         this.registerNum = registerNum;
+    }
+
+    public Set<Dataer> getDataers() {
+        return dataers;
+    }
+
+    public void setDataers(Set<Dataer> dataers) {
+        this.dataers = dataers;
+    }
+
+    public Set<Commentcs> getCourseComments() {
+        return courseComments;
+    }
+
+    public void setCourseComments(Set<Commentcs> courseComments) {
+        this.courseComments = courseComments;
+    }
+
+    public Set<Question> getQuestions() {
+        return questions;
+    }
+
+    public void setQuestions(Set<Question> questions) {
+        this.questions = questions;
     }
 }
