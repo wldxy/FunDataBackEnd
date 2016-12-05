@@ -1,7 +1,8 @@
 package fundata.model;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by stanforxc on 2016/12/4.
@@ -10,17 +11,14 @@ import java.util.Date;
 @Table(name = "question")
 public class Question {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id",nullable = false)
     private Long id;
 
-    @Temporal(TemporalType.DATE)
     @Column(name = "createtime")
-    private Date createtime;
+    private String createtime;
 
-    @Temporal(TemporalType.DATE)
     @Column(name = "updatetime")
-    private Date updatetime;
+    private String updatetime;
 
     @Column(name = "content")
     private String content;
@@ -30,6 +28,12 @@ public class Question {
 
     @ManyToOne
     private Course course;
+
+    @ManyToOne
+    private Dataer dataer;
+
+    @OneToMany
+    private Set<Answer> answers = new HashSet<>();
 
 
 
@@ -59,19 +63,45 @@ public class Question {
     }
 
 
-    public Date getCreatetime() {
+
+    public Course getCourse() {
+        return course;
+    }
+
+    public void setCourse(Course course) {
+        this.course = course;
+    }
+
+    public Dataer getDataer() {
+        return dataer;
+    }
+
+    public void setDataer(Dataer dataer) {
+        this.dataer = dataer;
+    }
+
+    public String getCreatetime() {
         return createtime;
     }
 
-    public void setCreatetime(Date createtime) {
+    public void setCreatetime(String createtime) {
         this.createtime = createtime;
     }
 
-    public Date getUpdatetime() {
+    public String getUpdatetime() {
         return updatetime;
     }
 
-    public void setUpdatetime(Date updatetime) {
+    public void setUpdatetime(String updatetime) {
         this.updatetime = updatetime;
+    }
+
+
+    public Set<Answer> getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(Set<Answer> answers) {
+        this.answers = answers;
     }
 }

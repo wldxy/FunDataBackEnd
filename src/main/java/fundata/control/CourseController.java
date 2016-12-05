@@ -1,17 +1,20 @@
 package fundata.control;
 
-import fundata.model.Course;
-import fundata.model.Step;
-import fundata.service.CourseServiceImpl;
-import fundata.service.QiniuServiceImpl;
-import fundata.service.StepServiceImpl;
+import fundata.model.*;
+import fundata.service.*;
 import fundata.viewmodel.BCourse;
 import fundata.viewmodel.TopClass;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.xml.crypto.Data;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -25,6 +28,15 @@ public class CourseController {
 
     @Autowired
     StepServiceImpl stepServiceImpl;
+
+    @Autowired
+    DataerServiceImpl dataerServiceImpl;
+
+    @Autowired
+    QuestionServiceImpl questionServiceImpl;
+
+    @Autowired
+    AnswerServiceImpl answerServiceImpl;
 
     @ResponseBody
     @RequestMapping("/screen_hot_course")
@@ -102,6 +114,64 @@ public class CourseController {
        }
     }
 
+    /*添加问题*/
+    @ResponseBody
+    @RequestMapping("/question/{userid}/{courseId}/q{num}/{courseMame}/{content}")
+    public boolean add_question(@PathVariable Long userid,@PathVariable Long courseId,@PathVariable String courseMame,@PathVariable String content,@PathVariable String num){
+        try{
+            String time = getCurrentTime();
+            Course course = courseServiceImpl.findById(courseId);
+            Dataer dataer = dataerServiceImpl.findById(userid);
+            Question question = new Question();
+            Long key = Long.parseLong(userid.toString()+ courseId.toString()+ num);
+            question.setId(key);
+            question.setDataer(dataer);
+            question.setCourse(course);
+            question.setUpdatetime(time);
+            question.setCreatetime(time);
+            question.setContent(content);
+            question.setAnswered(false);
+            questionServiceImpl.save(question);
+            return true;
+        }catch (Exception e) {
+            return false;
+        }
+    }
+
+    /*添加问题的回答*/
+    @ResponseBody
+    @RequestMapping("/answer/{userid}/{courseId}/q{numq}/a{numa}/{courseName}/{content}")
+    public boolean add_answer(@PathVariable Long userid,@PathVariable Long courseId,@PathVariable String numq,@PathVariable String numa,@PathVariable String courseName,@PathVariable String content){
+        try{
+            Long question_id = Long.parseLong(userid.toString()+ courseId.toString()+ numq);
+            Question question = questionServiceImpl.findById(question_id);
+            if (!question.getAnswered()) {
+                question.setAnswered(true);
+                questionServiceImpl.save(question);
+            }
+            Answer answer = new Answer();
+            answer.setId(Long.parseLong(userid.toString() + courseId.toString() + numq + numa));
+            answer.setCreatetime(getCurrentTime());
+            answer.setContent(content);
+            answer.setQuestion(question);
+            Set<Answer> answerSet = question.getAnswers();
+            answerSet.add(answer);
+            question.setAnswers(answerSet);
+            answerServiceImpl.save(answer);
+            return true;
+        }catch (Exception e){
+            return false;
+        }
+    }
+
+
+    private String getCurrentTime(){
+        Date date = new Date();
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String time = format.format(date);
+        return time;
+    }
+
     /*
     * 返回courseDetail
     * */
@@ -109,17 +179,65 @@ public class CourseController {
     @RequestMapping("/{courseId}/{courseName}/detail")
     public Map course_detail(@PathVariable Long courseId,@PathVariable String courseName){
         Map stepmap = StepMap(courseId);
-        return stepmap;
+        Map questionmap = question(courseId);
+        return questionmap;
+    }
+
+    private Map question(Long courseId){
+        HashMap course_qas = new HashMap();
+        List<HashMap> answeredList = new ArrayList<>();
+        List<HashMap> unansweredList = new ArrayList<>();
+        Course course = courseServiceImpl.findById(courseId);
+        Set<Question> questionSet = questionServiceImpl.findByCourse(course);
+        Iterator<Question> iter = questionSet.iterator();
+        Integer qCount = 0;
+        while (iter.hasNext()){
+            Question q = iter.next();
+            qCount++;
+            HashMap total = new HashMap();
+            HashMap questionMap = new HashMap();
+            questionMap.put("question_id",q.getId());
+            questionMap.put("question_owner_name",q.getDataer().getName());
+            questionMap.put("question_owner_id",q.getDataer().getId());
+            questionMap.put("question_createtime",q.getCreatetime());
+            questionMap.put("question_updatetime",q.getUpdatetime());
+            questionMap.put("question_content",q.getContent());
+            total.put("question"+qCount.toString(),questionMap);
+            if(q.getAnswered()){
+                Set<Answer> answerSet = q.getAnswers();
+                Iterator<Answer> iterAnswer = answerSet.iterator();
+                Integer aCount = 0;
+                List<HashMap> question_answer = new ArrayList<>();
+                while (iterAnswer.hasNext()){
+                    aCount++;
+                    Answer a = iterAnswer.next();
+                    HashMap answerMap = new HashMap();
+                    answerMap.put("answer_id",a.getId());
+                    answerMap.put("answer_owner_name",a.getQuestion().getDataer().getName());
+                    answerMap.put("answer_owner_id",a.getQuestion().getDataer().getId());
+                    answerMap.put("answer_time",a.getCreatetime());
+                    answerMap.put("answer_content",a.getContent());
+                    question_answer.add(answerMap);
+                }
+                total.put("answer"+qCount.toString(),question_answer);
+                answeredList.add(total);
+
+            }else {
+                unansweredList.add(total);
+            }
+        }
+        course_qas.put("answered",answeredList);
+        course_qas.put("unanswered",unansweredList);
+        /*获得answered*/
+        return course_qas;
     }
 
     private Map StepMap(Long courseId){
-        HashMap course_steps = new HashMap();
-
         /*获得课程信息*/
         Course course = courseServiceImpl.findById(courseId);
 
         /*获得所有step*/
-        HashMap course_step = new HashMap();
+        HashMap course_steps = new HashMap();
         List<HashMap>  stepList = new ArrayList<HashMap>();
         Set<Step> stepSet = stepServiceImpl.findByCourse(course);
         Iterator<Step> iter = stepSet.iterator();
@@ -131,19 +249,22 @@ public class CourseController {
             st.put("step_pic_url",t.getPictureUrl());
             stepList.add(st);
         }
-        course_step.put("course_steps",stepList);
-        return course_step;
+        course_steps.put("course_steps",stepList);
+        return course_steps;
     }
 
 
     @ResponseBody
     @RequestMapping("/Insert")
-    public void insert(){
-            Course course = new Course();
-            course.setId(1L);
-            course.setName("fds");
-            course.setTeacher("fff");
-            course.setRegisterNum(8);
-            courseServiceImpl.save(course);
+    public String insert(){
+        Dataer dataer = new Dataer();
+        dataer.setName("hongjiayong");
+        dataer.setEmail("3@163.com");
+        dataer.setPassword("fgfdgs");
+        dataerServiceImpl.save(dataer);
+        return "true";
     }
+
+
+
 }

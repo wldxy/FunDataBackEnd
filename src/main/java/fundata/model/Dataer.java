@@ -24,6 +24,9 @@ public class Dataer {
     @Column(name = "name", length = 100, nullable = false)
     private String name;
 
+    @Column(name = "role")
+    private int user_flag;
+
     @ManyToMany
     private Set<Dataset> datasets = new HashSet<>();
 
@@ -72,6 +75,14 @@ public class Dataer {
 
     public void setDatasets(Set<Dataset> datasets) {
         this.datasets = datasets;
+    }
+
+    public int getUser_flag() {
+        return user_flag;
+    }
+
+    public void setUser_flag(int user_flag) {
+        this.user_flag = user_flag;
     }
 /*
     public Set<Course> getCourses() {

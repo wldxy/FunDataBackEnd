@@ -42,8 +42,6 @@ public class Course {
     @OneToMany
     private Set<Commentcs> courseComments = new HashSet<>();
 
-    @OneToMany
-    private Set<Question> questions = new HashSet<>();
 
 
 
@@ -141,11 +139,4 @@ public class Course {
         this.courseComments = courseComments;
     }
 
-    public Set<Question> getQuestions() {
-        return questions;
-    }
-
-    public void setQuestions(Set<Question> questions) {
-        this.questions = questions;
-    }
 }
