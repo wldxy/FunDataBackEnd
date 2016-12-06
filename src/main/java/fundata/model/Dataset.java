@@ -28,6 +28,12 @@ public class Dataset {
     @ManyToMany
     private Set<DataFile> files;
 
+    @OneToMany
+    private Set<Contribute> contributes = new HashSet<>();
+
+    @OneToMany
+    private Set<PullRequest> pullRequests = new HashSet<>();
+
     public Dataset() { }
 
     public Dataset(String name) {
@@ -50,7 +56,6 @@ public class Dataset {
         this.name = name;
     }
 
-
     public Set<Dataer> getDataers() {
         return dataers;
     }
@@ -59,12 +64,28 @@ public class Dataset {
         dataers = dataers;
     }
 
-
     public Set<DataFile> getFiles() {
         return files;
     }
 
     public void setFiles(Set<DataFile> files) {
         this.files = files;
+    }
+
+
+    public Set<Contribute> getContributes() {
+        return contributes;
+    }
+
+    public void setContributes(Set<Contribute> contributes) {
+        this.contributes = contributes;
+    }
+
+    public Set<PullRequest> getPullRequests() {
+        return pullRequests;
+    }
+
+    public void setPullRequests(Set<PullRequest> pullRequests) {
+        this.pullRequests = pullRequests;
     }
 }
