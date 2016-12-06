@@ -182,9 +182,18 @@ public class CourseController {
     @ResponseBody
     @RequestMapping("/{courseId}/{courseName}/detail")
     public Map course_detail(@PathVariable Long courseId,@PathVariable String courseName){
+        Course course = courseServiceImpl.findById(courseId);
+        Map wrapper = new HashMap();
         Map stepmap = StepMap(courseId);
         Map questionmap = question(courseId);
-        return questionmap;
+        wrapper.put("course_id",courseId);
+        wrapper.put("course_name",courseName);
+        wrapper.put("course_overview",course.getOverview());
+        wrapper.put("course_steps",stepmap);
+        wrapper.put("course_qa",questionmap);
+        Map total = new HashMap();
+        total.put("course_detail",wrapper);
+        return total;
     }
 
     private Map question(Long courseId){
