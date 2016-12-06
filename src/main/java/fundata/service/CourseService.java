@@ -1,6 +1,8 @@
 package fundata.service;
 
 import fundata.model.Course;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Set;
@@ -15,5 +17,6 @@ public interface CourseService {
     void deleteCourseById(Long id);
     boolean increaseStep(Long id);
     int getStepNum(Long id);
-    List<Course> findHotest(int pageNum,int size);
+    List<Course> findHotest(Pageable pageable);
+    Page<Course> findAll(Pageable pageable);
 }

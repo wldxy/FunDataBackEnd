@@ -1,6 +1,5 @@
 package fundata.service;
 
-import com.sun.xml.internal.fastinfoset.stax.events.StAXFilteredEvent;
 import fundata.model.Dataer;
 import fundata.repository.DataerRepository;
 import org.springframework.beans.factory.annotation.Autowired;

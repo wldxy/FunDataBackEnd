@@ -1,11 +1,14 @@
 package fundata.control;
 
 import fundata.model.*;
+import fundata.repository.CourseRepository;
 import fundata.service.*;
 import fundata.viewmodel.BCourse;
 import fundata.viewmodel.TopClass;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -38,18 +41,19 @@ public class CourseController {
     @Autowired
     AnswerServiceImpl answerServiceImpl;
 
+
     @ResponseBody
     @RequestMapping("/screen_hot_course")
     public List<Course> screen_hot_course(Model model) throws IOException{
-        return courseServiceImpl.findHotest(0,5);
+        return courseServiceImpl.findHotest(new PageRequest(0,5));
     }
 
     @ResponseBody
-    @RequestMapping("/boutique_course/{page}/{size}")
-    public BCourse boutique_course(@PathVariable int page,@PathVariable int size,Model model)throws IOException{
+    @RequestMapping("/boutique_course/more/{pagenum}")
+    public BCourse boutique_course(@PathVariable int pagenum/*,@PageableDefault(page = size = 1,sort = "registerNum",direction = Sort.Direction.DESC)Pageable pageable*/)throws IOException{
         BCourse bc = new BCourse();
         List<TopClass> topClasses = new ArrayList<TopClass>();
-        List<Course> courses = courseServiceImpl.findHotest(page,size);
+       List<Course> courses = courseServiceImpl.findHotest(new PageRequest(pagenum,8));
         for (int i = 0;i < courses.size();++i) {
             topClasses.add(new TopClass(courses.get(i).getId(),courses.get(i).getName(),i,courses.get(i).getRegisterNum(),courses.get(i).getTeacher()));
         }
@@ -202,7 +206,7 @@ public class CourseController {
             questionMap.put("question_createtime",q.getCreatetime());
             questionMap.put("question_updatetime",q.getUpdatetime());
             questionMap.put("question_content",q.getContent());
-            total.put("question"+qCount.toString(),questionMap);
+            total.put("question",questionMap);
             if(q.getAnswered()){
                 Set<Answer> answerSet = q.getAnswers();
                 Iterator<Answer> iterAnswer = answerSet.iterator();
@@ -219,7 +223,7 @@ public class CourseController {
                     answerMap.put("answer_content",a.getContent());
                     question_answer.add(answerMap);
                 }
-                total.put("answer"+qCount.toString(),question_answer);
+                total.put("answer",question_answer);
                 answeredList.add(total);
 
             }else {

@@ -2,6 +2,7 @@ package fundata.repository;
 
 import fundata.model.Course;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -25,6 +26,8 @@ public interface CourseRepository extends JpaRepository<Course,Long> {
 
     @Query("select c from Course c order by c.registerNum DESC")
     List<Course> findHotest(Pageable pagable);
+
+    List<Course> findAll(Sort sort);
 
     @Transactional
     Long deleteById(Long id);
