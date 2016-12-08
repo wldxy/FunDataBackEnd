@@ -6,6 +6,7 @@ import com.qiniu.storage.BucketManager;
 import com.qiniu.storage.Configuration;
 import com.qiniu.util.Auth;
 import com.qiniu.util.StringMap;
+import fundata.model.DataFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -40,8 +41,14 @@ public class QiniuServiceImpl implements QiniuService {
     }
 
     @Override
-    public String createDownloadUrl(String key) {
-        String url = qiniuProperties.getDomain() + key;
+    public String createUploadToken(DataFile dataFile) {
+        String key = dataFile.getFileid().toString() + ".csv";
+        return this.createUploadToken(key);
+    }
+
+    @Override
+    public String createDownloadUrl(DataFile dataFile) {
+        String url = qiniuProperties.getDomain() + dataFile.getFileid() + ".csv";
         return auth.privateDownloadUrl(url, 3600);
     }
 

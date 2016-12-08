@@ -47,7 +47,7 @@ public class PullRequestView {
 class RequestInfo {
     public RequestInfo(PullRequest pullRequest) {
         this.id = pullRequest.getId();
-        this.updatetime = pullRequest.getUpdatetime().toString();
+        this.updatetime = pullRequest.getUpdatetime();
         this.type = pullRequest.getStatus();
         this.description = pullRequest.getDescription();
         this.username = pullRequest.getDataer().getName();
@@ -55,7 +55,7 @@ class RequestInfo {
 
     private String username;
 
-    private String updatetime;
+    private Date updatetime;
 
     private Long id;
 
@@ -71,11 +71,11 @@ class RequestInfo {
         this.username = userName;
     }
 
-    public String getUpdatetime() {
+    public Date getUpdatetime() {
         return updatetime;
     }
 
-    public void setUpdatetime(String updatetime) {
+    public void setUpdatetime(Date updatetime) {
         this.updatetime = updatetime;
     }
 

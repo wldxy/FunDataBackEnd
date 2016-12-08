@@ -2,6 +2,8 @@ package fundata.service;
 
 
 import com.qiniu.common.QiniuException;
+import fundata.model.DataFile;
+import fundata.model.Dataer;
 
 /**
  * Created by ocean on 16-11-29.
@@ -9,7 +11,9 @@ import com.qiniu.common.QiniuException;
 public interface QiniuService {
     String createUploadToken(String key);
 
-    String createDownloadUrl(String key);
+    String createUploadToken(DataFile dataFile);
+
+    String createDownloadUrl(DataFile dataFile);
 
     void deleteFile(String fileName) throws QiniuException;
 }

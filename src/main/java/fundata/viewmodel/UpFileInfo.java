@@ -7,6 +7,10 @@ public class UpFileInfo {
     private String uptoken;
     private String key;
 
+    public UpFileInfo() {
+
+    }
+
     public UpFileInfo(String uptoken, String key) {
         this.uptoken = uptoken;
         this.key = key;

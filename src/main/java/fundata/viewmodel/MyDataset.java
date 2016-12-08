@@ -4,6 +4,7 @@ import fundata.model.Dataset;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by ocean on 16-12-1.
@@ -19,13 +20,10 @@ public class MyDataset {
 
     List<DatasetInfo> dataset = new LinkedList<>();
 
-    public MyDataset(List<Dataset> datasets) {
-        if (datasets.size() != 0) {
-            for (Dataset item: datasets) {
-                System.out.println("hahahah" + item.getName());
-                DatasetInfo datasetInfo = new DatasetInfo(item.getName());
-                this.dataset.add(datasetInfo);
-            }
+    public MyDataset(Iterable<Dataset> datasets) {
+        for (Dataset item: datasets) {
+            DatasetInfo datasetInfo = new DatasetInfo(item.getName());
+            this.dataset.add(datasetInfo);
         }
     }
 }

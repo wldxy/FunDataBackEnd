@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by ocean on 16-12-1.
@@ -28,9 +29,14 @@ public class DatasetController {
 
     @RequestMapping("/getMyDataset")
     public MyDataset getMyDataset(@RequestParam(value = "username") String username) {
-        List<Dataset> datasetList;
+        Set<Dataset> datasetList;
         datasetList = datasetService.findByUserName(username);
         MyDataset myDataset = new MyDataset(datasetList);
         return myDataset;
+    }
+
+    @RequestMapping("/datasetFileConfirm")
+    public void confirmDatasetTitleDesc(@RequestParam(value = "status") Integer status) {
+
     }
 }

@@ -27,6 +27,9 @@ public class Dataer {
     @ManyToMany
     private Set<Dataset> datasets = new HashSet<>();
 
+    @OneToMany(mappedBy = "dataer")
+    private Set<PullRequest> pullRequests = new HashSet<>();
+
     public Dataer() { }
 
     public Dataer(String name, String password, String email) {

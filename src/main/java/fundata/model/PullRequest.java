@@ -1,6 +1,7 @@
 package fundata.model;
 
-import com.sun.org.glassfish.gmbal.Description;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -19,16 +20,21 @@ public class PullRequest {
     @Column(name = "description")
     private String description;
 
+    // 1 means success 0 means waiting -1 means file waiting to check
     @Column(name = "status")
     private Integer status;
 
     @Column(name = "updatetime")
+    @Temporal(TemporalType.DATE)
     private Date updatetime;
 
+    @OneToOne
     private DataFile dataFile;
 
+    @ManyToOne
     private Dataer dataer;
 
+    @ManyToOne
     private Dataset dataset;
 
     public Date getUpdatetime() {

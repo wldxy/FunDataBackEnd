@@ -1,6 +1,5 @@
 package fundata.control;
 
-//import repository.UserRepository;
 import fundata.model.Dataer;
 import fundata.repository.DataerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,26 +14,37 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class DataerController {
     @Autowired
-    DataerRepository repository;
+    DataerRepository dataerRepository;
 
-    @RequestMapping("/add")
-    public String add() {
-        Dataer user = new Dataer();
-        user.setName("nana");
-        user.setPassword("123456");
-        user.setEmail("hahah@163.com");
-        repository.save(user);
-        return "Add User";
+    @RequestMapping("/authorize/register")
+    public boolean add(@RequestParam(name = "email") String email,
+                       @RequestParam(name = "name") String name,
+                       @RequestParam(name = "pwd") String pwd) {
+        Dataer dataer1 = dataerRepository.findByUserEmail(email);
+        Dataer dataer2 = dataerRepository.findByUserName(name);
+        if (dataer1 == null && dataer2 == null) {
+            Dataer dataer = new Dataer();
+            dataer.setEmail(email);
+            dataer.setPassword(pwd);
+            dataer.setName(name);
+            dataerRepository.save(dataer);
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    @RequestMapping(value = "/user", method = RequestMethod.POST)
-    public String check(@RequestParam(value = "user") String name,
-                        @RequestParam(value = "password") String password) {
-        Dataer user = repository.findByUserName(name);
+    @RequestMapping(value = "/authorize/login", method = RequestMethod.POST)
+    public Integer checkLoginByName(@RequestParam(value = "user") String name,
+                                    @RequestParam(value = "password") String password) {
+        Dataer user = dataerRepository.findByUserName(name);
+        if (user == null) {
+            return -1;
+        }
         if (user.getPassword().equals(password)) {
-            return "login success";
+            return 1;
         } else {
-            return "login fail";
+            return 0;
         }
     }
 }

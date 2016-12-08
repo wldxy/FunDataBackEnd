@@ -12,4 +12,7 @@ import java.util.Set;
 public interface PullRequestService {
     Set<PullRequest> findByDatasetName(String datasetName);
 
+    PullRequest newPullRequest(String dataerName, String datasetName);
+
+    boolean setPullRequest(Long id, Integer status);
 }

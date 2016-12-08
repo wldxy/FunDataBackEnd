@@ -1,8 +1,6 @@
 package fundata.model;
 
 
-import fundata.model.DataFile;
-
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,19 +17,22 @@ public class Dataset {
     @Column(nullable = false,name = "ID")
     private Long id;
 
-    @Column(nullable = false,name="NAME",length = 50)
+    @Column(nullable = false,name = "NAME", length = 50)
     private String name;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "datasets")
     private Set<Dataer> dataers = new HashSet<>();
 
-    @ManyToMany
-    private Set<DataFile> files;
+    @Column(name = "description")
+    private String description;
 
-    @OneToMany
-    private Set<Contribute> contributes = new HashSet<>();
+    @OneToMany(mappedBy = "dataset")
+    private Set<DatasetTitle> datasetTitles = new HashSet<>();
 
-    @OneToMany
+    @OneToMany(mappedBy = "dataset")
+    private Set<DataFile> files = new HashSet<>();
+
+    @OneToMany(mappedBy = "dataset")
     private Set<PullRequest> pullRequests = new HashSet<>();
 
     public Dataset() { }
@@ -72,20 +73,27 @@ public class Dataset {
         this.files = files;
     }
 
-
-    public Set<Contribute> getContributes() {
-        return contributes;
-    }
-
-    public void setContributes(Set<Contribute> contributes) {
-        this.contributes = contributes;
-    }
-
     public Set<PullRequest> getPullRequests() {
         return pullRequests;
     }
 
     public void setPullRequests(Set<PullRequest> pullRequests) {
         this.pullRequests = pullRequests;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Set<DatasetTitle> getDatasetTitles() {
+        return datasetTitles;
+    }
+
+    public void setDatasetTitles(Set<DatasetTitle> datasetTitles) {
+        this.datasetTitles = datasetTitles;
     }
 }

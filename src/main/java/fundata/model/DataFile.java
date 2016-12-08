@@ -3,6 +3,7 @@ package fundata.model;
 import oracle.sql.TIMESTAMP;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.Set;
 
 /**
@@ -14,58 +15,64 @@ public class DataFile {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "fileid")
-    private Long fileid;
+    @Column(name = "id")
+    private Long id;
 
-    @Column(name="createTime")
-    private TIMESTAMP createTime;
+    @Column(name = "createTime", updatable = false)
+    @Temporal(TemporalType.DATE)
+    private Date createTime;
 
     @Column(name = "updateTime")
-    private TIMESTAMP updateTime;
+    @Temporal(TemporalType.DATE)
+    private Date updateTime;
 
-    @Column(name = "filename",length = 50)
-    private String filename;
+    @Column(name = "status")
+    private Integer status;
 
-    @ManyToMany
-    private Set<Dataset> datasets;
+    @ManyToOne
+    private Dataset dataset;
+
+    public String getFileName() {
+        return this.id.toString() + ".csv";
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
 
     public Long getFileid() {
-        return fileid;
+        return id;
     }
 
     public void setFileid(Long fileid) {
-        this.fileid = fileid;
+        this.id = fileid;
     }
 
-    public TIMESTAMP getCreateTime() {
+    public Date getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(TIMESTAMP createTime) {
+    public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
 
-    public TIMESTAMP getUpdateTime() {
+    public Date getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(TIMESTAMP updateTime) {
+    public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
 
-    public String getFilename() {
-        return filename;
+    public Dataset getDatasets() {
+        return dataset;
     }
 
-    public void setFilename(String filename) {
-        this.filename = filename;
-    }
-
-    public Set<Dataset> getDatasets() {
-        return datasets;
-    }
-
-    public void setDatasets(Set<Dataset> datasets) {
-        this.datasets = datasets;
+    public void setDatasets(Dataset datasets) {
+        this.dataset = datasets;
     }
 }
