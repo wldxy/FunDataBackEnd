@@ -17,4 +17,6 @@ public interface DataerRepository extends JpaRepository<Dataer, Long>, JpaSpecif
     @Query("select u from dataer u where u.email = :um")
     public Dataer findByUserEmail(@Param("um") String name);
 
+    Dataer findById(Long id);
+
 }

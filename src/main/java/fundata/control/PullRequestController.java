@@ -55,7 +55,7 @@ public class PullRequestController {
     @RequestMapping(value = "/requestFileConfirm", method = RequestMethod.POST)
     public void confirmRequestFileUpload(@RequestParam(name = "confirm") Integer confirm,
                                          @RequestParam(name = "fileid") Integer fileid) {
-        
+
     }
 }
 
