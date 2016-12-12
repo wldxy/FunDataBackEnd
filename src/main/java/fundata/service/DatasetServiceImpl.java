@@ -1,8 +1,6 @@
 package fundata.service;
 
-import fundata.model.Dataer;
-import fundata.model.Dataset;
-import fundata.model.DatasetTitle;
+import fundata.model.*;
 import fundata.repository.DataerRepository;
 import fundata.repository.DatasetRepository;
 import fundata.repository.DatasetTitleRepository;
@@ -11,6 +9,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -65,5 +64,24 @@ public class DatasetServiceImpl implements DatasetService {
         Dataset dataset = datasetRepository.findByDatasetName(datasetName);
         dataset.getDatasetTitles().add(datasetTitle);
         datasetRepository.save(dataset);
+    }
+
+    @Override
+    public List<Dataer> getContribute(String datasetNsame) {
+        Dataset dataset = datasetRepository.findByDatasetName(datasetNsame);
+        Set<PullRequest> pullRequests = dataset.getPullRequests();
+        List<Dataer> dataers = new ArrayList<>();
+        for (PullRequest pullRequest : pullRequests) {
+            dataers.add(pullRequest.getDataer());
+        }
+        return dataers;
+    }
+
+    @Override
+    public List<DataFile> getDatasetFile(String datasetName) {
+        Dataset dataset = datasetRepository.findByDatasetName(datasetName);
+        Set<DataFile> dataFiles = dataset.getFiles();
+        List<DataFile> dataFileList = new ArrayList<DataFile>(dataFiles);
+        return dataFileList;
     }
 }
