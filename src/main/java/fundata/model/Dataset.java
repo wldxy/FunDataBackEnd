@@ -35,6 +35,9 @@ public class Dataset {
     @OneToMany(mappedBy = "dataset")
     private Set<PullRequest> pullRequests = new HashSet<>();
 
+    @OneToMany(mappedBy = "dataset")
+    private Set<DSComment> dsComments = new HashSet<>();
+
     public Dataset() { }
 
     public Dataset(String name) {
@@ -95,5 +98,13 @@ public class Dataset {
 
     public void setDatasetTitles(Set<DatasetTitle> datasetTitles) {
         this.datasetTitles = datasetTitles;
+    }
+
+    public Set<DSComment> getDsComments() {
+        return dsComments;
+    }
+
+    public void setDsComments(Set<DSComment> dsComments) {
+        this.dsComments = dsComments;
     }
 }

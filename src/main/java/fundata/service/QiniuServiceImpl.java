@@ -8,10 +8,13 @@ import com.qiniu.util.Auth;
 import com.qiniu.util.StringMap;
 import fundata.model.DataFile;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * Created by ocean on 16-11-29.
@@ -55,5 +58,57 @@ public class QiniuServiceImpl implements QiniuService {
     @Override
     public void deleteFile(String fileName) throws QiniuException {
         bucketManager.delete(qiniuProperties.getBucket(), fileName);
+    }
+
+    @Override
+    public void downloadFile(DataFile dataFile, String dir) {
+        try {
+            URL url = new URL(createDownloadUrl(dataFile));
+            String fileName = dataFile.getFileName();
+
+            URLConnection urlConnection = url.openConnection();
+            HttpURLConnection httpURLConnection = (HttpURLConnection) urlConnection;
+            httpURLConnection.setRequestMethod("POST");
+            httpURLConnection.setRequestProperty("Charset", "UTF-8");
+            httpURLConnection.connect();
+            int fileSize = httpURLConnection.getContentLength();
+
+            BufferedInputStream bin = new BufferedInputStream(httpURLConnection.getInputStream());
+            File file = new File(dir + fileName);
+            if (!file.getParentFile().exists()) {
+                file.getParentFile().mkdirs();
+            }
+            OutputStream outputStream = new FileOutputStream(file);
+            int size = 0, len = 0;
+            byte[] buf = new byte[1024];
+            while ((size = bin.read(buf)) != -1) {
+                len += size;
+                outputStream.write(buf, 0, size);
+            }
+            bin.close();
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public int getFileSize(DataFile dataFile) {
+        int fileSize = 0;
+        try {
+            URL url = new URL(createDownloadUrl(dataFile));
+
+            URLConnection urlConnection = url.openConnection();
+            HttpURLConnection httpURLConnection = (HttpURLConnection) urlConnection;
+            httpURLConnection.setRequestMethod("POST");
+            httpURLConnection.setRequestProperty("Charset", "UTF-8");
+            httpURLConnection.connect();
+            fileSize = httpURLConnection.getContentLength();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            return fileSize;
+        }
     }
 }
