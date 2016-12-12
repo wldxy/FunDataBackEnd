@@ -1,6 +1,9 @@
 package fundata.service;
 
+import fundata.model.Competition;
 import fundata.model.Dataer;
+
+import java.util.Set;
 
 
 /**
@@ -9,4 +12,5 @@ import fundata.model.Dataer;
 public interface DataerService {
     void save(Dataer dataer);
     Dataer findById(Long id);
+    Dataer findByHostcompetition(Competition competition);
 }

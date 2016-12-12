@@ -1,10 +1,13 @@
 package fundata.service;
 
+import fundata.model.Competition;
 import fundata.model.Dataer;
 import fundata.repository.DataerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Set;
 
 /**
  * Created by stanforxc on 2016/12/5.
@@ -25,4 +28,13 @@ public class DataerServiceImpl implements DataerService {
     public Dataer findById(Long id) {
         return dataerRepository.findById(id);
     }
+
+    @Override
+    public Dataer findByHostcompetition(Competition competition) {
+        return dataerRepository.findByHostcompetition(competition);
+    }
+
+
+
+
 }

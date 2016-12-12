@@ -27,6 +27,15 @@ public class Dataer {
     @Column(name = "role")
     private int user_flag;
 
+    @Column(name = "head_href")
+    private String head_href;
+
+    @OneToMany(mappedBy = "hoster")
+    private Set<Competition> hostcompetition;
+
+    @ManyToMany
+    private Set<Competition> competitions;
+
     @ManyToMany
     private Set<Dataset> datasets = new HashSet<>();
 
@@ -84,6 +93,31 @@ public class Dataer {
     public void setUser_flag(int user_flag) {
         this.user_flag = user_flag;
     }
+
+    public Set<Competition> getCompetitions() {
+        return competitions;
+    }
+
+    public void setCompetitions(Set<Competition> competitions) {
+        this.competitions = competitions;
+    }
+
+    public String getHead_href() {
+        return head_href;
+    }
+
+    public void setHead_href(String head_href) {
+        this.head_href = head_href;
+    }
+
+    public Set<Competition> getHostCompetition() {
+        return hostcompetition;
+    }
+
+    public void setHostCompetition(Set<Competition> hostCompetition) {
+        this.hostcompetition = hostCompetition;
+    }
+
 /*
     public Set<Course> getCourses() {
         return courses;
