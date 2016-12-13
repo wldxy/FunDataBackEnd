@@ -5,14 +5,16 @@ import fundata.model.Competition;
 import fundata.model.Dataer;
 import fundata.service.CommentCompServiceImpl;
 import fundata.service.CompetitionServiceImpl;
-import fundata.service.DataerService;
 import fundata.service.DataerServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -161,12 +163,20 @@ public class CompetitionController {
         return competitions;
     }
 
+    @ResponseBody
+    @RequestMapping("/show_competitions")
+    public Map showCompetitions(@RequestParam(name = "page") int page){
+        Map competitions = getComps(page);
+
+        return competitions;
+    }
+
     //分页找参加竞赛
     Map getComps(int page){
         try {
             Map info = new HashMap();
             List<Map> competitionList = new ArrayList<>();
-            Pageable pageable = new PageRequest(page,1,new Sort(Sort.Direction.DESC,"registerNum"));
+            Pageable pageable = new PageRequest(page,8,new Sort(Sort.Direction.DESC,"registerNum"));
             Page<Competition> pages = competitionServiceImpl.findAll(pageable);
             for (Competition c: pages) {
                 Map temp = new HashMap();
