@@ -42,10 +42,11 @@ public class DatasetServiceImpl implements DatasetService {
     }
 
     @Override
-    public void addDataset(String username, String datasetname) {
+    public void addDataset(String username, String datasetname, String desc) {
         Dataer dataer = dataerRepository.findByUserName(username);
         System.out.println(dataer.getEmail());
         Dataset dataset = new Dataset(datasetname);
+        dataset.setDescription(desc);
         datasetRepository.save(dataset);
         dataer.getDatasets().add(dataset);
         dataerRepository.save(dataer);

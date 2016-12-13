@@ -16,7 +16,7 @@ import java.util.Set;
 public interface DatasetService {
     Set<Dataset> findByUserName(String username);
 
-    void addDataset(String username, String datasetname);
+    void addDataset(String username, String datasetname, String desc);
 
     Set<DatasetTitle> getDatasetTitle(String datasetName);
 
