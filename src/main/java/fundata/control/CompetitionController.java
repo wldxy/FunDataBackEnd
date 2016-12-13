@@ -196,7 +196,6 @@ public class CompetitionController {
         return detail;
     }
 
-
     //我的中心
     @ResponseBody
     @RequestMapping("/compCenter")
@@ -312,6 +311,4 @@ public class CompetitionController {
         totalComment.put("competitions",totalMap);
         return totalComment;
     }
-
-
 }

@@ -4,14 +4,17 @@ import fundata.model.PullRequest;
 import fundata.repository.DataerRepository;
 import fundata.service.PullRequestService;
 import fundata.service.QiniuService;
+import fundata.viewmodel.HotProject;
 import fundata.viewmodel.PullRequestView;
 import fundata.viewmodel.UpFileInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -56,6 +59,18 @@ public class PullRequestController {
     public void confirmRequestFileUpload(@RequestParam(name = "confirm") Integer confirm,
                                          @RequestParam(name = "fileid") Integer fileid) {
 
+    }
+
+    @RequestMapping(value = "/getHotProject", method = RequestMethod.POST)
+    public HotProject getFreshDataset(String userName, int page) {
+        Page<PullRequest> pullRequestPage = pullRequestService.findLatestPullRequest(userName, page, 10);
+        List<PullRequest> pullRequests = pullRequestPage.getContent();
+
+        HotProject hotProject = new HotProject();
+        for (PullRequest pullRequest : pullRequests) {
+            hotProject.addInfo(pullRequest.getDataset().getName(), pullRequest.getDataer().getName(), 1);
+        }
+        return hotProject;
     }
 }
 
