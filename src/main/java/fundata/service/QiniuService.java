@@ -19,5 +19,7 @@ public interface QiniuService {
 
     void downloadFile(DataFile dataFile, String dir);
 
+    void downloadFile(String url, String fileName, String dir);
+
     int getFileSize(DataFile dataFile);
 }

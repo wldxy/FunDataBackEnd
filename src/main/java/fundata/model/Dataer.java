@@ -25,7 +25,7 @@ public class Dataer {
     private String name;
 
     @Column(name = "role")
-    private int user_flag;
+    private Integer user_flag;
 
     @Column(name = "head_href")
     private String head_href;

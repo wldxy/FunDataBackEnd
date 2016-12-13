@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by ocean on 16-11-24.
  */
@@ -20,9 +23,10 @@ public class DataerController {
     DataerRepository dataerRepository;
 
     @RequestMapping("/authorize/register")
-    public boolean add(@RequestParam(name = "email") String email,
-                       @RequestParam(name = "name") String name,
-                       @RequestParam(name = "pwd") String pwd) {
+    public Map<String, String> add(@RequestParam(name = "email") String email,
+                                   @RequestParam(name = "name") String name,
+                                   @RequestParam(name = "pwd") String pwd) {
+        Map<String, String> map = new HashMap<>();
         Dataer dataer1 = dataerRepository.findByUserEmail(email);
         Dataer dataer2 = dataerRepository.findByUserName(name);
         if (dataer1 == null && dataer2 == null) {
@@ -31,23 +35,26 @@ public class DataerController {
             dataer.setPassword(pwd);
             dataer.setName(name);
             dataerRepository.save(dataer);
-            return true;
+            map.put("username", name);
         } else {
-            return false;
+            map.put("username", "");
         }
+        return map;
     }
 
     @RequestMapping(value = "/authorize/login", method = RequestMethod.POST)
-    public Integer checkLoginByName(@RequestParam(value = "user") String name,
-                                    @RequestParam(value = "password") String password) {
-        Dataer user = dataerRepository.findByUserName(name);
+    public Map<String, String> checkLoginByName(@RequestParam(value = "email") String email,
+                                    @RequestParam(value = "pwd") String password) {
+        Dataer user = dataerRepository.findByUserEmail(email);
+        Map<String, String> map = new HashMap<>();
         if (user == null) {
-            return -1;
+            map.put("username", "");
         }
         if (user.getPassword().equals(password)) {
-            return 1;
+            map.put("username", user.getName());
         } else {
-            return 0;
+            map.put("username", "");
         }
+        return map;
     }
 }

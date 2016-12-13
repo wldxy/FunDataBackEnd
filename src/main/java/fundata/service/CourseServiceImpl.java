@@ -66,10 +66,8 @@ public class CourseServiceImpl implements CourseService{
         return courseRepository.getStepNum(id);
     }
 
-
-
-     @Override
-   public List<Course> findHotest(Pageable pageable){
+    @Override
+    public List<Course> findHotest(Pageable pageable){
         return courseRepository.findHotest(pageable);
     }
 

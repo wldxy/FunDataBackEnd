@@ -5,6 +5,7 @@ import fundata.model.Competition;
 import fundata.model.Dataer;
 import fundata.service.CommentCompServiceImpl;
 import fundata.service.CompetitionServiceImpl;
+import fundata.service.DataerService;
 import fundata.service.DataerServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,15 +26,21 @@ import java.util.*;
 public class CompetitionController {
     @Autowired
     CompetitionServiceImpl competitionServiceImpl;
+
     @Autowired
     DataerServiceImpl dataerServiceImpl;
+
     @Autowired
     CommentCompServiceImpl commentCompImpl;
 
     /*添加竞赛*/
     @ResponseBody
     @RequestMapping("/add")
-    public boolean addCompetition(@RequestParam(name = "userid")Long userid,@RequestParam(name = "compName")String comName,@RequestParam(name = "start")String start,@RequestParam(name = "end")String end,@RequestParam(name = "des")String des){
+    public boolean addCompetition(@RequestParam(name = "userid")Long userid,
+                                  @RequestParam(name = "compName")String comName,
+                                  @RequestParam(name = "start")String start,
+                                  @RequestParam(name = "end")String end,
+                                  @RequestParam(name = "des")String des) {
         try {
             Dataer dataer = dataerServiceImpl.findById(userid);
             Competition competition = new Competition();
@@ -68,7 +75,8 @@ public class CompetitionController {
     /*参与竞赛*/
     @ResponseBody
     @RequestMapping("/register")
-    public String registerCompetition(@RequestParam(name = "userid")Long userid,@RequestParam(name = "comId")Long comId){
+    public String registerCompetition(@RequestParam(name = "userId")Long userid,
+                                      @RequestParam(name = "comId")Long comId) {
         try{
             Competition competition = competitionServiceImpl.findById(comId);
             Dataer host = competition.getHoster();
@@ -86,7 +94,6 @@ public class CompetitionController {
                 if(temp.getId().equals(userid)){
                     return "registered";
                 }
-
             }
 
             //注册竞赛
@@ -110,9 +117,44 @@ public class CompetitionController {
         }
     }
 
+    @RequestMapping("/unregister")
+    public boolean unregister(@RequestParam(name = "comId") Long comId,
+                              @RequestParam(name = "userId") Long userId) {
+        Dataer dataer = dataerServiceImpl.findById(userId);
+
+        Competition competition = competitionServiceImpl.findById(comId);
+
+        if (dataer == null || competition == null)
+            return false;
+        if (!dataer.getCompetitions().contains(competition)) {
+            return false;
+        }
+
+        dataer.getCompetitions().remove(competition);
+        dataerServiceImpl.save(dataer);
+
+        competition.setRegisterNum(competition.getRegisterNum()-1);
+        competitionServiceImpl.save(competition);
+        return true;
+    }
+
+    @RequestMapping("/delete")
+    public boolean delete(@RequestParam(name = "comId") Long comId,
+                          @RequestParam(name = "userId") Long userId) {
+        Competition competition = competitionServiceImpl.findById(comId);
+
+        if (competition.getHoster().getId().equals(userId)) {
+            competitionServiceImpl.deleteCompetition(competition);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     @ResponseBody
     @RequestMapping("/get_competition")
-    public Map getCompetition(@RequestParam(name = "page")int page,@RequestParam(name = "userid")Long userid){
+    public Map getCompetition(@RequestParam(name = "page") int page,
+                              @RequestParam(name = "userid") Long userid){
         Map competitions = getComps(page);
         Map Mycompetitions = getMyCompetition(userid);
         competitions.put("My_competitions",Mycompetitions);
@@ -278,6 +320,7 @@ public class CompetitionController {
             while (commentCompIterator.hasNext()){
                 CommentComp tempComment = commentCompIterator.next();
                 Map commentMap = new HashMap();
+                commentMap.put("user_id",tempComment.getDataer().getId());
                 commentMap.put("user_id",tempComment.getDataer().getId());
                 commentMap.put("user_name",tempComment.getDataer().getName());
                 commentMap.put("head_href",tempComment.getDataer().getHead_href());

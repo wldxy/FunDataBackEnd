@@ -13,8 +13,12 @@ import java.util.Set;
  */
 public interface CompetitionService {
     void save(Competition competition);
+
     Competition findById(Long id);
+
   //  Dataer findHost(Competition competition);
    // Set<Dataer> findContester(Competition competition);
     Page<Competition> findAll(Pageable pageable);
+
+    void deleteCompetition(Competition competition);
 }

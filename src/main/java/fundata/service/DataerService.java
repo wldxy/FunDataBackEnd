@@ -11,6 +11,10 @@ import java.util.Set;
  */
 public interface DataerService {
     void save(Dataer dataer);
+
     Dataer findById(Long id);
+
     Dataer findByHostcompetition(Competition competition);
+
+    Dataer findByDataerName(String dataerName);
 }

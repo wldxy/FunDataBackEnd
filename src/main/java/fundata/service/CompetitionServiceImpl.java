@@ -44,4 +44,9 @@ public class CompetitionServiceImpl implements CompetitionService {
     public Page<Competition> findAll(Pageable pageable) {
         return competitionRepostiory.findAll(pageable);
     }
+
+    @Override
+    public void deleteCompetition(Competition competition) {
+        competitionRepostiory.delete(competition);
+    }
 }
