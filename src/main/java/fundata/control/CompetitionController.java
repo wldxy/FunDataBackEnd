@@ -1,6 +1,6 @@
 package fundata.control;
 
-import fundata.model.CommentComp;
+import fundata.model.Commentcomp;
 import fundata.model.Competition;
 import fundata.model.Dataer;
 import fundata.service.CommentCompServiceImpl;
@@ -242,11 +242,26 @@ public class CompetitionController {
     @RequestMapping("/comment/add")
     public boolean addComment(@RequestParam(name = "userid")Long userid,@RequestParam(name = "compId")Long compId,@RequestParam(name = "content")String content){
         try {
-            CommentComp commentComp = new CommentComp();
-            commentComp.setDataer(dataerServiceImpl.findById(userid));
-            commentComp.setCompetition(competitionServiceImpl.findById(compId));
+            Commentcomp commentComp = new Commentcomp();
+            Dataer dataer = dataerServiceImpl.findById(userid);
+            Competition competition = competitionServiceImpl.findById(compId);
+            if(dataer == null){
+                return false;
+            }
+            commentComp.setDataer(dataer);
+
+            if (competition == null){
+                return false;
+            }
+            commentComp.setCompetition(competition);
             commentComp.setContent(content);
             commentComp.setTime(getCurrentTime());
+
+            Set<Commentcomp> commentcompSet = dataer.getCommentcompSet();
+            commentcompSet.add(commentComp);
+            dataer.setCommentcompSet(commentcompSet);
+
+            dataerServiceImpl.save(dataer);
             commentCompImpl.save(commentComp);
             return true;
         }catch (Exception e){
@@ -262,22 +277,22 @@ public class CompetitionController {
     }
 
 
-    //竞赛评论
+    //竞赛评论 参与的
     @ResponseBody
-    @RequestMapping("/comment")
+    @RequestMapping("/comment/host")
     public Map getCompComment(@RequestParam(name = "userid")Long userid){
         Dataer dataer = dataerServiceImpl.findById(userid);
-        Set<Competition> competitionSet = dataer.getCompetitions();
+        Set<Competition> competitionSet = dataer.getHostCompetition();
         Iterator<Competition> competitionIterator = competitionSet.iterator();
         Map totalComment = new HashMap();
         List<Map> totalMap = new ArrayList<>();
         while (competitionIterator.hasNext()){
             Competition temp = competitionIterator.next();
-            Set<CommentComp> commentComps = temp.getCommentComps();
-            Iterator<CommentComp> commentCompIterator = commentComps.iterator();
+            Set<Commentcomp> commentComps = temp.getCommentComps();
+            Iterator<Commentcomp> commentCompIterator = commentComps.iterator();
             List<Map> commentList = new ArrayList<>();
             while (commentCompIterator.hasNext()){
-                CommentComp tempComment = commentCompIterator.next();
+                Commentcomp tempComment = commentCompIterator.next();
                 Map commentMap = new HashMap();
                 commentMap.put("user_id",tempComment.getDataer().getId());
                 commentMap.put("user_name",tempComment.getDataer().getName());
