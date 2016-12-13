@@ -29,11 +29,14 @@ public class DataFile {
     @Column(name = "status")
     private Integer status;
 
+    @Column(name = "suffix")
+    private String suffix;
+
     @ManyToOne
     private Dataset dataset;
 
     public String getFileName() {
-        return this.id.toString() + ".csv";
+        return this.id.toString() + "." + suffix;
     }
 
     public Integer getStatus() {
@@ -74,5 +77,13 @@ public class DataFile {
 
     public void setDatasets(Dataset datasets) {
         this.dataset = datasets;
+    }
+
+    public String getSuffix() {
+        return suffix;
+    }
+
+    public void setSuffix(String suffix) {
+        this.suffix = suffix;
     }
 }

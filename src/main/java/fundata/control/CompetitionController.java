@@ -1,6 +1,5 @@
 package fundata.control;
 
-import fundata.model.Accurate;
 import fundata.model.Commentcomp;
 import fundata.model.Competition;
 import fundata.model.Dataer;
@@ -13,7 +12,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -27,8 +29,10 @@ import java.util.*;
 public class CompetitionController {
     @Autowired
     CompetitionServiceImpl competitionServiceImpl;
+
     @Autowired
     DataerServiceImpl dataerServiceImpl;
+
     @Autowired
     CommentCompServiceImpl commentCompImpl;
     @Autowired
@@ -37,7 +41,11 @@ public class CompetitionController {
     /*添加竞赛*/
     @ResponseBody
     @RequestMapping("/add")
-    public boolean addCompetition(@RequestParam(name = "userid")Long userid,@RequestParam(name = "compName")String comName,@RequestParam(name = "start")String start,@RequestParam(name = "end")String end,@RequestParam(name = "des")String des){
+    public boolean addCompetition(@RequestParam(name = "userid")Long userid,
+                                  @RequestParam(name = "compName")String comName,
+                                  @RequestParam(name = "start")String start,
+                                  @RequestParam(name = "end")String end,
+                                  @RequestParam(name = "des")String des) {
         try {
             Dataer dataer = dataerServiceImpl.findById(userid);
             Competition competition = new Competition();
@@ -72,7 +80,8 @@ public class CompetitionController {
     /*参与竞赛*/
     @ResponseBody
     @RequestMapping("/register")
-    public String registerCompetition(@RequestParam(name = "userid")Long userid,@RequestParam(name = "comId")Long comId){
+    public String registerCompetition(@RequestParam(name = "userId")Long userid,
+                                      @RequestParam(name = "comId")Long comId) {
         try{
             Competition competition = competitionServiceImpl.findById(comId);
             Dataer host = competition.getHoster();
@@ -90,7 +99,6 @@ public class CompetitionController {
                 if(temp.getId().equals(userid)){
                     return "registered";
                 }
-
             }
 
             //注册竞赛
@@ -114,12 +122,55 @@ public class CompetitionController {
         }
     }
 
+    @RequestMapping("/unregister")
+    public boolean unregister(@RequestParam(name = "comId") Long comId,
+                              @RequestParam(name = "userId") Long userId) {
+        Dataer dataer = dataerServiceImpl.findById(userId);
+
+        Competition competition = competitionServiceImpl.findById(comId);
+
+        if (dataer == null || competition == null)
+            return false;
+        if (!dataer.getCompetitions().contains(competition)) {
+            return false;
+        }
+
+        dataer.getCompetitions().remove(competition);
+        dataerServiceImpl.save(dataer);
+
+        competition.setRegisterNum(competition.getRegisterNum()-1);
+        competitionServiceImpl.save(competition);
+        return true;
+    }
+
+    @RequestMapping("/delete")
+    public boolean delete(@RequestParam(name = "comId") Long comId,
+                          @RequestParam(name = "userId") Long userId) {
+        Competition competition = competitionServiceImpl.findById(comId);
+
+        if (competition.getHoster().getId().equals(userId)) {
+            competitionServiceImpl.deleteCompetition(competition);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     @ResponseBody
     @RequestMapping("/get_competition")
-    public Map getCompetition(@RequestParam(name = "page")int page,@RequestParam(name = "userid")Long userid){
+    public Map getCompetition(@RequestParam(name = "page") int page,
+                              @RequestParam(name = "userid") Long userid){
         Map competitions = getComps(page);
         Map Mycompetitions = getMyCompetition(userid);
         competitions.put("My_competitions",Mycompetitions);
+        return competitions;
+    }
+
+    @ResponseBody
+    @RequestMapping("/show_competitions")
+    public Map showCompetitions(@RequestParam(name = "page") int page){
+        Map competitions = getComps(page);
+
         return competitions;
     }
 
@@ -128,7 +179,7 @@ public class CompetitionController {
         try {
             Map info = new HashMap();
             List<Map> competitionList = new ArrayList<>();
-            Pageable pageable = new PageRequest(page,1,new Sort(Sort.Direction.DESC,"registerNum"));
+            Pageable pageable = new PageRequest(page,8,new Sort(Sort.Direction.DESC,"registerNum"));
             Page<Competition> pages = competitionServiceImpl.findAll(pageable);
             for (Competition c: pages) {
                 Map temp = new HashMap();
@@ -297,6 +348,7 @@ public class CompetitionController {
             while (commentCompIterator.hasNext()){
                 Commentcomp tempComment = commentCompIterator.next();
                 Map commentMap = new HashMap();
+                commentMap.put("user_id",tempComment.getDataer().getId());
                 commentMap.put("user_id",tempComment.getDataer().getId());
                 commentMap.put("user_name",tempComment.getDataer().getName());
                 commentMap.put("head_href",tempComment.getDataer().getHead_href());

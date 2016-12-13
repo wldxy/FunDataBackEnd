@@ -61,10 +61,9 @@ public class QiniuServiceImpl implements QiniuService {
     }
 
     @Override
-    public void downloadFile(DataFile dataFile, String dir) {
+    public void downloadFile(String urlPath, String fileName, String dir) {
         try {
-            URL url = new URL(createDownloadUrl(dataFile));
-            String fileName = dataFile.getFileName();
+            URL url = new URL(urlPath);
 
             URLConnection urlConnection = url.openConnection();
             HttpURLConnection httpURLConnection = (HttpURLConnection) urlConnection;
@@ -74,7 +73,7 @@ public class QiniuServiceImpl implements QiniuService {
             int fileSize = httpURLConnection.getContentLength();
 
             BufferedInputStream bin = new BufferedInputStream(httpURLConnection.getInputStream());
-            File file = new File(dir + fileName);
+            File file = new File(dir + "/"+ fileName);
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
             }
@@ -90,6 +89,42 @@ public class QiniuServiceImpl implements QiniuService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void downloadFile(DataFile dataFile, String dir) {
+        String url = createDownloadUrl(dataFile);
+        String fileName = dataFile.getFileName();
+        this.downloadFile(url, fileName, dir);
+
+//        try {
+//            URL url = new URL(createDownloadUrl(dataFile));
+//            String fileName = dataFile.getFileName();
+//
+//            URLConnection urlConnection = url.openConnection();
+//            HttpURLConnection httpURLConnection = (HttpURLConnection) urlConnection;
+//            httpURLConnection.setRequestMethod("POST");
+//            httpURLConnection.setRequestProperty("Charset", "UTF-8");
+//            httpURLConnection.connect();
+//            int fileSize = httpURLConnection.getContentLength();
+//
+//            BufferedInputStream bin = new BufferedInputStream(httpURLConnection.getInputStream());
+//            File file = new File(dir + fileName);
+//            if (!file.getParentFile().exists()) {
+//                file.getParentFile().mkdirs();
+//            }
+//            OutputStream outputStream = new FileOutputStream(file);
+//            int size = 0, len = 0;
+//            byte[] buf = new byte[1024];
+//            while ((size = bin.read(buf)) != -1) {
+//                len += size;
+//                outputStream.write(buf, 0, size);
+//            }
+//            bin.close();
+//            outputStream.close();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
     @Override

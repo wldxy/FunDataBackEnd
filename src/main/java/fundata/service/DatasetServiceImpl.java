@@ -84,4 +84,11 @@ public class DatasetServiceImpl implements DatasetService {
         List<DataFile> dataFileList = new ArrayList<DataFile>(dataFiles);
         return dataFileList;
     }
+
+    @Override
+    public Dataset findByDatasetName(String datasetName) {
+        Dataset dataset = datasetRepository.findByDatasetName(datasetName);
+        return dataset;
+    }
 }
+

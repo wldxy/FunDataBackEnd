@@ -34,7 +34,10 @@ public class DataerServiceImpl implements DataerService {
         return dataerRepository.findByHostcompetition(competition);
     }
 
-
+    @Override
+    public Dataer findByDataerName(String dataerName) {
+        return dataerRepository.findByUserName(dataerName);
+    }
 
 
 }

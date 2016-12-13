@@ -22,7 +22,6 @@ public interface DataerRepository extends JpaRepository<Dataer, Long>, JpaSpecif
 
     Dataer findByHostcompetition(Competition competition);
 
-
     Dataer findById(Long id);
 
 }

@@ -2,6 +2,7 @@ package fundata.model;
 
 import javax.persistence.*;
 import java.util.Set;
+import java.util.concurrent.CompletionService;
 
 /**
  * Created by stanforxc on 2016/11/29.
@@ -36,15 +37,14 @@ public class Competition {
     @ManyToOne
     private Dataer hoster;
 
-    @ManyToMany(mappedBy = "competitions")
+    @ManyToMany(mappedBy = "competitions", cascade = CascadeType.ALL)
     private Set<Dataer> dataers;  //参与者
 
-    @OneToMany(mappedBy = "competition")
+    @OneToMany(mappedBy = "competition", cascade = CascadeType.ALL)
     private Set<Commentcomp> commentComps;
 
     @OneToMany
     private Set<DataFile> dataFile;
-
 
     public Long getId() {
         return id;
@@ -61,7 +61,6 @@ public class Competition {
     public void setName(String name) {
         this.name = name;
     }
-
 
     public Set<DataFile> getDataFile() {
         return dataFile;
