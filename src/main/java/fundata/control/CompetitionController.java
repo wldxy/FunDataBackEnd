@@ -1,5 +1,6 @@
 package fundata.control;
 
+import fundata.model.Accurate;
 import fundata.model.Commentcomp;
 import fundata.model.Competition;
 import fundata.model.Dataer;
@@ -367,4 +368,33 @@ public class CompetitionController {
         totalComment.put("competitions",totalMap);
         return totalComment;
     }
+
+    //person->competition->accurate
+    @ResponseBody
+    @RequestMapping("/add/person/accurate")
+    public boolean add_person_accurate(@RequestParam(name = "userid")Long userid,@RequestParam(name = "compId")Long comId,@RequestParam(name = "accurate")Double accurate){
+        try {
+            Dataer dataer = dataerServiceImpl.findById(userid);
+            Set<Competition> competitions = dataer.getCompetitions();
+            Set<Accurate> accurates = dataer.getAccurates();
+            Iterator<Competition> competitionIterator = competitions.iterator();
+            while (competitionIterator.hasNext()){
+                Competition temp = competitionIterator.next();
+                if(temp.getId().equals(comId)){
+                    Accurate a = new Accurate();
+                    a.setValue(accurate);
+                    a.setDataer(dataer);
+                    accurateServiveImpl.save(a);
+                    accurates.add(a);
+                }
+            }
+            dataer.setAccurates(accurates);
+            dataerServiceImpl.save(dataer);
+            return true;
+        }catch (Exception e){
+            return false;
+        }
+    }
+
+
 }
