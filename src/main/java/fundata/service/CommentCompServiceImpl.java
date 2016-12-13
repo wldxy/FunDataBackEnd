@@ -1,6 +1,6 @@
 package fundata.service;
 
-import fundata.model.CommentComp;
+import fundata.model.Commentcomp;
 import fundata.repository.CommentCompRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ public class CommentCompServiceImpl implements CommentCompService {
 
 
     @Override
-    public void save(CommentComp commentComp) {
+    public void save(Commentcomp commentComp) {
         commentCompRepository.save(commentComp);
     }
 }

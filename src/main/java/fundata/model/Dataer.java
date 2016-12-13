@@ -42,6 +42,13 @@ public class Dataer {
     @OneToMany(mappedBy = "dataer")
     private Set<PullRequest> pullRequests = new HashSet<>();
 
+    @OneToMany(mappedBy = "dataer")
+    private Set<Commentcomp> commentcompSet;
+
+    @OneToMany(mappedBy = "dataer")
+    private Set<Accurate> accurates = new HashSet<>();
+
+
     public Dataer() { }
 
     public Dataer(String name, String password, String email) {
@@ -116,6 +123,22 @@ public class Dataer {
 
     public void setHostCompetition(Set<Competition> hostCompetition) {
         this.hostcompetition = hostCompetition;
+    }
+
+    public Set<Commentcomp> getCommentcompSet() {
+        return commentcompSet;
+    }
+
+    public void setCommentcompSet(Set<Commentcomp> commentcompSet) {
+        this.commentcompSet = commentcompSet;
+    }
+
+    public Set<Accurate> getAccurates() {
+        return accurates;
+    }
+
+    public void setAccurates(Set<Accurate> accurates) {
+        this.accurates = accurates;
     }
 
 /*

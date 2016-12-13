@@ -1,7 +1,6 @@
 package fundata.model;
 
 import javax.persistence.*;
-import javax.xml.crypto.Data;
 import java.util.Set;
 import java.util.concurrent.CompletionService;
 
@@ -42,7 +41,7 @@ public class Competition {
     private Set<Dataer> dataers;  //参与者
 
     @OneToMany(mappedBy = "competition", cascade = CascadeType.ALL)
-    private Set<CommentComp> commentComps;
+    private Set<Commentcomp> commentComps;
 
     @OneToMany
     private Set<DataFile> dataFile;
@@ -119,11 +118,11 @@ public class Competition {
         this.endtime = endtime;
     }
 
-    public Set<CommentComp> getCommentComps() {
+    public Set<Commentcomp> getCommentComps() {
         return commentComps;
     }
 
-    public void setCommentComps(Set<CommentComp> commentComps) {
+    public void setCommentComps(Set<Commentcomp> commentComps) {
         this.commentComps = commentComps;
     }
 
