@@ -17,7 +17,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.DateTimeException;
 import java.util.*;
 
 /**
@@ -36,6 +38,15 @@ public class CompetitionController {
     CommentCompServiceImpl commentCompImpl;
     @Autowired
     AccurateServiveImpl accurateServiveImpl;
+
+
+    public boolean isActive(Competition competition) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date startDate = sdf.parse(competition.getStarttime());
+        Date endDate = sdf.parse(competition.getEndtime());
+        Date now = new Date();
+        return startDate.compareTo(now) <= 0 && now.compareTo(endDate) <= 0;
+    }
 
     /*添加竞赛*/
     @ResponseBody
@@ -63,7 +74,7 @@ public class CompetitionController {
             competition.setEndtime(end);
             competition.setDes(des);
             competition.setRegisterNum(0);
-            competition.setActive(true);
+           // competition.setActive(true);
             /*
             * TODO:dataset
             * */
@@ -101,21 +112,23 @@ public class CompetitionController {
             }
 
             //注册竞赛
-            Dataer participant = dataerServiceImpl.findById(userid);
-
+            if(isActive(competition)){
+                Dataer participant = dataerServiceImpl.findById(userid);
 
             /*竞赛添加竞赛者*/
-            competition.setRegisterNum(competition.getRegisterNum() + 1);
-            contesters.add(participant);
-            competition.setDataers(contesters);
-            competitionServiceImpl.save(competition);
+                competition.setRegisterNum(competition.getRegisterNum() + 1);
+                contesters.add(participant);
+                competition.setDataers(contesters);
+                competitionServiceImpl.save(competition);
 
             /*参赛者注册竞赛*/
-            Set<Competition> competitionSet = participant.getCompetitions();
-            competitionSet.add(competition);
-            participant.setCompetitions(competitionSet);
-            dataerServiceImpl.save(participant);
-            return "true";
+                Set<Competition> competitionSet = participant.getCompetitions();
+                competitionSet.add(competition);
+                participant.setCompetitions(competitionSet);
+                dataerServiceImpl.save(participant);
+                return "true";
+            }
+            return "outdated";
         }catch (Exception e){
             return "false";
         }
@@ -186,7 +199,7 @@ public class CompetitionController {
                 temp.put("com_id",c.getId());
                 temp.put("com_owner_id",c.getHoster().getId());
                 temp.put("com_owner_name",c.getHoster().getName());
-                temp.put("com_active_flag",c.isActive());
+                temp.put("com_active_flag",isActive(c));
                 temp.put("com_join_num",c.getRegisterNum());
                 temp.put("com_des",c.getDes());
                 competitionList.add(temp);
@@ -253,7 +266,7 @@ public class CompetitionController {
     //我的中心
     @ResponseBody
     @RequestMapping("/compCenter")
-    public Map myCompetitionCenter(@RequestParam(name = "userid")Long userid){
+    public Map myCompetitionCenter(@RequestParam(name = "userid")Long userid) throws ParseException {
         Dataer dataer = dataerServiceImpl.findById(userid);
         Map total = new HashMap();
         List<Map> competitionList = new ArrayList<>();
@@ -264,7 +277,7 @@ public class CompetitionController {
             Map maptemp = new HashMap();
             maptemp.put("com_name",temp.getName());
             maptemp.put("com_id",temp.getId());
-            maptemp.put("com_active_flag",temp.isActive());
+            maptemp.put("com_active_flag",isActive(temp));
             maptemp.put("com_des",temp.getDes());
             competitionList.add(maptemp);
         }
@@ -298,25 +311,28 @@ public class CompetitionController {
             Commentcomp commentComp = new Commentcomp();
             Dataer dataer = dataerServiceImpl.findById(userid);
             Competition competition = competitionServiceImpl.findById(compId);
-            if(dataer == null){
-                return false;
+            if(isActive(competition)){
+                if(dataer == null){
+                    return false;
+                }
+                commentComp.setDataer(dataer);
+
+                if (competition == null){
+                    return false;
+                }
+                commentComp.setCompetition(competition);
+                commentComp.setContent(content);
+                commentComp.setTime(getCurrentTime());
+
+                Set<Commentcomp> commentcompSet = dataer.getCommentcompSet();
+                commentcompSet.add(commentComp);
+                dataer.setCommentcompSet(commentcompSet);
+
+                dataerServiceImpl.save(dataer);
+                commentCompImpl.save(commentComp);
+                return true;
             }
-            commentComp.setDataer(dataer);
-
-            if (competition == null){
-                return false;
-            }
-            commentComp.setCompetition(competition);
-            commentComp.setContent(content);
-            commentComp.setTime(getCurrentTime());
-
-            Set<Commentcomp> commentcompSet = dataer.getCommentcompSet();
-            commentcompSet.add(commentComp);
-            dataer.setCommentcompSet(commentcompSet);
-
-            dataerServiceImpl.save(dataer);
-            commentCompImpl.save(commentComp);
-            return true;
+            return false;
         }catch (Exception e){
             return false;
         }
@@ -378,7 +394,7 @@ public class CompetitionController {
             Iterator<Competition> competitionIterator = competitions.iterator();
             while (competitionIterator.hasNext()){
                 Competition temp = competitionIterator.next();
-                if(temp.getId().equals(comId)){
+                if(isActive(temp) && temp.getId().equals(comId)){
                     Accurate a = new Accurate();
                     a.setValue(accurate);
                     a.setDataer(dataer);
@@ -398,14 +414,14 @@ public class CompetitionController {
     //getUserAllAccurate() (Sorted)
     @ResponseBody
     @RequestMapping("/person/accurate")
-    public Map getDataerAllAccurate(@RequestParam(name = "userid")Long userid,@RequestParam(name = "compId")Long compId){
+    public Map getDataerAllAccurate(@RequestParam(name = "userid")Long userid,@RequestParam(name = "compId")Long compId) throws ParseException {
         //Pageable pageable = new PageRequest(page,1,new Sort(Sort.Direction.DESC,"value"));
         //Page<Accurate> accuratePage = accurateServiveImpl.findAll(pageable);
         Dataer dataer = dataerServiceImpl.findById(userid);
         Set<Accurate> accuratePage = dataer.getAccurates();
         List<Map> mapList = new ArrayList<>();
         Competition competition = competitionServiceImpl.findById(compId);
-        if(competition.getDataers().contains(dataer)){
+        if(isActive(competition) && competition.getDataers().contains(dataer)){
             for (Accurate a: accuratePage) {
                 Map temp = new HashMap();
                 temp.put("user_id",a.getDataer().getId());
