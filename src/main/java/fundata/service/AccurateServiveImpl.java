@@ -4,6 +4,8 @@ import fundata.model.Accurate;
 import fundata.model.Dataer;
 import fundata.repository.AccurateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -34,5 +36,10 @@ public class AccurateServiveImpl implements AccurateService{
         }catch (Exception e){
             return null;
         }
+    }
+
+    @Override
+    public Page<Accurate> findAll(Pageable pageable) {
+        return accurateRepository.findAll(pageable);
     }
 }

@@ -1,5 +1,6 @@
 package fundata.control;
 
+import com.sun.javafx.sg.prism.NGShape;
 import fundata.model.Accurate;
 import fundata.model.Commentcomp;
 import fundata.model.Competition;
@@ -13,10 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -384,6 +382,7 @@ public class CompetitionController {
                     Accurate a = new Accurate();
                     a.setValue(accurate);
                     a.setDataer(dataer);
+                    a.setUploadDate(getCurrentTime());
                     accurateServiveImpl.save(a);
                     accurates.add(a);
                 }
@@ -394,6 +393,70 @@ public class CompetitionController {
         }catch (Exception e){
             return false;
         }
+    }
+
+    //getUserAllAccurate() (Sorted)
+    @ResponseBody
+    @RequestMapping("/person/accurate")
+    public Map getDataerAllAccurate(@RequestParam(name = "userid")Long userid,@RequestParam(name = "compId")Long compId){
+        //Pageable pageable = new PageRequest(page,1,new Sort(Sort.Direction.DESC,"value"));
+        //Page<Accurate> accuratePage = accurateServiveImpl.findAll(pageable);
+        Dataer dataer = dataerServiceImpl.findById(userid);
+        Set<Accurate> accuratePage = dataer.getAccurates();
+        List<Map> mapList = new ArrayList<>();
+        Competition competition = competitionServiceImpl.findById(compId);
+        if(competition.getDataers().contains(dataer)){
+            for (Accurate a: accuratePage) {
+                Map temp = new HashMap();
+                temp.put("user_id",a.getDataer().getId());
+                temp.put("value",a.getValue());
+                temp.put("uploadtime",a.getUploadDate());
+                mapList.add(temp);
+            }
+        }
+        Map total = new HashMap();
+        total.put("user_accurate",mapList);
+        return total;
+    }
+
+    //得到某一竞赛下的排名
+    @ResponseBody
+    @RequestMapping("/accurate/rank")
+    public Map getRank(@RequestParam(name = "compId")Long compId,@RequestParam(name = "page")int page){
+        Competition competition = competitionServiceImpl.findById(compId);
+        Set<Dataer> dataers = competition.getDataers();
+        List<Accurate> accurateSort = new ArrayList<>();
+        for (Dataer dataer : dataers){
+            accurateSort.addAll(dataer.getAccurates());
+        }
+        Collections.sort(accurateSort,new Comparator<Accurate>(){
+            public int compare(Accurate arg0, Accurate arg1) {
+                return arg1.getValue().compareTo(arg0.getValue());
+            }
+        });
+
+        List<Accurate> list = new ArrayList<>();
+        Map rank = new HashMap();
+        if(page*4 <= accurateSort.size() - 1){
+            list = accurateSort.subList(page*4,(page+1)*4-1);
+        }else {
+            rank.put("rank",list);
+            return rank;
+        }
+
+        List<Map> totalMap = new ArrayList<>();
+        for (Accurate a : list){
+            Map tempMap = new HashMap();
+            tempMap.put("user_id",a.getDataer().getId());
+            tempMap.put("user_name",a.getDataer().getName());
+            tempMap.put("head_url",a.getDataer().getHead_href());
+            tempMap.put("accurate_id",a.getId());
+            tempMap.put("uploadDate",a.getUploadDate());
+            tempMap.put("value",a.getValue());
+            totalMap.add(tempMap);
+        }
+        rank.put("rank",totalMap);
+        return rank;
     }
 
 
