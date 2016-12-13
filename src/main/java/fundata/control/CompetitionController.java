@@ -1,8 +1,10 @@
 package fundata.control;
 
+import fundata.model.Accurate;
 import fundata.model.Commentcomp;
 import fundata.model.Competition;
 import fundata.model.Dataer;
+import fundata.service.AccurateServiveImpl;
 import fundata.service.CommentCompServiceImpl;
 import fundata.service.CompetitionServiceImpl;
 import fundata.service.DataerServiceImpl;
@@ -29,6 +31,8 @@ public class CompetitionController {
     DataerServiceImpl dataerServiceImpl;
     @Autowired
     CommentCompServiceImpl commentCompImpl;
+    @Autowired
+    AccurateServiveImpl accurateServiveImpl;
 
     /*添加竞赛*/
     @ResponseBody

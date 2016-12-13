@@ -25,7 +25,7 @@ public class Dataer {
     private String name;
 
     @Column(name = "role")
-    private int user_flag;
+    private Integer user_flag;
 
     @Column(name = "head_href")
     private String head_href;
@@ -44,6 +44,9 @@ public class Dataer {
 
     @OneToMany(mappedBy = "dataer")
     private Set<Commentcomp> commentcompSet;
+
+    @OneToMany(mappedBy = "dataer")
+    private Set<Accurate> accurates = new HashSet<>();
 
 
     public Dataer() { }
@@ -128,6 +131,14 @@ public class Dataer {
 
     public void setCommentcompSet(Set<Commentcomp> commentcompSet) {
         this.commentcompSet = commentcompSet;
+    }
+
+    public Set<Accurate> getAccurates() {
+        return accurates;
+    }
+
+    public void setAccurates(Set<Accurate> accurates) {
+        this.accurates = accurates;
     }
 
 /*
