@@ -51,13 +51,14 @@ public class CompetitionController {
     /*添加竞赛*/
     @ResponseBody
     @RequestMapping("/add")
-    public boolean addCompetition(@RequestParam(name = "userid")Long userid,
-                                  @RequestParam(name = "compName")String comName,
-                                  @RequestParam(name = "start")String start,
-                                  @RequestParam(name = "end")String end,
-                                  @RequestParam(name = "des")String des) {
+    public boolean addCompetition(@RequestParam(name = "username") String username,
+                                  @RequestParam(name = "compName") String comName,
+                                  @RequestParam(name = "start") String start,
+                                  @RequestParam(name = "end") String end,
+                                  @RequestParam(name = "des") String des) {
         try {
-            Dataer dataer = dataerServiceImpl.findById(userid);
+//            Dataer dataer = dataerServiceImpl.findById(userid);
+            Dataer dataer = dataerServiceImpl.findByDataerName(username);
             Competition competition = new Competition();
             competition.setName(comName);
             competitionServiceImpl.save(competition);
@@ -90,15 +91,15 @@ public class CompetitionController {
     /*参与竞赛*/
     @ResponseBody
     @RequestMapping("/register")
-    public String registerCompetition(@RequestParam(name = "userId")Long userid,
-                                      @RequestParam(name = "comId")Long comId) {
+    public String registerCompetition(@RequestParam(name = "username") String username,
+                                      @RequestParam(name = "comId") Long comId) {
         try{
             Competition competition = competitionServiceImpl.findById(comId);
             Dataer host = competition.getHoster();
             Set<Dataer> contesters = competition.getDataers();
 
             //是否是host
-            if (host.getId().equals(userid)){
+            if (host.getName().equals(username)){
                 return "host";
             }
 
@@ -106,14 +107,14 @@ public class CompetitionController {
             Iterator<Dataer> iterDataer = contesters.iterator();
             while (iterDataer.hasNext()){
                 Dataer temp = iterDataer.next();
-                if(temp.getId().equals(userid)){
+                if(temp.getName().equals(username)){
                     return "registered";
                 }
             }
 
             //注册竞赛
             if(isActive(competition)){
-                Dataer participant = dataerServiceImpl.findById(userid);
+                Dataer participant = dataerServiceImpl.findByDataerName(username);
 
             /*竞赛添加竞赛者*/
                 competition.setRegisterNum(competition.getRegisterNum() + 1);
@@ -136,9 +137,9 @@ public class CompetitionController {
 
     @RequestMapping("/unregister")
     public boolean unregister(@RequestParam(name = "comId") Long comId,
-                              @RequestParam(name = "userId") Long userId) {
-        Dataer dataer = dataerServiceImpl.findById(userId);
-
+                              @RequestParam(name = "username") String username) {
+//        Dataer dataer = dataerServiceImpl.findById(userId);
+        Dataer dataer = dataerServiceImpl.findByDataerName(username);
         Competition competition = competitionServiceImpl.findById(comId);
 
         if (dataer == null || competition == null)
@@ -157,10 +158,10 @@ public class CompetitionController {
 
     @RequestMapping("/delete")
     public boolean delete(@RequestParam(name = "comId") Long comId,
-                          @RequestParam(name = "userId") Long userId) {
+                          @RequestParam(name = "username") String username) {
         Competition competition = competitionServiceImpl.findById(comId);
 
-        if (competition.getHoster().getId().equals(userId)) {
+        if (competition.getHoster().getName().equals(username)) {
             competitionServiceImpl.deleteCompetition(competition);
             return true;
         } else {
@@ -171,9 +172,9 @@ public class CompetitionController {
     @ResponseBody
     @RequestMapping("/get_competition")
     public Map getCompetition(@RequestParam(name = "page") int page,
-                              @RequestParam(name = "userid") Long userid){
+                              @RequestParam(name = "username") String username){
         Map competitions = getComps(page);
-        Map Mycompetitions = getMyCompetition(userid);
+        Map Mycompetitions = getMyCompetition(username);
         competitions.put("My_competitions",Mycompetitions);
         return competitions;
     }
@@ -213,8 +214,8 @@ public class CompetitionController {
 
 
     //我参加/举办的竞赛
-    Map getMyCompetition(Long userid){
-        Dataer dataer = dataerServiceImpl.findById(userid);
+    Map getMyCompetition(String username) {
+        Dataer dataer = dataerServiceImpl.findByDataerName(username);
         Set<Competition> competitionSet = dataer.getCompetitions();
         Map presentMap = new HashMap();
         List<Map> hostList = new ArrayList<>();
@@ -225,7 +226,7 @@ public class CompetitionController {
             Map temp = new HashMap();
             temp.put("com_name",c.getName());
             temp.put("com_id",c.getId());
-            if(c.getHoster().getId().equals(userid)){
+            if(c.getHoster().getName().equals(username)){
                 hostList.add(temp);
             }else {
                 participateList.add(temp);
@@ -266,8 +267,9 @@ public class CompetitionController {
     //我的中心
     @ResponseBody
     @RequestMapping("/compCenter")
-    public Map myCompetitionCenter(@RequestParam(name = "userid")Long userid) throws ParseException {
-        Dataer dataer = dataerServiceImpl.findById(userid);
+    public Map myCompetitionCenter(@RequestParam(name = "username") String username) throws ParseException {
+//        Dataer dataer = dataerServiceImpl.findById(userid);
+        Dataer dataer = dataerServiceImpl.findByDataerName(username);
         Map total = new HashMap();
         List<Map> competitionList = new ArrayList<>();
         Set<Competition> competitions = dataer.getCompetitions();
@@ -306,10 +308,13 @@ public class CompetitionController {
     //加入评论
     @ResponseBody
     @RequestMapping("/comment/add")
-    public boolean addComment(@RequestParam(name = "userid")Long userid,@RequestParam(name = "compId")Long compId,@RequestParam(name = "content")String content){
+    public boolean addComment(@RequestParam(name = "username") String username,
+                              @RequestParam(name = "compId") Long compId,
+                              @RequestParam(name = "content") String content){
         try {
             Commentcomp commentComp = new Commentcomp();
-            Dataer dataer = dataerServiceImpl.findById(userid);
+//            Dataer dataer = dataerServiceImpl.findById(userid);
+            Dataer dataer = dataerServiceImpl.findByDataerName(username);
             Competition competition = competitionServiceImpl.findById(compId);
             if(isActive(competition)){
                 if(dataer == null){
@@ -349,8 +354,9 @@ public class CompetitionController {
     //竞赛评论 参与的
     @ResponseBody
     @RequestMapping("/comment/host")
-    public Map getCompComment(@RequestParam(name = "userid")Long userid){
-        Dataer dataer = dataerServiceImpl.findById(userid);
+    public Map getCompComment(@RequestParam(name = "username") String username){
+//        Dataer dataer = dataerServiceImpl.findById(userid);
+        Dataer dataer = dataerServiceImpl.findByDataerName(username);
         Set<Competition> competitionSet = dataer.getHostCompetition();
         Iterator<Competition> competitionIterator = competitionSet.iterator();
         Map totalComment = new HashMap();
