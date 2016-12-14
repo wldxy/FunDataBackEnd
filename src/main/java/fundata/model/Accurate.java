@@ -16,6 +16,9 @@ public class Accurate {
     @Column(name = "value")
     private Double value;
 
+    @Column(name = "uploadDate")
+    private String uploadDate;
+
     @ManyToOne
     private Dataer dataer;
 
@@ -42,5 +45,13 @@ public class Accurate {
 
     public void setValue(Double value) {
         this.value = value;
+    }
+
+    public String getUploadDate() {
+        return uploadDate;
+    }
+
+    public void setUploadDate(String uploadDate) {
+        this.uploadDate = uploadDate;
     }
 }

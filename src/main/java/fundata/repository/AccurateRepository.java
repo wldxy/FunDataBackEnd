@@ -3,6 +3,7 @@ package fundata.repository;
 import ch.qos.logback.core.joran.action.ActionUtil;
 import fundata.model.Accurate;
 import fundata.model.Dataer;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.RequestParam;
