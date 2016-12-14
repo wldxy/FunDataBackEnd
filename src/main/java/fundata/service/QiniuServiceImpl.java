@@ -39,8 +39,13 @@ public class QiniuServiceImpl implements QiniuService {
 
     @Override
     public String createUploadToken(String key) {
-        return auth.uploadToken(qiniuProperties.getBucket(), key, 3600,
-                new StringMap().put("insertOnly", 1));
+//        return auth.uploadToken(qiniuProperties.getBucket(), key, 3600,
+//                new StringMap().put("insertOnly", 1));
+        System.out.println("===================");
+        System.out.println(qiniuProperties.getBucket());
+        System.out.println("===================");
+
+        return auth.uploadToken(qiniuProperties.getBucket());
     }
 
     @Override
