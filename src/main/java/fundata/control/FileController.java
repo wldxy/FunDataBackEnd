@@ -55,7 +55,7 @@ public class FileController {
 //            return false;
 //        }
 //    }
-    @RequestMapping(value = "/getToken", method = RequestMethod.POST)
+    @RequestMapping(value = "/getToken", method = RequestMethod.GET)
     public Map getToken() {
         Map map = new HashMap();
         map.put("uptoken", qiniuService.createUploadToken());
@@ -72,8 +72,6 @@ public class FileController {
         dataFile.setStatus(0);
         dataFile.setOldname(name);
         dataFileRepository.save(dataFile);
-
-        System.out.println("====================");
 
         Integer point = name.lastIndexOf('.');
         String suffix = name.substring(point, name.length());
