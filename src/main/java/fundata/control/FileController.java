@@ -70,14 +70,18 @@ public class FileController {
         dataFile.setCreateTime(new Date());
         dataFile.setUpdateTime(new Date());
         dataFile.setStatus(0);
+        dataFile.setOldname(name);
         dataFileRepository.save(dataFile);
+
+        System.out.println("====================");
 
         Integer point = name.lastIndexOf('.');
         String suffix = name.substring(point, name.length());
-        dataFile.setName(dataFile.getFileid() + suffix);
+        String fileName = dataFile.getFileid() + suffix;
+        dataFile.setName(fileName);
         dataFileRepository.save(dataFile);
 
-        map.put("name", name);
+        map.put("name", fileName);
         return map;
     }
 

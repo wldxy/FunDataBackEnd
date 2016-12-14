@@ -21,6 +21,9 @@ public class DataFile {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "oldname")
+    private String oldname;
+
     @Column(name = "createTime", updatable = false)
     @Temporal(TemporalType.DATE)
     private Date createTime;
@@ -31,6 +34,14 @@ public class DataFile {
 
     @Column(name = "status")
     private Integer status;
+
+    public String getOldname() {
+        return oldname;
+    }
+
+    public void setOldname(String oldname) {
+        this.oldname = oldname;
+    }
 
     public String getName() {
         return name;
