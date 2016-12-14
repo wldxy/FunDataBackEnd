@@ -55,14 +55,14 @@ public class FileController {
 //            return false;
 //        }
 //    }
-    @RequestMapping(value = "/getToken", method = RequestMethod.GET)
+    @RequestMapping(value = "/getToken")
     public Map getToken() {
         Map map = new HashMap();
         map.put("uptoken", qiniuService.createUploadToken());
         return map;
     }
 
-    @RequestMapping(value = "/getKey", method = RequestMethod.POST)
+    @RequestMapping(value = "/getKey")
     public Map getKey(@RequestParam(name = "name") String name) {
         Map map = new HashMap();
 
