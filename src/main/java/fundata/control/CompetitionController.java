@@ -1,6 +1,5 @@
 package fundata.control;
 
-import com.sun.javafx.sg.prism.NGShape;
 import fundata.model.Accurate;
 import fundata.model.Commentcomp;
 import fundata.model.Competition;
@@ -14,12 +13,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.DateTimeException;
 import java.util.*;
 
 /**
@@ -249,7 +250,7 @@ public class CompetitionController {
     //得到竞赛详情
     @ResponseBody
     @RequestMapping("/detail")
-    public Map getCompetitionDetails(@RequestParam(name = "compId")Long id){
+    public Map getCompetitionDetails(@RequestParam(name = "compId")Long id) throws ParseException {
         Map detail = new HashMap();
         Competition competition = competitionServiceImpl.findById(id);
         detail.put("com_id",competition.getId());
@@ -262,6 +263,7 @@ public class CompetitionController {
         detail.put("com_owner_name",competition.getHoster().getName());
         detail.put("com_start_time",competition.getStarttime());
         detail.put("com_end_time",competition.getEndtime());
+        detail.put("com_active_flag", isActive(competition));
         /*
         * TODO:com_download
         * TODO:com_mysubmisson
