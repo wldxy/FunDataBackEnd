@@ -18,6 +18,9 @@ public class DataFile {
     @Column(name = "id")
     private Long id;
 
+    @Column(name = "name")
+    private String name;
+
     @Column(name = "createTime", updatable = false)
     @Temporal(TemporalType.DATE)
     private Date createTime;
@@ -29,14 +32,12 @@ public class DataFile {
     @Column(name = "status")
     private Integer status;
 
-    @Column(name = "suffix")
-    private String suffix;
+    public String getName() {
+        return name;
+    }
 
-    @ManyToOne
-    private Dataset dataset;
-
-    public String getFileName() {
-        return this.id.toString() + "." + suffix;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Integer getStatus() {
@@ -69,21 +70,5 @@ public class DataFile {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
-    }
-
-    public Dataset getDatasets() {
-        return dataset;
-    }
-
-    public void setDatasets(Dataset datasets) {
-        this.dataset = datasets;
-    }
-
-    public String getSuffix() {
-        return suffix;
-    }
-
-    public void setSuffix(String suffix) {
-        this.suffix = suffix;
     }
 }

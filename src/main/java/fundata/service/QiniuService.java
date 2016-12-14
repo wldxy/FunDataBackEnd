@@ -15,6 +15,8 @@ public interface QiniuService {
 
     String createDownloadUrl(DataFile dataFile);
 
+    String createUploadToken();
+
     void deleteFile(String fileName) throws QiniuException;
 
     void downloadFile(DataFile dataFile, String dir);

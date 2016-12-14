@@ -21,6 +21,7 @@ import java.util.Set;
  * Created by ocean on 16-12-1.
  */
 @RestController
+@RequestMapping("dataset")
 public class DatasetController {
     @Autowired
     @Qualifier("datasetServiceImpl")

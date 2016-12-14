@@ -29,7 +29,7 @@ public class Dataset {
     @OneToMany(mappedBy = "dataset")
     private Set<DatasetTitle> datasetTitles = new HashSet<>();
 
-    @OneToMany(mappedBy = "dataset")
+    @OneToMany
     private Set<DataFile> files = new HashSet<>();
 
     @OneToMany(mappedBy = "dataset")

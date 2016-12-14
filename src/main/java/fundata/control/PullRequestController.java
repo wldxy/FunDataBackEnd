@@ -44,7 +44,7 @@ public class PullRequestController {
                                      @RequestParam(name = "username") String username) {
         PullRequest pullRequest = pullRequestService.newPullRequest(username, datasetname);
         UpFileInfo returnValue = new UpFileInfo();
-        returnValue.setKey(pullRequest.getDataFile().getFileName());
+//        returnValue.setKey(pullRequest.getDataFile().getFileName());
         returnValue.setUptoken(qiniuService.createUploadToken(pullRequest.getDataFile()));
         return returnValue;
     }

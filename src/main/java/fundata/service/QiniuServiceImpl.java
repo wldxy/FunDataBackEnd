@@ -61,6 +61,11 @@ public class QiniuServiceImpl implements QiniuService {
     }
 
     @Override
+    public String createUploadToken() {
+        return auth.uploadToken(qiniuProperties.getBucket());
+    }
+
+    @Override
     public void deleteFile(String fileName) throws QiniuException {
         bucketManager.delete(qiniuProperties.getBucket(), fileName);
     }
@@ -99,7 +104,7 @@ public class QiniuServiceImpl implements QiniuService {
     @Override
     public void downloadFile(DataFile dataFile, String dir) {
         String url = createDownloadUrl(dataFile);
-        String fileName = dataFile.getFileName();
+        String fileName = dataFile.getName();
         this.downloadFile(url, fileName, dir);
 
 //        try {
