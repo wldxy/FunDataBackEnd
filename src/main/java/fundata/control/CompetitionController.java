@@ -217,21 +217,29 @@ public class CompetitionController {
     Map getMyCompetition(String username) {
         Dataer dataer = dataerServiceImpl.findByDataerName(username);
         Set<Competition> competitionSet = dataer.getCompetitions();
+        Set<Competition> competitionnHost = dataer.getHostCompetition();
         Map presentMap = new HashMap();
         List<Map> hostList = new ArrayList<>();
         List<Map> participateList = new ArrayList<>();
+
         Iterator<Competition> competitionIterator = competitionSet.iterator();
         while (competitionIterator.hasNext()){
             Competition c = competitionIterator.next();
             Map temp = new HashMap();
             temp.put("com_name",c.getName());
             temp.put("com_id",c.getId());
-            if(c.getHoster().getName().equals(username)){
-                hostList.add(temp);
-            }else {
-                participateList.add(temp);
-            }
+            participateList.add(temp);
         }
+
+        competitionIterator = competitionnHost.iterator();
+        while (competitionIterator.hasNext()) {
+            Competition competition = competitionIterator.next();
+            Map temp = new HashMap();
+            temp.put("com_name", competition.getName());
+            temp.put("com_id", competition.getId());
+            hostList.add(temp);
+        }
+
         presentMap.put("my_participate_com",participateList);
         presentMap.put("my_com",hostList);
         return presentMap;
