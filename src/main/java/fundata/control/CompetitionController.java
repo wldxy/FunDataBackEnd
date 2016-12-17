@@ -169,7 +169,7 @@ public class CompetitionController {
     @ResponseBody
     @RequestMapping("/get_competition")
     public Map getCompetition(@RequestParam(name = "page") int page,
-                              @RequestParam(name = "username") String username){
+                              @RequestParam(name = "username") String username) throws ParseException {
         Map competitions = getComps(page);
         Map Mycompetitions = getMyCompetition(username);
         competitions.put("My_competitions",Mycompetitions);
@@ -211,7 +211,7 @@ public class CompetitionController {
 
 
     //我参加/举办的竞赛
-    Map getMyCompetition(String username) {
+    Map getMyCompetition(String username) throws ParseException {
         Dataer dataer = dataerServiceImpl.findByDataerName(username);
         Set<Competition> competitionSet = dataer.getCompetitions();
         Set<Competition> competitionnHost = dataer.getHostCompetition();
@@ -225,6 +225,7 @@ public class CompetitionController {
             Map temp = new HashMap();
             temp.put("com_name",c.getName());
             temp.put("com_id",c.getId());
+            temp.put("com_active_flag",isActive(c));
             participateList.add(temp);
         }
 
@@ -234,6 +235,7 @@ public class CompetitionController {
             Map temp = new HashMap();
             temp.put("com_name", competition.getName());
             temp.put("com_id", competition.getId());
+            temp.put("com_active_flag",isActive(competition));
             hostList.add(temp);
         }
 
@@ -279,8 +281,8 @@ public class CompetitionController {
     @Autowired
     FileProperties fileProperties;
 
-    @RequestMapping("/comfirmAnsFile")
-    public boolean comfirmAnsFile(@RequestParam(name = "key") String key,
+    @RequestMapping("/confirmAnsFile")
+    public boolean confirmAnsFile(@RequestParam(name = "key") String key,
                                   @RequestParam(name = "comId") Long comId) {
         Long fileid = Long.parseLong(key.substring(0, key.lastIndexOf('.')));
         DataFile dataFile = dataFileRepository.findById(fileid);
@@ -302,9 +304,9 @@ public class CompetitionController {
         return true;
     }
 
-    @RequestMapping("/comfirmDataFile")
-    public boolean comfirmDataFile(@RequestParam(name = "key") String key,
-                                   @RequestParam(name = "comId") Long comId) {
+    @RequestMapping("/confirmDataFile")
+    public boolean confirmDataFile(@RequestParam(name = "key") String key,
+                                   @RequestParam(name = "comId") String comId) {
         Long fileid = Long.parseLong(key.substring(0, key.lastIndexOf('.')));
         DataFile dataFile = dataFileRepository.findById(fileid);
 
@@ -312,7 +314,7 @@ public class CompetitionController {
             return false;
         }
 
-        Competition competition = competitionServiceImpl.findById(comId);
+        Competition competition = competitionServiceImpl.findById(Long.valueOf(comId));
         if (competition == null) {
             return false;
         }
