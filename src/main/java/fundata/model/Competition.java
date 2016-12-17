@@ -46,6 +46,9 @@ public class Competition {
     @OneToMany
     private Set<DataFile> dataFile;
 
+    @OneToOne
+    private DataFile ansFile;
+
     public Long getId() {
         return id;
     }
@@ -132,5 +135,13 @@ public class Competition {
 
     public void setHoster(Dataer hoster) {
         this.hoster = hoster;
+    }
+
+    public DataFile getAnsFile() {
+        return ansFile;
+    }
+
+    public void setAnsFile(DataFile ansFile) {
+        this.ansFile = ansFile;
     }
 }

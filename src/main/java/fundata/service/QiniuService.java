@@ -11,7 +11,7 @@ import fundata.model.Dataer;
 public interface QiniuService {
     String createUploadToken(String key);
 
-    String createUploadToken(DataFile dataFile);
+//    String createUploadToken(DataFile dataFile);
 
     String createDownloadUrl(DataFile dataFile);
 

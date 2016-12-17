@@ -45,13 +45,13 @@ public class PullRequestController {
         PullRequest pullRequest = pullRequestService.newPullRequest(username, datasetname);
         UpFileInfo returnValue = new UpFileInfo();
 //        returnValue.setKey(pullRequest.getDataFile().getFileName());
-        returnValue.setUptoken(qiniuService.createUploadToken(pullRequest.getDataFile()));
+//        returnValue.setUptoken(qiniuService.createUploadToken(pullRequest.getDataFile()));
         return returnValue;
     }
 
     @RequestMapping(value = "/confirmRequest", method = RequestMethod.POST)
     public boolean confirmRequest(@RequestParam(name = "confirm") Integer confirm,
-                               @RequestParam(name = "id") Long requestId) {
+                                  @RequestParam(name = "id") Long requestId) {
         return pullRequestService.setPullRequest(requestId, confirm);
     }
 

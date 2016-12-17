@@ -1,4 +1,4 @@
-package fundata.service;
+package fundata.repository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;

@@ -1,13 +1,9 @@
 package fundata.control;
 
-import fundata.model.Accurate;
-import fundata.model.Commentcomp;
-import fundata.model.Competition;
-import fundata.model.Dataer;
-import fundata.service.AccurateServiveImpl;
-import fundata.service.CommentCompServiceImpl;
-import fundata.service.CompetitionServiceImpl;
-import fundata.service.DataerServiceImpl;
+import fundata.model.*;
+import fundata.repository.DataFileRepository;
+import fundata.repository.FileProperties;
+import fundata.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -274,6 +270,102 @@ public class CompetitionController {
         return detail;
     }
 
+    @Autowired
+    DataFileRepository dataFileRepository;
+
+    @Autowired
+    QiniuService qiniuService;
+
+    @Autowired
+    FileProperties fileProperties;
+
+    @RequestMapping("/comfirmAnsFile")
+    public boolean comfirmAnsFile(@RequestParam(name = "key") String key,
+                                  @RequestParam(name = "comId") Long comId) {
+        Long fileid = Long.parseLong(key.substring(0, key.lastIndexOf('.')));
+        DataFile dataFile = dataFileRepository.findById(fileid);
+
+        if (dataFile == null) {
+            return false;
+        }
+
+        Competition competition = competitionServiceImpl.findById(comId);
+        if (competition == null) {
+            return false;
+        }
+
+        competition.setAnsFile(dataFile);
+        competitionServiceImpl.save(competition);
+
+        qiniuService.downloadFile(qiniuService.createDownloadUrl(dataFile), comId.toString() + ".csv", fileProperties.getAnsFilePath());
+
+        return true;
+    }
+
+    @RequestMapping("/comfirmDataFile")
+    public boolean comfirmDataFile(@RequestParam(name = "key") String key,
+                                   @RequestParam(name = "comId") Long comId) {
+        Long fileid = Long.parseLong(key.substring(0, key.lastIndexOf('.')));
+        DataFile dataFile = dataFileRepository.findById(fileid);
+
+        if (dataFile == null) {
+            return false;
+        }
+
+        Competition competition = competitionServiceImpl.findById(comId);
+        if (competition == null) {
+            return false;
+        }
+
+        competition.getDataFile().add(dataFile);
+        competitionServiceImpl.save(competition);
+
+        return true;
+    }
+
+    @RequestMapping("/confirmUserAns")
+    public boolean confirmUserAns(@RequestParam(name = "userId") Long userId,
+                                  @RequestParam(name = "key") String key,
+                                  @RequestParam(name = "comId") Long comId) {
+        Long fileid = Long.parseLong(key.substring(0, key.lastIndexOf('.')));
+        DataFile dataFile = dataFileRepository.findById(fileid);
+
+        if (dataFile == null) {
+            return false;
+        }
+
+        Competition competition = competitionServiceImpl.findById(comId);
+        qiniuService.downloadFile(qiniuService.createDownloadUrl(dataFile), dataFile.getName(), fileProperties.getUserAnsPath());
+
+        String ansUrl = fileProperties.getAnsFilePath() + comId.toString() + ".csv";
+        String userAnsUrl = fileProperties.getUserAnsPath() + dataFile.getName();
+        Evaluator evaluator = new ClassifyEvaluator(ansUrl);
+        double accurate = evaluator.evaluate(userAnsUrl);
+
+        try {
+            Dataer dataer = dataerServiceImpl.findById(userId);
+            Set<Competition> competitions = dataer.getCompetitions();
+            Set<Accurate> accurates = dataer.getAccurates();
+            Iterator<Competition> competitionIterator = competitions.iterator();
+            while (competitionIterator.hasNext()) {
+                Competition temp = competitionIterator.next();
+                if(isActive(temp) && temp.getId().equals(comId)){
+                    Accurate a = new Accurate();
+                    a.setValue(accurate);
+                    a.setDataer(dataer);
+                    a.setUploadDate(getCurrentTime());
+                    accurateServiveImpl.save(a);
+                    accurates.add(a);
+                }
+            }
+            dataer.setAccurates(accurates);
+            dataerServiceImpl.save(dataer);
+            return true;
+        }catch (Exception e){
+            return false;
+        }
+    }
+
     //我的中心
     @ResponseBody
     @RequestMapping("/compCenter")
@@ -399,38 +491,43 @@ public class CompetitionController {
         return totalComment;
     }
 
-    //person->competition->accurate
-    @ResponseBody
-    @RequestMapping("/add/person/accurate")
-    public boolean add_person_accurate(@RequestParam(name = "userid")Long userid,@RequestParam(name = "compId")Long comId,@RequestParam(name = "accurate")Double accurate){
-        try {
-            Dataer dataer = dataerServiceImpl.findById(userid);
-            Set<Competition> competitions = dataer.getCompetitions();
-            Set<Accurate> accurates = dataer.getAccurates();
-            Iterator<Competition> competitionIterator = competitions.iterator();
-            while (competitionIterator.hasNext()){
-                Competition temp = competitionIterator.next();
-                if(isActive(temp) && temp.getId().equals(comId)){
-                    Accurate a = new Accurate();
-                    a.setValue(accurate);
-                    a.setDataer(dataer);
-                    a.setUploadDate(getCurrentTime());
-                    accurateServiveImpl.save(a);
-                    accurates.add(a);
-                }
-            }
-            dataer.setAccurates(accurates);
-            dataerServiceImpl.save(dataer);
-            return true;
-        }catch (Exception e){
-            return false;
-        }
-    }
+//    //person->competition->accurate
+//    @ResponseBody
+//    @RequestMapping("/add/person/accurate")
+//    public boolean add_person_accurate(@RequestParam(name = "userid") Long userid,
+//                                       @RequestParam(name = "compId") Long comId,
+//                                       @RequestParam(name = "accurate") Double accurate) {
+//
+//
+//        try {
+//            Dataer dataer = dataerServiceImpl.findById(userid);
+//            Set<Competition> competitions = dataer.getCompetitions();
+//            Set<Accurate> accurates = dataer.getAccurates();
+//            Iterator<Competition> competitionIterator = competitions.iterator();
+//            while (competitionIterator.hasNext()) {
+//                Competition temp = competitionIterator.next();
+//                if(isActive(temp) && temp.getId().equals(comId)){
+//                    Accurate a = new Accurate();
+//                    a.setValue(accurate);
+//                    a.setDataer(dataer);
+//                    a.setUploadDate(getCurrentTime());
+//                    accurateServiveImpl.save(a);
+//                    accurates.add(a);
+//                }
+//            }
+//            dataer.setAccurates(accurates);
+//            dataerServiceImpl.save(dataer);
+//            return true;
+//        }catch (Exception e){
+//            return false;
+//        }
+//    }
 
     //getUserAllAccurate() (Sorted)
     @ResponseBody
     @RequestMapping("/person/accurate")
-    public Map getDataerAllAccurate(@RequestParam(name = "userid")Long userid,@RequestParam(name = "compId")Long compId) throws ParseException {
+    public Map getDataerAllAccurate(@RequestParam(name = "userid")Long userid,
+                                    @RequestParam(name = "compId")Long compId) throws ParseException {
         //Pageable pageable = new PageRequest(page,1,new Sort(Sort.Direction.DESC,"value"));
         //Page<Accurate> accuratePage = accurateServiveImpl.findAll(pageable);
         Dataer dataer = dataerServiceImpl.findById(userid);

@@ -3,6 +3,7 @@ package fundata.control;
 import fundata.model.Dataer;
 import fundata.model.Dataset;
 import fundata.model.DatasetTitle;
+import fundata.model.PullRequest;
 import fundata.service.DataerService;
 import fundata.service.DatasetService;
 import fundata.service.QiniuService;
@@ -15,13 +16,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by ocean on 16-12-1.
  */
 @RestController
-@RequestMapping("dataset")
+@RequestMapping("/dataset")
 public class DatasetController {
     @Autowired
     @Qualifier("datasetServiceImpl")
@@ -50,6 +51,28 @@ public class DatasetController {
         
 
         return true;
+    }
+
+    @RequestMapping("/getMyContribute")
+    public Map getMyContribute(@RequestParam("username") String username) {
+        Map map = new HashMap();
+
+        List<Map> dataset = new ArrayList<>();
+
+        Dataer dataer = dataerService.findByDataerName(username);
+        Set<PullRequest> pullRequests = dataer.getPullRequests();
+        for (PullRequest pullRequest : pullRequests) {
+            if (pullRequest.getStatus() == 1) {
+                Map temp = new HashMap();
+                temp.put("datasetname", pullRequest.getDataset().getName());
+                temp.put("updatetime", pullRequest.getUpdatetime().toString());
+
+                dataset.add(temp);
+            }
+        }
+
+        map.put("dataset", dataset);
+        return map;
     }
 
     @RequestMapping("/getMyDataset")

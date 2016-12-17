@@ -48,7 +48,6 @@ public class Dataer {
     @OneToMany(mappedBy = "dataer")
     private Set<Accurate> accurates = new HashSet<>();
 
-
     public Dataer() { }
 
     public Dataer(String name, String password, String email) {
@@ -141,7 +140,23 @@ public class Dataer {
         this.accurates = accurates;
     }
 
-/*
+    public Set<Competition> getHostcompetition() {
+        return hostcompetition;
+    }
+
+    public void setHostcompetition(Set<Competition> hostcompetition) {
+        this.hostcompetition = hostcompetition;
+    }
+
+    public Set<PullRequest> getPullRequests() {
+        return pullRequests;
+    }
+
+    public void setPullRequests(Set<PullRequest> pullRequests) {
+        this.pullRequests = pullRequests;
+    }
+
+    /*
     public Set<Course> getCourses() {
         return courses;
     }

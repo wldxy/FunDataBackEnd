@@ -1,15 +1,13 @@
 package fundata.control;
 
-import com.qiniu.util.Auth;
 import fundata.model.DataFile;
+import fundata.model.Dataset;
 import fundata.repository.DataFileRepository;
-import fundata.service.QiniuProperties;
+import fundata.repository.DatasetRepository;
 import fundata.service.QiniuService;
-import fundata.viewmodel.UpFileInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,6 +26,9 @@ public class FileController {
 
     @Autowired
     private DataFileRepository dataFileRepository;
+
+    @Autowired
+    private DatasetRepository datasetRepository;
 
 //    @RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
 //    public UpFileInfo getUploadCSV() {
@@ -55,6 +56,9 @@ public class FileController {
 //            return false;
 //        }
 //    }
+
+    static final String downloadPath = "TestFile/";
+
     @RequestMapping(value = "/getToken")
     public Map getToken() {
         Map map = new HashMap();
@@ -83,4 +87,20 @@ public class FileController {
         return map;
     }
 
+
+    @RequestMapping(value = "/file/confirmDatasetTitle")
+    public boolean confirmDatasetTitle(@RequestParam(name = "fileid") Long fileid,
+                                       @RequestParam(name = "datasetname") String datasetName) {
+        DataFile dataFile = dataFileRepository.findById(fileid);
+        Dataset dataset = datasetRepository.findByDatasetName(datasetName);
+        qiniuService.downloadFile(dataFile, downloadPath);
+        String path = downloadPath + dataFile.getName();
+
+        return true;
+    }
+
+    @RequestMapping(value = "/getDownloadUrl")
+    public String getDownloadUrl(@RequestParam(name = "fileid") Long fileid) {
+        return qiniuService.createDownloadUrl(dataFileRepository.findById(fileid));
+    }
 }

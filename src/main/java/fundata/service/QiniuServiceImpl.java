@@ -5,8 +5,8 @@ import com.qiniu.common.Zone;
 import com.qiniu.storage.BucketManager;
 import com.qiniu.storage.Configuration;
 import com.qiniu.util.Auth;
-import com.qiniu.util.StringMap;
 import fundata.model.DataFile;
+import fundata.repository.QiniuProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,17 +47,18 @@ public class QiniuServiceImpl implements QiniuService {
 
         return auth.uploadToken(qiniuProperties.getBucket());
     }
-
-    @Override
-    public String createUploadToken(DataFile dataFile) {
-        String key = dataFile.getFileid().toString() + ".csv";
-        return this.createUploadToken(key);
-    }
+//
+//    @Override
+//    public String createUploadToken(DataFile dataFile) {
+//        String key = dataFile.getName();
+//        String url = "http://" + qiniuProperties.getDomain() + "/" + key;
+//        return this.createUploadToken(url);
+//    }
 
     @Override
     public String createDownloadUrl(DataFile dataFile) {
-        String url = qiniuProperties.getDomain() + dataFile.getFileid() + ".csv";
-        return auth.privateDownloadUrl(url, 3600);
+        String url = "http://" + qiniuProperties.getDomain() + "/" + dataFile.getName();
+        return url;
     }
 
     @Override
@@ -80,7 +81,7 @@ public class QiniuServiceImpl implements QiniuService {
             httpURLConnection.setRequestMethod("POST");
             httpURLConnection.setRequestProperty("Charset", "UTF-8");
             httpURLConnection.connect();
-            int fileSize = httpURLConnection.getContentLength();
+//            int fileSize = httpURLConnection.getContentLength();
 
             BufferedInputStream bin = new BufferedInputStream(httpURLConnection.getInputStream());
             File file = new File(dir + "/"+ fileName);

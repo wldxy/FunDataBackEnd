@@ -22,6 +22,8 @@ public class Accurate {
     @ManyToOne
     private Dataer dataer;
 
+    @OneToOne
+    private DataFile dataFile;
 
     public Long getId() {
         return id;
@@ -53,5 +55,13 @@ public class Accurate {
 
     public void setUploadDate(String uploadDate) {
         this.uploadDate = uploadDate;
+    }
+
+    public DataFile getDataFile() {
+        return dataFile;
+    }
+
+    public void setDataFile(DataFile dataFile) {
+        this.dataFile = dataFile;
     }
 }
