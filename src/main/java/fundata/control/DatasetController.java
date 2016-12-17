@@ -210,40 +210,18 @@ public class DatasetController {
 
     @RequestMapping("/getComment")
     public DSCommentView getComment(@RequestParam(name = "datasetname") String datasetname) {
-//        Dataset dataset = datasetService.findByDatasetName(datasetname);
-//
-//        Set<DSComment> dsComments = dataset.getDsComments();
-//        List<Map> comment = new ArrayList<>();
-//        for (DSComment dsComment : dsComments) {
-//            Map temp = new HashMap();
-//            temp.put("username", dsComment.getDataer().getName());
-//            temp.put("picurl", "");
-//            temp.put("content", dsComment.getContent());
-//            temp.put("updatetime", dsComment.getTime().toString());
-//        }
-//
-//        Map map = new HashMap();
-//        map.put("comments", comment);
-//        return map;
+
         return dsCommentService.getComment(datasetname);
     }
 
     @RequestMapping("/comment")
-    public boolean comment(@RequestParam(name = "username") String username,
+    public DSCommentView comment(@RequestParam(name = "username") String username,
                            @RequestParam(name = "datasetname") String datasetname,
                            @RequestParam(name = "content") String content) {
+        DSComment dsComment = dsCommentService.addComment(username, datasetname, content);
 
-//        Dataer dataer = dataerService.findByDataerName(username);
-//        Dataset dataset = datasetService.findByDatasetName(datasetname);
-//
-//        if (dataer == null || dataset == null)
-//            return false;
-//
-//        DSComment dsComment = new DSComment();
-//        dsComment.setTime(new Date());
-//        dsComment.setDataer(dataer);
-//        dsComment.setDataset(dataset);
-//        dsComment.setContent(content);
-        return dsCommentService.addComment(username, datasetname, content);
+        DSCommentView dsCommentView = new DSCommentView();
+        dsCommentView.addDSComment(dsComment);
+        return dsCommentView;
     }
 }

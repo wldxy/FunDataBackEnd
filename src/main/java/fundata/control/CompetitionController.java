@@ -540,6 +540,20 @@ public class CompetitionController {
 //        }
 //    }
 
+    @RequestMapping("/applyIf")
+    public boolean isRegister(@RequestParam(name = "username") String username,
+                              @RequestParam(name = "comId") Long Id) {
+        Dataer dataer = dataerServiceImpl.findByDataerName(username);
+        Set<Competition> competitions = dataer.getCompetitions();
+
+        Competition competition = competitionServiceImpl.findById(Id);
+        if (competitions.contains(competition)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     //getUserAllAccurate() (Sorted)
     @ResponseBody
     @RequestMapping("/person/accurate")
@@ -568,7 +582,8 @@ public class CompetitionController {
     //得到某一竞赛下的排名
     @ResponseBody
     @RequestMapping("/accurate/rank")
-    public Map getRank(@RequestParam(name = "compId")Long compId,@RequestParam(name = "page")int page){
+    public Map getRank(@RequestParam(name = "compId")Long compId,
+                       @RequestParam(name = "page")int page){
         Competition competition = competitionServiceImpl.findById(compId);
         Set<Dataer> dataers = competition.getDataers();
         List<Accurate> accurateSort = new ArrayList<>();

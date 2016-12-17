@@ -27,12 +27,12 @@ public class DSCommentServiceImpl implements DSCommentService {
     private DSCommentRepository dsCommentRepository;
 
     @Override
-    public boolean addComment(String dataerName, String datasetName, String content) {
+    public DSComment addComment(String dataerName, String datasetName, String content) {
         Dataer dataer = dataerRepository.findByUserName(dataerName);
         Dataset dataset = datasetRepository.findByDatasetName(datasetName);
 
         if (dataer == null || dataset == null) {
-            return false;
+            return null;
         }
 
         DSComment dsComment = new DSComment();
@@ -41,7 +41,7 @@ public class DSCommentServiceImpl implements DSCommentService {
         dsComment.setDataset(dataset);
         dsComment.setTime(new Date());
         dsCommentRepository.save(dsComment);
-        return true;
+        return dsComment;
     }
 
     @Override
