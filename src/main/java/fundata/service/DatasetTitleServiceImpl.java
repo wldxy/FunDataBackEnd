@@ -37,6 +37,7 @@ public class DatasetTitleServiceImpl implements DatasetTitleService {
 
                 datasetTitleRepository.save(datasetTitle);
             }
+            csvReader.close();
             return true;
         } catch (java.io.IOException e) {
             e.printStackTrace();

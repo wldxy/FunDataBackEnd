@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public class ClassifyEvaluator extends Evaluator {
 
-    private Map<Integer, Integer> ans = new HashMap<>();
+    private Map<Integer, Integer> ans;
 
     public ClassifyEvaluator(String path) {
         super(path);
@@ -21,6 +21,7 @@ public class ClassifyEvaluator extends Evaluator {
 
     @Override
     public boolean init(String path) {
+        this.ans = new HashMap<>();
         try {
             CsvReader csvReader = new CsvReader(path, ',', Charset.forName("UTF-8"));
             csvReader.readHeaders();

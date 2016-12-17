@@ -27,4 +27,6 @@ public interface DatasetService {
     List<DataFile> getDatasetFile(String datasetName);
 
     Dataset findByDatasetName(String datasetName);
+
+    void save(Dataset dataset);
 }

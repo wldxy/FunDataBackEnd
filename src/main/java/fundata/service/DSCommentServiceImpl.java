@@ -8,12 +8,14 @@ import fundata.repository.DataerRepository;
 import fundata.repository.DatasetRepository;
 import fundata.viewmodel.DSCommentView;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
 /**
  * Created by ocean on 16-12-12.
  */
+@Service
 public class DSCommentServiceImpl implements DSCommentService {
     @Autowired
     private DataerRepository dataerRepository;

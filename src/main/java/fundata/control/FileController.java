@@ -57,8 +57,6 @@ public class FileController {
 //        }
 //    }
 
-    static final String downloadPath = "TestFile/";
-
     @RequestMapping(value = "/getToken")
     public Map getToken() {
         Map map = new HashMap();
@@ -85,18 +83,6 @@ public class FileController {
 
         map.put("name", fileName);
         return map;
-    }
-
-
-    @RequestMapping(value = "/file/confirmDatasetTitle")
-    public boolean confirmDatasetTitle(@RequestParam(name = "fileid") Long fileid,
-                                       @RequestParam(name = "datasetname") String datasetName) {
-        DataFile dataFile = dataFileRepository.findById(fileid);
-        Dataset dataset = datasetRepository.findByDatasetName(datasetName);
-        qiniuService.downloadFile(dataFile, downloadPath);
-        String path = downloadPath + dataFile.getName();
-
-        return true;
     }
 
     @RequestMapping(value = "/getDownloadUrl")

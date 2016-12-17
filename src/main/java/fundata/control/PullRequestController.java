@@ -34,7 +34,7 @@ public class PullRequestController {
 //                                          @RequestParam(name = "page") int page,
                                           @RequestParam(name = "username") String username) {
         Set<PullRequest> pullRequests = pullRequestService.findByDatasetName(datasetName);
-        if (pullRequests != null) {
+        if (pullRequests.size() != 0) {
             return new PullRequestView(pullRequests);
         } else {
             return new PullRequestView(0);
@@ -48,7 +48,7 @@ public class PullRequestController {
 //        UpFileInfo returnValue = new UpFileInfo();
 //        returnValue.setKey(pullRequest.getDataFile().getFileName());
 //        returnValue.setUptoken(qiniuService.createUploadToken(pullRequest.getDataFile()));
-        return false;
+        return true;
     }
 
     @RequestMapping(value = "/confirmRequest", method = RequestMethod.POST)

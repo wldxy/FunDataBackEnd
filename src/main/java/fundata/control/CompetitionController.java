@@ -284,6 +284,11 @@ public class CompetitionController {
     @RequestMapping("/confirmAnsFile")
     public boolean confirmAnsFile(@RequestParam(name = "key") String key,
                                   @RequestParam(name = "comId") Long comId) {
+
+        System.out.println("===============");
+        System.out.println("Competition Ans "+key+" is confirmed");
+        System.out.println("===============");
+
         Long fileid = Long.parseLong(key.substring(0, key.lastIndexOf('.')));
         DataFile dataFile = dataFileRepository.findById(fileid);
 
@@ -307,6 +312,11 @@ public class CompetitionController {
     @RequestMapping("/confirmDataFile")
     public boolean confirmDataFile(@RequestParam(name = "key") String key,
                                    @RequestParam(name = "comId") String comId) {
+
+        System.out.println("===============");
+        System.out.println("Competition DataFile "+key+" is confirmed");
+        System.out.println("===============");
+
         Long fileid = Long.parseLong(key.substring(0, key.lastIndexOf('.')));
         DataFile dataFile = dataFileRepository.findById(fileid);
 
@@ -326,9 +336,14 @@ public class CompetitionController {
     }
 
     @RequestMapping("/confirmUserAns")
-    public boolean confirmUserAns(@RequestParam(name = "userId") Long userId,
+    public boolean confirmUserAns(@RequestParam(name = "username") String username,
                                   @RequestParam(name = "key") String key,
                                   @RequestParam(name = "comId") Long comId) {
+
+        System.out.println("===============");
+        System.out.println("UserAns "+key+" is confirmed");
+        System.out.println("===============");
+
         Long fileid = Long.parseLong(key.substring(0, key.lastIndexOf('.')));
         DataFile dataFile = dataFileRepository.findById(fileid);
 
@@ -345,7 +360,7 @@ public class CompetitionController {
         double accurate = evaluator.evaluate(userAnsUrl);
 
         try {
-            Dataer dataer = dataerServiceImpl.findById(userId);
+            Dataer dataer = dataerServiceImpl.findByDataerName(username);
             Set<Competition> competitions = dataer.getCompetitions();
             Set<Accurate> accurates = dataer.getAccurates();
             Iterator<Competition> competitionIterator = competitions.iterator();
@@ -528,11 +543,11 @@ public class CompetitionController {
     //getUserAllAccurate() (Sorted)
     @ResponseBody
     @RequestMapping("/person/accurate")
-    public Map getDataerAllAccurate(@RequestParam(name = "userid")Long userid,
+    public Map getDataerAllAccurate(@RequestParam(name = "username")String username,
                                     @RequestParam(name = "compId")Long compId) throws ParseException {
         //Pageable pageable = new PageRequest(page,1,new Sort(Sort.Direction.DESC,"value"));
         //Page<Accurate> accuratePage = accurateServiveImpl.findAll(pageable);
-        Dataer dataer = dataerServiceImpl.findById(userid);
+        Dataer dataer = dataerServiceImpl.findByDataerName(username);
         Set<Accurate> accuratePage = dataer.getAccurates();
         List<Map> mapList = new ArrayList<>();
         Competition competition = competitionServiceImpl.findById(compId);

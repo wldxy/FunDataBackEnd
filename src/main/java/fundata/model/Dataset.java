@@ -32,6 +32,9 @@ public class Dataset {
     @OneToMany
     private Set<DataFile> files = new HashSet<>();
 
+    @OneToOne
+    private DataFile titleFile;
+
     @OneToMany(mappedBy = "dataset")
     private Set<PullRequest> pullRequests = new HashSet<>();
 
@@ -42,6 +45,14 @@ public class Dataset {
 
     public Dataset(String name) {
         this.name = name;
+    }
+
+    public DataFile getTitleFile() {
+        return titleFile;
+    }
+
+    public void setTitleFile(DataFile titleFile) {
+        this.titleFile = titleFile;
     }
 
     public Long getId() {

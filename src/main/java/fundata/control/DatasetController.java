@@ -3,10 +3,8 @@ package fundata.control;
 import fundata.model.*;
 import fundata.repository.DataFileRepository;
 import fundata.repository.FileProperties;
-import fundata.service.DataerService;
-import fundata.service.DatasetService;
-import fundata.service.DatasetTitleService;
-import fundata.service.QiniuService;
+import fundata.service.*;
+import fundata.viewmodel.DSCommentView;
 import fundata.viewmodel.DatasetContent;
 import fundata.viewmodel.MyDataset;
 import fundata.viewmodel.UpFileInfo;
@@ -37,6 +35,9 @@ public class DatasetController {
 
     @Autowired
     private QiniuService qiniuService;
+
+    @Autowired
+    private DSCommentService dsCommentService;
 //
 //    @RequestMapping("/createDataset")
 //    public UpFileInfo createDataset(@RequestParam(value = "username") String username,
@@ -75,6 +76,11 @@ public class DatasetController {
     public boolean confirmDatasetTitle(@RequestParam(value = "datasetname") String datasetName,
                                        @RequestParam(value = "username") String username,
                                        @RequestParam(value = "key") String key) {
+
+        System.out.println("===============");
+        System.out.println("DataFileTitle "+key+" is confirmed");
+        System.out.println("===============");
+
         Long id = Long.parseLong(key.substring(0, key.lastIndexOf('.')));
         DataFile dataFile = dataFileRepository.findById(id);
 
@@ -83,6 +89,9 @@ public class DatasetController {
 
         if (dataer == null || dataset == null || dataFile == null)
             return false;
+
+        dataset.setTitleFile(dataFile);
+        datasetService.save(dataset);
 
         qiniuService.downloadFile(dataFile, fileProperties.getTitlePath());
         String url = fileProperties.getTitlePath() + dataFile.getName();
@@ -99,6 +108,18 @@ public class DatasetController {
                                       @RequestParam(value = "username") String username,
                                       @RequestParam(value = "key") String key) {
 
+        System.out.println("===============");
+        System.out.println("DataFile "+key+" is confirmed");
+        System.out.println("===============");
+
+        Long id = Long.parseLong(key.substring(0, key.lastIndexOf('.')));
+        DataFile dataFile = dataFileRepository.findById(id);
+
+        Dataer dataer = dataerService.findByDataerName(username);
+        Dataset dataset = datasetService.findByDatasetName(datasetName);
+
+        if (dataer == null || dataset == null || dataFile == null)
+            return false;
 
         return true;
     }
@@ -154,6 +175,7 @@ public class DatasetController {
         } else {
             datasetContent.setAdmin(0);
         }
+        datasetContent.setContribute(0);
         datasetContent.setDescription(dataset.getDescription());
 
         Set<DatasetTitle> datasetTitles = dataset.getDatasetTitles();
@@ -162,10 +184,66 @@ public class DatasetController {
                     datasetTitle.getTitleType(), datasetTitle.getMeaning());
         }
         return datasetContent;
+//        Map map = new HashMap();
+//        Dataset dataset = datasetService.findByDatasetName(datesetName);
+//        Set<Dataer> dataers = dataset.getDataers();
+//
+//        map.put("contribute", 0);
+//        map.put("description", dataset.getDescription());
+//        map.put("admin", 1);
+//        map.put("count", 1);
+//
+//        List<Map> content = new ArrayList<>();
+//        Set<DatasetTitle> datasetTitles = dataset.getDatasetTitles();
+//
+//        for (DatasetTitle datasetTitle : datasetTitles) {
+//            Map temp = new HashMap();
+//            temp.put("name", datasetTitle.getTitleName());
+//            temp.put("type", datasetTitle.getTitleType());
+//            temp.put("meaning", datasetTitle.getMeaning());
+//            content.add(temp);
+//        }
+//        map.put("content", content);
+//
+//        return map;
     }
 
     @RequestMapping("/getComment")
-    public void getComment(@RequestParam(name = "datasetname") String datasetname) {
-        DSC
+    public DSCommentView getComment(@RequestParam(name = "datasetname") String datasetname) {
+//        Dataset dataset = datasetService.findByDatasetName(datasetname);
+//
+//        Set<DSComment> dsComments = dataset.getDsComments();
+//        List<Map> comment = new ArrayList<>();
+//        for (DSComment dsComment : dsComments) {
+//            Map temp = new HashMap();
+//            temp.put("username", dsComment.getDataer().getName());
+//            temp.put("picurl", "");
+//            temp.put("content", dsComment.getContent());
+//            temp.put("updatetime", dsComment.getTime().toString());
+//        }
+//
+//        Map map = new HashMap();
+//        map.put("comments", comment);
+//        return map;
+        return dsCommentService.getComment(datasetname);
+    }
+
+    @RequestMapping("/comment")
+    public boolean comment(@RequestParam(name = "username") String username,
+                           @RequestParam(name = "datasetname") String datasetname,
+                           @RequestParam(name = "content") String content) {
+
+//        Dataer dataer = dataerService.findByDataerName(username);
+//        Dataset dataset = datasetService.findByDatasetName(datasetname);
+//
+//        if (dataer == null || dataset == null)
+//            return false;
+//
+//        DSComment dsComment = new DSComment();
+//        dsComment.setTime(new Date());
+//        dsComment.setDataer(dataer);
+//        dsComment.setDataset(dataset);
+//        dsComment.setContent(content);
+        return dsCommentService.addComment(username, datasetname, content);
     }
 }

@@ -91,5 +91,10 @@ public class DatasetServiceImpl implements DatasetService {
         Dataset dataset = datasetRepository.findByDatasetName(datasetName);
         return dataset;
     }
+
+    @Override
+    public void save(Dataset dataset) {
+        datasetRepository.save(dataset);
+    }
 }
 
