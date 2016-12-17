@@ -19,8 +19,8 @@ public class DatasetContent {
 
     public DatasetContent() { }
 
-    public void addContent(String key ,String desc, String type) {
-        content.add(new Content(key, desc, type));
+    public void addContent(String key ,String type, String meaning) {
+        content.add(new Content(key, type, meaning));
     }
 
     public Integer getContribute() {
@@ -67,13 +67,37 @@ public class DatasetContent {
 class Content {
     private String key;
 
-    private String value;
+    private String type;
 
-    private String desc;
+    private String meaning;
 
-    Content(String key ,String desc, String type) {
+    Content(String key ,String type, String meaning) {
         this.key = key;
-        this.desc = desc;
-        this.value = type;
+        this.type = type;
+        this.meaning = meaning;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getMeaning() {
+        return meaning;
+    }
+
+    public void setMeaning(String meaning) {
+        this.meaning = meaning;
     }
 }

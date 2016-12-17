@@ -10,20 +10,20 @@ import java.util.Set;
  * Created by ocean on 16-12-1.
  */
 public class MyDataset {
-    public List<DatasetInfo> getDataset() {
-        return dataset;
+    public List<DatasetInfo> getDatasets() {
+        return datasets;
     }
 
-    public void setDataset(List<DatasetInfo> dataset) {
-        this.dataset = dataset;
+    public void setDatasets(List<DatasetInfo> datasets) {
+        this.datasets = datasets;
     }
 
-    List<DatasetInfo> dataset = new LinkedList<>();
+    List<DatasetInfo> datasets = new LinkedList<>();
 
     public MyDataset(Iterable<Dataset> datasets) {
         for (Dataset item: datasets) {
             DatasetInfo datasetInfo = new DatasetInfo(item.getName());
-            this.dataset.add(datasetInfo);
+            this.datasets.add(datasetInfo);
         }
     }
 }

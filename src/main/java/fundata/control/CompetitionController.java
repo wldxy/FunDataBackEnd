@@ -33,9 +33,9 @@ public class CompetitionController {
 
     @Autowired
     CommentCompServiceImpl commentCompImpl;
+
     @Autowired
     AccurateServiveImpl accurateServiveImpl;
-
 
     public boolean isActive(Competition competition) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

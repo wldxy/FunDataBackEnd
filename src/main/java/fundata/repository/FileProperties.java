@@ -12,6 +12,7 @@ public class FileProperties {
 
     private String ansFilePath;
     private String userAnsPath;
+    private String titlePath;
 
     public String getAnsFilePath() {
         return ansFilePath;
@@ -27,5 +28,13 @@ public class FileProperties {
 
     public void setUserAnsPath(String userAnsPath) {
         this.userAnsPath = userAnsPath;
+    }
+
+    public String getTitlePath() {
+        return titlePath;
+    }
+
+    public void setTitlePath(String titlePath) {
+        this.titlePath = titlePath;
     }
 }

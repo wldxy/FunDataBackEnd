@@ -21,6 +21,7 @@ import java.util.Set;
  * Created by ocean on 16-12-6.
  */
 @RestController
+@RequestMapping(value = "/dataset")
 public class PullRequestController {
     @Autowired
     private PullRequestService pullRequestService;
@@ -30,7 +31,8 @@ public class PullRequestController {
 
     @RequestMapping(value = "/getPullRequest", method = RequestMethod.POST)
     public PullRequestView getPullRequest(@RequestParam(name = "datasetname") String datasetName,
-                                          @RequestParam(name = "page") int page) {
+//                                          @RequestParam(name = "page") int page,
+                                          @RequestParam(name = "username") String username) {
         Set<PullRequest> pullRequests = pullRequestService.findByDatasetName(datasetName);
         if (pullRequests != null) {
             return new PullRequestView(pullRequests);
@@ -40,13 +42,13 @@ public class PullRequestController {
     }
 
     @RequestMapping(value = "/newPullRequest", method = RequestMethod.POST)
-    public UpFileInfo newPullRequest(@RequestParam(name = "datasetname") String datasetname,
-                                     @RequestParam(name = "username") String username) {
+    public boolean newPullRequest(@RequestParam(name = "datasetname") String datasetname,
+                                  @RequestParam(name = "username") String username) {
         PullRequest pullRequest = pullRequestService.newPullRequest(username, datasetname);
-        UpFileInfo returnValue = new UpFileInfo();
+//        UpFileInfo returnValue = new UpFileInfo();
 //        returnValue.setKey(pullRequest.getDataFile().getFileName());
 //        returnValue.setUptoken(qiniuService.createUploadToken(pullRequest.getDataFile()));
-        return returnValue;
+        return false;
     }
 
     @RequestMapping(value = "/confirmRequest", method = RequestMethod.POST)
