@@ -37,23 +37,17 @@ public class Course {
     private int registerNum;
 
     @ManyToMany
-   private Set<Dataer> dataers = new HashSet<>();
+    private Set<Dataer> dataers = new HashSet<>();
 
     @OneToMany
     private Set<Commentcs> courseComments = new HashSet<>();
 
+    public Course() { }
 
-
-
-
-    public Course(){}
-
-    public Course(Long id, String name, String teacher, String description, String overview,int step, String pictureUrl,int registerNum) {
-        this.id = id;
+    public Course(String name, String teacher, String description, int step, String pictureUrl, int registerNum) {
         this.name = name;
         this.teacher = teacher;
         this.description = description;
-        this.overview = overview;
         this.step = step;
         this.pictureUrl = pictureUrl;
         this.registerNum = registerNum;

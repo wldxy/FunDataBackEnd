@@ -18,4 +18,6 @@ public interface PullRequestService {
     boolean setPullRequest(Long id, Integer status);
 
     Page<PullRequest> findLatestPullRequest(String dataerName, int page, int size);
+
+    void save(PullRequest pullRequest);
 }

@@ -65,10 +65,12 @@ public class CourseController {
     * 注册课程
     * */
     @ResponseBody
-    @RequestMapping(value = "/add/{courseId}/{courseName}/{description}/{teacher}/{overview}",method = RequestMethod.GET)
-    public boolean registerCourse(@PathVariable Long courseId, @PathVariable String courseName,@PathVariable String overview,@PathVariable String description,@PathVariable String teacher){
+    @RequestMapping(value = "/add/{courseId}/{courseName}/{description}/{teacher}/{overview}",method = RequestMethod.POST)
+    public boolean registerCourse(@PathVariable String courseName,
+                                  @PathVariable String description,
+                                  @PathVariable String teacher){
         try {
-            courseServiceImpl.save(new Course(courseId,courseName,teacher,description,overview,0,"",0));
+            courseServiceImpl.save(new Course(courseName, teacher, description,  0, "", 0));
             return true;
         }catch (Exception e){
             return false;
@@ -277,7 +279,4 @@ public class CourseController {
         dataerServiceImpl.save(dataer);
         return "true";
     }
-
-
-
 }

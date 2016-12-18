@@ -262,13 +262,37 @@ public class CompetitionController {
         detail.put("com_start_time",competition.getStarttime());
         detail.put("com_end_time",competition.getEndtime());
         detail.put("com_active_flag", isActive(competition));
-        /*
-        * TODO:com_download
-        * TODO:com_mysubmisson
-        * TODO:rank
-        * TODO:discuss
-        * TODO:answer
-        * */
+
+        Set<Commentcomp> commentcomps = competition.getCommentComps();
+
+        List<Map> comment = new ArrayList<>();
+
+        for (Commentcomp commentcomp : commentcomps) {
+            Map temp = new HashMap();
+            temp.put("username", commentcomp.getDataer().getName());
+            temp.put("head-url", commentcomp.getDataer().getHead_href());
+            temp.put("content", commentcomp.getContent());
+            temp.put("time", commentcomp.getTime());
+            comment.add(temp);
+        }
+        detail.put("comments", comment);
+
+        Set<DataFile> dataFiles = competition.getDataFile();
+
+        List<Map> download = new ArrayList<>();
+
+        for (DataFile dataFile : dataFiles) {
+            Map temp = new HashMap();
+            temp.put("url", qiniuService.createDownloadUrl(dataFile));
+            temp.put("time", dataFile.getCreateTime().toString());
+            temp.put("name", dataFile.getOldname());
+            temp.put("size", qiniuService.getFileSize(dataFile));
+            download.add(temp);
+        }
+        detail.put("download", download);
+
+        detail.put("ansfile", qiniuService.createDownloadUrl(competition.getAnsFile()));
+
         return detail;
     }
 
@@ -522,7 +546,7 @@ public class CompetitionController {
 //            Set<Accurate> accurates = dataer.getAccurates();
 //            Iterator<Competition> competitionIterator = competitions.iterator();
 //            while (competitionIterator.hasNext()) {
-//                Competition temp = competitionIterator.next();
+//                Competipption temp = competitionIterator.next();
 //                if(isActive(temp) && temp.getId().equals(comId)){
 //                    Accurate a = new Accurate();
 //                    a.setValue(accurate);
@@ -582,8 +606,7 @@ public class CompetitionController {
     //得到某一竞赛下的排名
     @ResponseBody
     @RequestMapping("/accurate/rank")
-    public Map getRank(@RequestParam(name = "compId")Long compId,
-                       @RequestParam(name = "page")int page){
+    public Map getRank(@RequestParam(name = "compId")Long compId){
         Competition competition = competitionServiceImpl.findById(compId);
         Set<Dataer> dataers = competition.getDataers();
         List<Accurate> accurateSort = new ArrayList<>();
@@ -598,12 +621,13 @@ public class CompetitionController {
 
         List<Accurate> list = new ArrayList<>();
         Map rank = new HashMap();
-        if(page*4 <= accurateSort.size() - 1){
-            list = accurateSort.subList(page*4,(page+1)*4-1);
-        }else {
-            rank.put("rank",list);
-            return rank;
-        }
+//        if(page*4 <= accurateSort.size() - 1){
+//            list = accurateSort.subList(page*4,(page+1)*4-1);
+//        }else {
+//            rank.put("rank",list);
+//            return rank;
+//        }
+        list = accurateSort;
 
         List<Map> totalMap = new ArrayList<>();
         for (Accurate a : list){

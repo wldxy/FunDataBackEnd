@@ -1,6 +1,7 @@
 package fundata.model;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CompletionService;
 
@@ -38,13 +39,13 @@ public class Competition {
     private Dataer hoster;
 
     @ManyToMany(mappedBy = "competitions", cascade = CascadeType.ALL)
-    private Set<Dataer> dataers;  //参与者
+    private Set<Dataer> dataers = new HashSet<>();  //参与者
 
     @OneToMany(mappedBy = "competition", cascade = CascadeType.ALL)
-    private Set<Commentcomp> commentComps;
+    private Set<Commentcomp> commentComps = new HashSet<>();
 
     @OneToMany
-    private Set<DataFile> dataFile;
+    private Set<DataFile> dataFile = new HashSet<>();
 
     @OneToOne
     private DataFile ansFile;

@@ -4,10 +4,7 @@ import fundata.model.*;
 import fundata.repository.DataFileRepository;
 import fundata.repository.FileProperties;
 import fundata.service.*;
-import fundata.viewmodel.DSCommentView;
-import fundata.viewmodel.DatasetContent;
-import fundata.viewmodel.MyDataset;
-import fundata.viewmodel.UpFileInfo;
+import fundata.viewmodel.*;
 import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -75,7 +72,8 @@ public class DatasetController {
     @RequestMapping("/confirmTitle")
     public boolean confirmDatasetTitle(@RequestParam(value = "datasetname") String datasetName,
                                        @RequestParam(value = "username") String username,
-                                       @RequestParam(value = "key") String key) {
+                                       @RequestParam(value = "key") String key,
+                                       @RequestParam(value = "description") String desc) {
 
         System.out.println("===============");
         System.out.println("DataFileTitle "+key+" is confirmed");
@@ -101,12 +99,14 @@ public class DatasetController {
         return true;
     }
 
-
+    @Autowired
+    private PullRequestService pullRequestService;
 
     @RequestMapping("/confirmFile")
     public boolean confirmDatasetFile(@RequestParam(value = "datasetname") String datasetName,
                                       @RequestParam(value = "username") String username,
-                                      @RequestParam(value = "key") String key) {
+                                      @RequestParam(value = "key") String key,
+                                      @RequestParam(value = "description") String desc) {
 
         System.out.println("===============");
         System.out.println("DataFile "+key+" is confirmed");
@@ -120,6 +120,11 @@ public class DatasetController {
 
         if (dataer == null || dataset == null || dataFile == null)
             return false;
+
+        PullRequest pullRequest = pullRequestService.newPullRequest(username, datasetName);
+        pullRequest.setDataFile(dataFile);
+        pullRequest.setDescription(desc);
+        pullRequestService.save(pullRequest);
 
         return true;
     }
@@ -154,11 +159,6 @@ public class DatasetController {
         MyDataset myDataset = new MyDataset(datasetList);
 
         return myDataset;
-    }
-
-    @RequestMapping("/datasetFileConfirm")
-    public void confirmDatasetTitleDesc(@RequestParam(value = "status") Integer status) {
-
     }
 
     @RequestMapping("/getDemoContent")

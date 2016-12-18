@@ -35,7 +35,13 @@ public class PullRequestController {
                                           @RequestParam(name = "username") String username) {
         Set<PullRequest> pullRequests = pullRequestService.findByDatasetName(datasetName);
         if (pullRequests.size() != 0) {
-            return new PullRequestView(pullRequests);
+//            return new PullRequestView(pullRequests);
+            PullRequestView pullRequestView = new PullRequestView(0);
+
+            for (PullRequest pullRequest : pullRequests) {
+                pullRequestView.add(pullRequest, qiniuService.createDownloadUrl(pullRequest.getDataFile()));
+            }
+            return pullRequestView;
         } else {
             return new PullRequestView(0);
         }

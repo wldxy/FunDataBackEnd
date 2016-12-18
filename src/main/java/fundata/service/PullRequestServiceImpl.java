@@ -63,20 +63,17 @@ public class PullRequestServiceImpl implements PullRequestService {
         Dataset dataset = datasetRepository.findByDatasetName(datasetName);
         Dataer dataer = dataerRepository.findByUserName(dataerName);
 
+        if (dataer == null || dataset == null) {
+            return null;
+        }
+
         PullRequest pullRequest = new PullRequest();
         pullRequest.setDataer(dataer);
         pullRequest.setDataset(dataset);
         pullRequest.setStatus(-1);
         pullRequest.setUpdatetime(new Date());
-
-        DataFile dataFile = new DataFile();
-        dataFile.setStatus(-1);
-        dataFile.setCreateTime(new Date());
-        dataFile.setUpdateTime(new Date());
-        dataFileRepository.save(dataFile);
-        pullRequest.setDataFile(dataFile);
-
         pullRequestRepository.save(pullRequest);
+
         return pullRequest;
     }
 
@@ -125,6 +122,11 @@ public class PullRequestServiceImpl implements PullRequestService {
                 new PageRequest(page, size, new Sort(Sort.Direction.DESC, new String("updatetime"))),
                 pullRequests.size());
         return pullRequestPage;
+    }
+
+    @Override
+    public void save(PullRequest pullRequest) {
+        pullRequestRepository.save(pullRequest);
     }
 
 }

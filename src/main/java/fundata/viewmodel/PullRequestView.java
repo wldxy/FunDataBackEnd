@@ -1,6 +1,11 @@
 package fundata.viewmodel;
 
+import fundata.model.DataFile;
 import fundata.model.PullRequest;
+import fundata.service.QiniuService;
+import fundata.service.QiniuServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,7 +15,11 @@ import java.util.Set;
 /**
  * Created by ocean on 16-12-6.
  */
+@Component
 public class PullRequestView {
+//    @Autowired
+//    private QiniuService qiniuService;
+
     public PullRequestView(int count) {
         this.count = count;
     }
@@ -18,9 +27,15 @@ public class PullRequestView {
     public PullRequestView(Set<PullRequest> pullRequests) {
         this.count = 0;
         for (PullRequest p : pullRequests) {
-            this.pullrequest.add(new RequestInfo(p));
+//            this.pullrequest.add(new RequestInfo(p,
+//                    qiniuService.createDownloadUrl(p.getDataFile())));
             this.count += 1;
         }
+    }
+
+    public void add(PullRequest pullRequest, String url) {
+        this.count++;
+        this.pullrequest.add(new RequestInfo(pullRequest, url));
     }
 
     private int count;
@@ -45,12 +60,21 @@ public class PullRequestView {
 }
 
 class RequestInfo {
-    public RequestInfo(PullRequest pullRequest) {
+
+    public RequestInfo(PullRequest pullRequest, String url) {
         this.id = pullRequest.getId();
         this.updatetime = pullRequest.getUpdatetime();
         this.type = pullRequest.getStatus();
         this.description = pullRequest.getDescription();
         this.username = pullRequest.getDataer().getName();
+        this.url = url;
+//
+//        if (pullRequest.getDataFile() == null) {
+//            this.url = "";
+//        } else {
+//            DataFile dataFile = pullRequest.getDataFile();
+//            this.url = qiniuService.createDownloadUrl(dataFile);
+//        }
     }
 
     private String username;
@@ -62,6 +86,16 @@ class RequestInfo {
     private Integer type;
 
     private String description;
+
+    private String url;
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
     public String getUserName() {
         return username;
