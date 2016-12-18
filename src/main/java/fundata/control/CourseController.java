@@ -255,6 +255,7 @@ public class CourseController {
         while (iter.hasNext()){
             Step t = iter.next();
             HashMap st = new HashMap();
+            st.put("id", t.getStepid());
             st.put("step_header",t.getStepname());
             st.put("step_content",t.getContent());
             st.put("step_pic_url",t.getPictureUrl());
@@ -379,6 +380,8 @@ public class CourseController {
         }
     }
 
+
+
     // 获取dataer创建的课程和参加的课程
     @ResponseBody
     @RequestMapping(value = "/mycourses", method = RequestMethod.POST)
@@ -442,16 +445,27 @@ public class CourseController {
         }
     }
 
-    // 添加step
-//    @ResponseBody
-//    @RequestMapping(value = "/addstep", method = RequestMethod.POST)
-//    public boolean addStep(@RequestParam Long id, @RequestParam String name, @RequestParam String content){
-//        try{
-//            Step step = new Step();
-//        }catch (Exception e){
-//
-//        }
-//    }
+    //add step
+    @ResponseBody
+    @RequestMapping(value = "/addstep", method = RequestMethod.POST)
+    public Map addStep(@RequestParam Long id, @RequestParam String name, @RequestParam String content){
+        try{
+            Course course = courseServiceImpl.findById(id);
+            Step step = new Step();
+            step.setStepname(name);
+            step.setContent(content);
+            step.setCourse(course);
+            //step.setPictureUrl("dsf");
+            stepServiceImpl.save(step);
+            Map map = new HashMap();
+            map.put("step_id", step.getStepid());
+            map.put("step_header", step.getStepname());
+            return map;
+        }catch (Exception e){
+            e.printStackTrace();;
+            return null;
+        }
+    }
 
     @Autowired
     DataFileRepository dataFileRepository;
@@ -460,28 +474,35 @@ public class CourseController {
     QiniuService qiniuService;
 
     // step上传图片
-//    @ResponseBody
-//    @RequestMapping(value = "/confirmsteppic", method = RequestMethod.POST)
-//    public boolean confirmStepPic(@RequestParam String key, @RequestParam Long stepId){
-//        System.out.println("===============");
-//        System.out.println("Step pic "+key+" is confirmed");
-//        System.out.println("===============");
-//
-//        Long fileid = Long.parseLong(key.substring(0, key.lastIndexOf('.')));
-//        DataFile dataFile = dataFileRepository.findById(fileid);
-//
-//        String url = qiniuService.createDownloadUrl(dataFile);
-//
-//        if (dataFile == null) {
-//            return false;
-//        }
-//
-//        Step step = stepServiceImpl.findByCourse()
-//        if (competition == null) {
-//            return false;
-//        }
-//
-//    }
+    @ResponseBody
+    @RequestMapping(value = "/confirmsteppic", method = RequestMethod.POST)
+    public Map confirmStepPic(@RequestParam String key, @RequestParam Long stepId, @RequestParam Long courseId){
+        System.out.println("===============");
+        System.out.println("Step pic "+key+" is confirmed");
+        System.out.println("===============");
+
+        Long fileid = Long.parseLong(key.substring(0, key.lastIndexOf('.')));
+        DataFile dataFile = dataFileRepository.findById(fileid);
+
+        String url = qiniuService.createDownloadUrl(dataFile);
+
+        if (dataFile == null) {
+            return null;
+        }
+
+        Step step = stepServiceImpl.findById(stepId);
+        if (step == null) {
+            return null;
+        }
+        else {
+            step.setPictureUrl(url);
+            stepServiceImpl.save(step);
+            Map map =new HashMap<>();
+            map.put("url", url);
+            return map;
+        }
+
+    }
 
 
 }

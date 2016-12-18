@@ -1,5 +1,6 @@
 package fundata.model;
 
+import javax.annotation.Generated;
 import javax.persistence.*;
 
 /**
@@ -9,7 +10,9 @@ import javax.persistence.*;
 @Table(name = "step")
 public class Step{
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "stepid",nullable = false)
+
     private Long stepid;
 
     @ManyToOne
@@ -47,9 +50,7 @@ public class Step{
         return stepid;
     }
 
-    public void setStepid(Long stepid) {
-        this.stepid = stepid;
-    }
+
 
 
     public String getStepname() {

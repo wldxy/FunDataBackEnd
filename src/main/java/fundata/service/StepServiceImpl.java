@@ -34,4 +34,12 @@ public class StepServiceImpl implements StepService {
         return stepRepository.findByCourse(course);
     }
 
+    @Override
+    public Step findById(Long id) {
+        return stepRepository.findOne(id);
+    }
+
+
+
+
 }

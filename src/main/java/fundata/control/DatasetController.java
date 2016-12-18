@@ -138,13 +138,19 @@ public class DatasetController {
         Dataer dataer = dataerService.findByDataerName(username);
         Set<PullRequest> pullRequests = dataer.getPullRequests();
         for (PullRequest pullRequest : pullRequests) {
-            if (pullRequest.getStatus() == 1) {
-                Map temp = new HashMap();
-                temp.put("datasetname", pullRequest.getDataset().getName());
-                temp.put("updatetime", pullRequest.getUpdatetime().toString());
+//            if (pullRequest.getStatus() == 1) {
+//                Map temp = new HashMap();
+//                temp.put("datasetname", pullRequest.getDataset().getName());
+//                temp.put("updatetime", pullRequest.getUpdatetime().toString());
+//
+//                dataset.add(temp);
+//            }
+            Map temp = new HashMap();
+            temp.put("datasetname", pullRequest.getDataset().getName());
+            temp.put("updatetime", pullRequest.getUpdatetime().toString());
+            temp.put("type", pullRequest.getStatus());
 
-                dataset.add(temp);
-            }
+            dataset.add(temp);
         }
 
         map.put("dataset", dataset);
