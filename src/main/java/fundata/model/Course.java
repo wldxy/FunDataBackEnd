@@ -30,7 +30,7 @@ public class Course {
     private String overview;
 
     @Column(name = "step")
-    private  int step;
+    private int step;
 
     @Column(name = "pictureUrl",length = 50)
     private String pictureUrl;
@@ -43,6 +43,17 @@ public class Course {
 
     @ManyToOne
     private Dataer hoster;
+
+    public Set<Step> getSteps() {
+        return steps;
+    }
+
+    public void setSteps(Set<Step> steps) {
+        this.steps = steps;
+    }
+
+    @OneToMany(mappedBy = "course")
+    private Set<Step> steps = new HashSet<>();
 
     @OneToMany
     private Set<Commentcs> courseComments = new HashSet<>();

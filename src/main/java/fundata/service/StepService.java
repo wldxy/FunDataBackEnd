@@ -12,4 +12,5 @@ public interface StepService {
     void save(Step step);
     void updateStepContent(String content,int stepid);
     Set<Step> findByCourse(Course course);
+    Step findById(Long id);
 }
