@@ -189,7 +189,7 @@ public class CompetitionController {
         try {
             Map info = new HashMap();
             List<Map> competitionList = new ArrayList<>();
-            Pageable pageable = new PageRequest(page,8,new Sort(Sort.Direction.DESC,"registerNum"));
+            Pageable pageable = new PageRequest(page,100,new Sort(Sort.Direction.DESC,"registerNum"));
             Page<Competition> pages = competitionServiceImpl.findAll(pageable);
             for (Competition c: pages) {
                 Map temp = new HashMap();

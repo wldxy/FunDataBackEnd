@@ -1,15 +1,9 @@
 package fundata.control;
 
 import fundata.model.Dataer;
-import fundata.model.PullRequest;
 import fundata.repository.DataerRepository;
-import fundata.viewmodel.HotProject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +28,7 @@ public class DataerController {
             dataer.setEmail(email);
             dataer.setPassword(pwd);
             dataer.setName(name);
+            dataer.setHead_href("http://img1.3lian.com/gif/more/11/201209/905adae6a744ae04f0c9ceaceb72d672.jpg");
             dataerRepository.save(dataer);
             map.put("username", name);
         } else {
@@ -57,6 +52,42 @@ public class DataerController {
         }
         return map;
     }
-//
-//    @RequestMapping(value = "")
+
+    @ResponseBody
+    @RequestMapping(value = "/authorize/user", method = RequestMethod.POST)
+    public Map getUserProfile(@RequestParam String username){
+        try{
+            Dataer dataer = dataerRepository.findByUserName(username);
+
+            Map map = new HashMap<>();
+            map.put("user_id", dataer.getId());
+            map.put("user_name", dataer.getName());
+            map.put("user_email", dataer.getEmail());
+            map.put("head_href", dataer.getHead_href());
+
+            return map;
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/authorize/edit", method = RequestMethod.POST)
+    public boolean editProfile(@RequestParam String username, @RequestParam String oldpwd, @RequestParam String newpwd){
+        try{
+            Dataer dataer = dataerRepository.findByUserName(username);
+            if (dataer.getPassword().equals(oldpwd)){
+                dataer.setPassword(newpwd);
+                dataerRepository.save(dataer);
+                return true;
+            }else {
+                return false;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }
