@@ -291,7 +291,11 @@ public class CompetitionController {
         }
         detail.put("download", download);
 
-        detail.put("ansfile", qiniuService.createDownloadUrl(competition.getAnsFile()));
+        if (competition.getAnsFile() != null){
+            detail.put("ansfile", qiniuService.createDownloadUrl(competition.getAnsFile()));
+        }else{
+            detail.put("ansfile", null);
+        }
 
         return detail;
     }

@@ -4,8 +4,6 @@ import fundata.model.DataFile;
 import fundata.model.Dataer;
 import fundata.model.Dataset;
 import fundata.model.DatasetTitle;
-import fundata.repository.DatasetRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Set;
@@ -29,4 +27,6 @@ public interface DatasetService {
     Dataset findByDatasetName(String datasetName);
 
     void save(Dataset dataset);
+
+//    List<Dataset> findAll();
 }

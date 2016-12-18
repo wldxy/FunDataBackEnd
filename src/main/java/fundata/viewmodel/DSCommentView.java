@@ -25,16 +25,17 @@ public class DSCommentView {
 
     public void addDSComment(DSComment dsComment) {
         this.comments.add(new CommentInfo(dsComment.getDataer().getName(),
-                dsComment.getContent(), dsComment.getTime().toString()));
+                dsComment.getContent(), dsComment.getTime().toString(), dsComment.getDataer().getHead_href()));
     }
 
 }
 
 class CommentInfo {
-    CommentInfo(String username, String content, String updatetime) {
+    CommentInfo(String username, String content, String updatetime, String head_href) {
         this.username = username;
         this.content = content;
         this.updatetime = updatetime;
+        this.head_href = head_href;
     }
 
     String username;
@@ -42,6 +43,8 @@ class CommentInfo {
     String content;
 
     String updatetime;
+
+    String head_href;
 
     public String getUsername() {
         return username;
@@ -65,5 +68,13 @@ class CommentInfo {
 
     public void setUpdatetime(String updatetime) {
         this.updatetime = updatetime;
+    }
+
+    public void setHead_href(String head_href) {
+        this.head_href = head_href;
+    }
+
+    public String getHead_href() {
+        return head_href;
     }
 }

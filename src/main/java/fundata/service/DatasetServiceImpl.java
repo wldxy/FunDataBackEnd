@@ -5,10 +5,8 @@ import fundata.repository.DataerRepository;
 import fundata.repository.DatasetRepository;
 import fundata.repository.DatasetTitleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -40,6 +38,12 @@ public class DatasetServiceImpl implements DatasetService {
 
         return dataer.getDatasets();
     }
+
+//    @Override
+//    public List<Dataset> findAll(){
+//        return  datasetRepository.findAll();
+//
+//    }
 
     @Override
     public void addDataset(String username, String datasetname, String desc) {

@@ -4,13 +4,12 @@ import fundata.model.*;
 import fundata.repository.DataFileRepository;
 import fundata.repository.FileProperties;
 import fundata.service.*;
-import fundata.viewmodel.*;
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
+import fundata.viewmodel.DSCommentView;
+import fundata.viewmodel.DatasetContent;
+import fundata.viewmodel.MyDataset;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
@@ -35,18 +34,12 @@ public class DatasetController {
 
     @Autowired
     private DSCommentService dsCommentService;
-//
-//    @RequestMapping("/createDataset")
-//    public UpFileInfo createDataset(@RequestParam(value = "username") String username,
-//                                    @RequestParam(value = "datasetname") String datasetname,
-//                                    @RequestParam(value = "desc") String desc) {
-//        datasetService.addDataset(username, datasetname, desc);
-//        String fileName = "desc" + datasetname + ".csv";
-//        UpFileInfo upFileInfo = new UpFileInfo();
-//        upFileInfo.setUptoken(qiniuService.createUploadToken(fileName));
-//        upFileInfo.setKey(fileName);
-//        return upFileInfo;
-//    }
+
+    @Autowired
+    DataFileRepository dataFileRepository;
+
+    @Autowired
+    DatasetTitleService datasetTitleService;
 
     @RequestMapping("/createDataset")
     public boolean createDataset(@RequestParam(value = "username") String username,
@@ -59,15 +52,6 @@ public class DatasetController {
         datasetService.addDataset(username, datasetname, desc);
         return true;
     }
-
-//
-//    @RequestMapping("/confirm")
-
-    @Autowired
-    DataFileRepository dataFileRepository;
-
-    @Autowired
-    DatasetTitleService datasetTitleService;
 
     @RequestMapping("/confirmTitle")
     public boolean confirmDatasetTitle(@RequestParam(value = "datasetname") String datasetName,
@@ -129,6 +113,24 @@ public class DatasetController {
         return true;
     }
 
+//    @ResponseBody
+//    @RequestMapping(value = "/getHotProject", method = RequestMethod.POST)
+//    public Map getHotProject(){
+//        try{
+//            Map map = new HashMap<>();
+//
+//            List<Dataset> datasetList = new ArrayList<>();
+//
+////            Dataer dataer =
+//
+//            return map;
+//        }catch (Exception e){
+//            e.printStackTrace();
+//            return null;
+//        }
+//    }
+
+
     @RequestMapping("/getMyContribute")
     public Map getMyContribute(@RequestParam("username") String username) {
         Map map = new HashMap();
@@ -138,13 +140,6 @@ public class DatasetController {
         Dataer dataer = dataerService.findByDataerName(username);
         Set<PullRequest> pullRequests = dataer.getPullRequests();
         for (PullRequest pullRequest : pullRequests) {
-//            if (pullRequest.getStatus() == 1) {
-//                Map temp = new HashMap();
-//                temp.put("datasetname", pullRequest.getDataset().getName());
-//                temp.put("updatetime", pullRequest.getUpdatetime().toString());
-//
-//                dataset.add(temp);
-//            }
             Map temp = new HashMap();
             temp.put("datasetname", pullRequest.getDataset().getName());
             temp.put("updatetime", pullRequest.getUpdatetime().toString());
@@ -190,28 +185,6 @@ public class DatasetController {
                     datasetTitle.getTitleType(), datasetTitle.getMeaning());
         }
         return datasetContent;
-//        Map map = new HashMap();
-//        Dataset dataset = datasetService.findByDatasetName(datesetName);
-//        Set<Dataer> dataers = dataset.getDataers();
-//
-//        map.put("contribute", 0);
-//        map.put("description", dataset.getDescription());
-//        map.put("admin", 1);
-//        map.put("count", 1);
-//
-//        List<Map> content = new ArrayList<>();
-//        Set<DatasetTitle> datasetTitles = dataset.getDatasetTitles();
-//
-//        for (DatasetTitle datasetTitle : datasetTitles) {
-//            Map temp = new HashMap();
-//            temp.put("name", datasetTitle.getTitleName());
-//            temp.put("type", datasetTitle.getTitleType());
-//            temp.put("meaning", datasetTitle.getMeaning());
-//            content.add(temp);
-//        }
-//        map.put("content", content);
-//
-//        return map;
     }
 
     @RequestMapping("/getComment")
