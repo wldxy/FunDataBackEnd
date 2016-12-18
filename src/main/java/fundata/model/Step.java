@@ -1,7 +1,6 @@
 package fundata.model;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
 /**
  * Created by stanforxc on 2016/12/5.
@@ -11,7 +10,7 @@ import java.io.Serializable;
 public class Step{
     @Id
     @Column(name = "stepid",nullable = false)
-    private int stepid;
+    private Long stepid;
 
     @ManyToOne
     private Course course;
@@ -25,6 +24,8 @@ public class Step{
     @Column(name = "pictureUrl")
     private String pictureUrl;
 
+
+//    public Step(Long id, )
 
     public String getContent() {
         return content;
@@ -42,11 +43,11 @@ public class Step{
         this.course = course;
     }
 
-    public int getStepid() {
+    public Long getStepid() {
         return stepid;
     }
 
-    public void setStepid(int stepid) {
+    public void setStepid(Long stepid) {
         this.stepid = stepid;
     }
 

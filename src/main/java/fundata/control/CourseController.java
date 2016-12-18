@@ -1,6 +1,7 @@
 package fundata.control;
 
 import fundata.model.*;
+import fundata.repository.DataFileRepository;
 import fundata.service.*;
 import fundata.viewmodel.BCourse;
 import fundata.viewmodel.TopClass;
@@ -89,31 +90,31 @@ public class CourseController {
     /*
     * 添加step
     * */
-    @ResponseBody
-    @RequestMapping(value = "/{courseId}/step{num}/{stepname}/{content}",method = RequestMethod.GET)
-    public boolean addStep(@PathVariable Long courseId,@PathVariable String num,@PathVariable String stepname,@PathVariable String content){
-       try {
-           int number = Integer.parseInt(num);
-           if(number > courseServiceImpl.getStepNum(courseId)){
-               /*设置step内容*/
-               Step step = new Step();
-               step.setStepname(stepname);
-               step.setContent(content);
-               int key = Integer.parseInt(courseId.toString()+ num);
-               step.setStepid(key);
-               /*找到对应course*/
-               Course course = courseServiceImpl.findById(courseId);
-               step.setCourse(course);
-               stepServiceImpl.save(step);
-               courseServiceImpl.increaseStep(courseId);
-           }else {
-               stepServiceImpl.updateStepContent(content,number);
-           }
-           return true;
-       }catch (Exception ex){
-           return false;
-       }
-    }
+//    @ResponseBody
+//    @RequestMapping(value = "/{courseId}/step{num}/{stepname}/{content}",method = RequestMethod.GET)
+//    public boolean addStep(@PathVariable Long courseId,@PathVariable String num,@PathVariable String stepname,@PathVariable String content){
+//       try {
+//           int number = Integer.parseInt(num);
+//           if(number > courseServiceImpl.getStepNum(courseId)){
+//               /*设置step内容*/
+//               Step step = new Step();
+//               step.setStepname(stepname);
+//               step.setContent(content);
+//               int key = Integer.parseInt(courseId.toString()+ num);
+//               step.setStepid(key);
+//               /*找到对应course*/
+//               Course course = courseServiceImpl.findById(courseId);
+//               step.setCourse(course);
+//               stepServiceImpl.save(step);
+//               courseServiceImpl.increaseStep(courseId);
+//           }else {
+//               stepServiceImpl.updateStepContent(content,number);
+//           }
+//           return true;
+//       }catch (Exception ex){
+//           return false;
+//       }
+//    }
 
     /*添加问题*/
     @ResponseBody
@@ -289,10 +290,10 @@ public class CourseController {
             dataer.setHostCourses(courses);
 
             Map map = new HashMap<>();
-            map.put("course_id", course.getId());
-            map.put("course_name", course.getName());
-            map.put("course_host", course.getHoster().getName());
-            map.put("course_des", course.getDescription());
+            map.put("id", course.getId());
+            map.put("name", course.getName());
+            map.put("hoster", course.getHoster().getName());
+            map.put("description", course.getDescription());
 
             return map;
         }catch (Exception e){
@@ -322,8 +323,6 @@ public class CourseController {
             Dataer dataer = dataerServiceImpl.findByDataerName(username);
             Course course = courseServiceImpl.findById(id);
 
-//            Set<Dataer> dataers = course.getDataers();
-//            dataers.add(dataer);
             course.getDataers().add(dataer);
 
             courseServiceImpl.save(course);
@@ -371,8 +370,31 @@ public class CourseController {
             Map myPcourses = new HashMap<>();
             Map myHcourses = new HashMap<>();
 
-            myPcourses.put("join_courses", dataer.getCourses());
-            myHcourses.put("host_courses", dataer.getHostCourses());
+            List<Map> join = new ArrayList<>();
+//            myPcourses.put("join_courses", dataer.getCourses());
+            for (Course course : dataer.getCourses()) {
+                Map temp = new HashMap<>();
+                temp.put("id", course.getId());
+                temp.put("name", course.getName());
+                temp.put("hoster", course.getHoster().getName());
+                temp.put("description", course.getDescription());
+
+                join.add(temp);
+            }
+            myPcourses.put("join_courses", join);
+
+//            myHcourses.put("host_courses", dataer.getHostCourses());
+            List<Map> host = new ArrayList<>();
+            for (Course course : dataer.getHostCourses()) {
+                Map temp = new HashMap<>();
+                temp.put("id", course.getId());
+                temp.put("name", course.getName());
+                temp.put("hoster", course.getHoster().getName());
+                temp.put("description", course.getDescription());
+
+                host.add(temp);
+            }
+            myHcourses.put("host_courses", host);
 
             map.put("join", myPcourses);
             map.put("host", myHcourses);
@@ -399,5 +421,47 @@ public class CourseController {
             return false;
         }
     }
+
+    // 添加step
+//    @ResponseBody
+//    @RequestMapping(value = "/addstep", method = RequestMethod.POST)
+//    public boolean addStep(@RequestParam Long id, @RequestParam String name, @RequestParam String content){
+//        try{
+//            Step step = new Step();
+//        }catch (Exception e){
+//
+//        }
+//    }
+
+    @Autowired
+    DataFileRepository dataFileRepository;
+
+    @Autowired
+    QiniuService qiniuService;
+
+    // step上传图片
+//    @ResponseBody
+//    @RequestMapping(value = "/confirmsteppic", method = RequestMethod.POST)
+//    public boolean confirmStepPic(@RequestParam String key, @RequestParam Long stepId){
+//        System.out.println("===============");
+//        System.out.println("Step pic "+key+" is confirmed");
+//        System.out.println("===============");
+//
+//        Long fileid = Long.parseLong(key.substring(0, key.lastIndexOf('.')));
+//        DataFile dataFile = dataFileRepository.findById(fileid);
+//
+//        String url = qiniuService.createDownloadUrl(dataFile);
+//
+//        if (dataFile == null) {
+//            return false;
+//        }
+//
+//        Step step = stepServiceImpl.findByCourse()
+//        if (competition == null) {
+//            return false;
+//        }
+//
+//    }
+
 
 }
