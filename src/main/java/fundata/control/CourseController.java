@@ -55,7 +55,7 @@ public class CourseController {
         List<TopClass> topClasses = new ArrayList<TopClass>();
        List<Course> courses = courseServiceImpl.findHotest(new PageRequest(pagenum,8));
         for (int i = 0;i < courses.size();++i) {
-            topClasses.add(new TopClass(courses.get(i).getId(),courses.get(i).getName(),i,courses.get(i).getRegisterNum(),courses.get(i).getTeacher()));
+            topClasses.add(new TopClass(courses.get(i).getId(),courses.get(i).getName(),i,courses.get(i).getRegisterNum(),courses.get(i).getHoster().getName()));
         }
         bc.setBoutique_course(topClasses);
         return bc;
@@ -70,7 +70,8 @@ public class CourseController {
                                   @PathVariable String description,
                                   @PathVariable String teacher){
         try {
-            courseServiceImpl.save(new Course(courseName, teacher, description,  0, "", 0));
+            Dataer dataer = dataerServiceImpl.findByDataerName(teacher);
+            courseServiceImpl.save(new Course(courseName, dataer, description,  0, "", 0));
             return true;
         }catch (Exception e){
             return false;

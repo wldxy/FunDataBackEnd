@@ -17,9 +17,9 @@ public class Course {
 
     @Column(name = "name",nullable = false,length = 50)
     private String name;
-
-    @Column(name = "teacher",nullable = false,length = 20)
-    private String teacher;
+//
+//    @Column(name = "teacher",nullable = false,length = 20)
+//    private String teacher;
 
     @Column(name = "description",length = 50)
     private String description;
@@ -39,14 +39,18 @@ public class Course {
     @ManyToMany
     private Set<Dataer> dataers = new HashSet<>();
 
+    @ManyToOne
+    private Dataer hoster;
+
     @OneToMany
     private Set<Commentcs> courseComments = new HashSet<>();
 
     public Course() { }
 
-    public Course(String name, String teacher, String description, int step, String pictureUrl, int registerNum) {
+    public Course(String name, Dataer hoster, String description, int step, String pictureUrl, int registerNum) {
         this.name = name;
-        this.teacher = teacher;
+//        this.teacher = teacher;
+        this.hoster = hoster;
         this.description = description;
         this.step = step;
         this.pictureUrl = pictureUrl;
@@ -61,6 +65,14 @@ public class Course {
         this.id = id;
     }
 
+    public Dataer getHoster() {
+        return hoster;
+    }
+
+    public void setHoster(Dataer hoster) {
+        this.hoster = hoster;
+    }
+
     public String getName() {
         return name;
     }
@@ -68,14 +80,14 @@ public class Course {
     public void setName(String name) {
         this.name = name;
     }
-
-    public String getTeacher() {
-        return teacher;
-    }
-
-    public void setTeacher(String teacher) {
-        this.teacher = teacher;
-    }
+//
+//    public String getTeacher() {
+//        return teacher;
+//    }
+//
+//    public void setTeacher(String teacher) {
+//        this.teacher = teacher;
+//    }
 
     public String getDescription() {
         return description;

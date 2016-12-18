@@ -1,6 +1,7 @@
 package fundata.model;
 
 import javax.persistence.*;
+import javax.xml.crypto.Data;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -48,12 +49,34 @@ public class Dataer {
     @OneToMany(mappedBy = "dataer")
     private Set<Accurate> accurates = new HashSet<>();
 
+    @OneToMany(mappedBy = "dataers", cascade = CascadeType.ALL)
+    private Set<Course> courses = new HashSet<>();
+
+    @OneToMany(mappedBy = "hoster", cascade = CascadeType.ALL)
+    private Set<Course> hostCourses = new HashSet<>();
+
     public Dataer() { }
 
     public Dataer(String name, String password, String email) {
         this.name = name;
         this.password = password;
         this.email = email;
+    }
+
+    public Set<Course> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(Set<Course> courses) {
+        this.courses = courses;
+    }
+
+    public Set<Course> getHostCourses() {
+        return hostCourses;
+    }
+
+    public void setHostCourses(Set<Course> hostCourses) {
+        this.hostCourses = hostCourses;
     }
 
     public Long getId() {
