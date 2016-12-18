@@ -318,12 +318,20 @@ public class CourseController {
     // 学生注册课程
     @ResponseBody
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public boolean registerCourse(@RequestParam String username, @RequestParam Long id){
+    public boolean registerCourse(@RequestParam String username,
+                                  @RequestParam Long id,
+                                  @RequestParam Integer type){
         try{
+
             Dataer dataer = dataerServiceImpl.findByDataerName(username);
             Course course = courseServiceImpl.findById(id);
 
-            course.getDataers().add(dataer);
+            if (type == 1){
+                course.getDataers().add(dataer);
+            }
+            else if (type == 0) {
+                course.getDataers().remove(dataer);
+            }
 
             courseServiceImpl.save(course);
 
@@ -337,7 +345,8 @@ public class CourseController {
     // 课程详细页面
     @ResponseBody
     @RequestMapping(value = "/detail", method = RequestMethod.POST)
-    public Map courseDetail(@RequestParam Long id){
+    public Map courseDetail(@RequestParam(name = "username") String name,
+                            @RequestParam(name = "id") Long id){
         try{
             Course course = courseServiceImpl.findById(id);
 
@@ -350,6 +359,17 @@ public class CourseController {
             map.put("course_overview", course.getOverview());
             map.put("course_steps", stepmap);
             map.put("course_qa", qamap);
+
+            Integer flag;
+
+            Dataer dataer = dataerServiceImpl.findByDataerName(name);
+            Set<Course> courses = dataer.getCourses();
+            if (courses.contains(course))
+                flag = 1;
+            else
+                flag = 0;
+
+            map.put("flag", flag);
 
             return map;
 

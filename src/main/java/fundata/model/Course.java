@@ -38,7 +38,7 @@ public class Course {
     @Column(name = "registerNum")
     private int registerNum;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     private Set<Dataer> dataers = new HashSet<>();
 
     @ManyToOne
