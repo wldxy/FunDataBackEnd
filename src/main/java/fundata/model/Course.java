@@ -1,5 +1,7 @@
 package fundata.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -65,6 +67,7 @@ public class Course {
         this.id = id;
     }
 
+    @JsonBackReference
     public Dataer getHoster() {
         return hoster;
     }
@@ -129,6 +132,7 @@ public class Course {
         this.registerNum = registerNum;
     }
 
+    @JsonBackReference
     public Set<Dataer> getDataers() {
         return dataers;
     }

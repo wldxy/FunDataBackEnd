@@ -1,20 +1,14 @@
 package fundata.control;
 
 import fundata.model.*;
-import fundata.repository.CourseRepository;
 import fundata.service.*;
 import fundata.viewmodel.BCourse;
 import fundata.viewmodel.TopClass;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.*;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -280,4 +274,130 @@ public class CourseController {
         dataerServiceImpl.save(dataer);
         return "true";
     }
+
+
+    // 添加课程
+    @ResponseBody
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    public Map addCourse(@RequestParam String username, @RequestParam String coursename, @RequestParam String des){
+        try{
+            Dataer dataer = dataerServiceImpl.findByDataerName(username);
+            Set<Course> courses = dataer.getHostCourses();
+            Course course = new Course(coursename, dataer, des, 0, "", 0);
+            courseServiceImpl.save(course);
+            courses.add(course);
+            dataer.setHostCourses(courses);
+
+            Map map = new HashMap<>();
+            map.put("course_id", course.getId());
+            map.put("course_name", course.getName());
+            map.put("course_host", course.getHoster().getName());
+            map.put("course_des", course.getDescription());
+
+            return map;
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    // 删除课程
+    @ResponseBody
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    public boolean deleteCourse(@RequestParam String username, @RequestParam Long id){
+        try{
+            courseServiceImpl.deleteCourseById(id);
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // 学生注册课程
+    @ResponseBody
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public boolean registerCourse(@RequestParam String username, @RequestParam Long id){
+        try{
+            Dataer dataer = dataerServiceImpl.findByDataerName(username);
+            Course course = courseServiceImpl.findById(id);
+
+//            Set<Dataer> dataers = course.getDataers();
+//            dataers.add(dataer);
+            course.getDataers().add(dataer);
+
+            courseServiceImpl.save(course);
+
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // 课程详细页面
+    @ResponseBody
+    @RequestMapping(value = "/detail", method = RequestMethod.POST)
+    public Map courseDetail(@RequestParam Long id){
+        try{
+            Course course = courseServiceImpl.findById(id);
+
+            Map map = new HashMap<>();
+            Map stepmap = StepMap(id);
+            Map qamap = question(id);
+
+            map.put("course_id", course.getId());
+            map.put("course_name", course.getName());
+            map.put("course_overview", course.getOverview());
+            map.put("course_steps", stepmap);
+            map.put("course_qa", qamap);
+
+            return map;
+
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    // 获取dataer创建的课程和参加的课程
+    @ResponseBody
+    @RequestMapping(value = "/mycourses", method = RequestMethod.POST)
+    public Map myCourses(@RequestParam String username){
+        try{
+            Dataer dataer = dataerServiceImpl.findByDataerName(username);
+
+            Map map = new HashMap<>();
+            Map myPcourses = new HashMap<>();
+            Map myHcourses = new HashMap<>();
+
+            myPcourses.put("join_courses", dataer.getCourses());
+            myHcourses.put("host_courses", dataer.getHostCourses());
+
+            map.put("join", myPcourses);
+            map.put("host", myHcourses);
+
+            return map;
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    // 修改overview
+    @ResponseBody
+    @RequestMapping(value = "/editoverview", method = RequestMethod.POST)
+    public boolean editOverview(@RequestParam Long id, @RequestParam String content){
+        try{
+            Course course = courseServiceImpl.findById(id);
+            course.setOverview(content);
+
+            courseServiceImpl.save(course);
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }

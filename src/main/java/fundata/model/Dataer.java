@@ -1,7 +1,6 @@
 package fundata.model;
 
 import javax.persistence.*;
-import javax.xml.crypto.Data;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -49,7 +48,7 @@ public class Dataer {
     @OneToMany(mappedBy = "dataer")
     private Set<Accurate> accurates = new HashSet<>();
 
-    @OneToMany(mappedBy = "dataers", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "dataers", cascade = CascadeType.ALL)
     private Set<Course> courses = new HashSet<>();
 
     @OneToMany(mappedBy = "hoster", cascade = CascadeType.ALL)
