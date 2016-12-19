@@ -56,65 +56,6 @@ public class CourseController {
         return bc;
     }
 
-    /*
-    * 注册课程
-    * */
-    @ResponseBody
-    @RequestMapping(value = "/add/{courseId}/{courseName}/{description}/{teacher}/{overview}",method = RequestMethod.POST)
-    public boolean registerCourse(@PathVariable String courseName,
-                                  @PathVariable String description,
-                                  @PathVariable String teacher){
-        try {
-            Dataer dataer = dataerServiceImpl.findByDataerName(teacher);
-            courseServiceImpl.save(new Course(courseName, dataer, description,  0, "", 0));
-            return true;
-        }catch (Exception e){
-            return false;
-        }
-    }
-
-    /*
-    * 删除课程
-    * */
-    @ResponseBody
-    @RequestMapping(value = "/delete/{courseId}",method = RequestMethod.GET)
-    public boolean deleteCourse(@PathVariable Long courseId){
-        try {
-            courseServiceImpl.deleteCourseById(courseId);
-            return true;
-        }catch (Exception e){
-            return false;
-        }
-    }
-
-    /*
-    * 添加step
-    * */
-//    @ResponseBody
-//    @RequestMapping(value = "/{courseId}/step{num}/{stepname}/{content}",method = RequestMethod.GET)
-//    public boolean addStep(@PathVariable Long courseId,@PathVariable String num,@PathVariable String stepname,@PathVariable String content){
-//       try {
-//           int number = Integer.parseInt(num);
-//           if(number > courseServiceImpl.getStepNum(courseId)){
-//               /*设置step内容*/
-//               Step step = new Step();
-//               step.setStepname(stepname);
-//               step.setContent(content);
-//               int key = Integer.parseInt(courseId.toString()+ num);
-//               step.setStepid(key);
-//               /*找到对应course*/
-//               Course course = courseServiceImpl.findById(courseId);
-//               step.setCourse(course);
-//               stepServiceImpl.save(step);
-//               courseServiceImpl.increaseStep(courseId);
-//           }else {
-//               stepServiceImpl.updateStepContent(content,number);
-//           }
-//           return true;
-//       }catch (Exception ex){
-//           return false;
-//       }
-//    }
 
     /*添加问题*/
     @ResponseBody
@@ -174,25 +115,6 @@ public class CourseController {
         return time;
     }
 
-    /*
-    * 返回courseDetail
-    * */
-    @ResponseBody
-    @RequestMapping("/{courseId}/{courseName}/detail")
-    public Map course_detail(@PathVariable Long courseId,@PathVariable String courseName){
-        Course course = courseServiceImpl.findById(courseId);
-        Map wrapper = new HashMap();
-        Map stepmap = StepMap(courseId);
-        Map questionmap = question(courseId);
-        wrapper.put("course_id",courseId);
-        wrapper.put("course_name",courseName);
-        wrapper.put("course_overview",course.getOverview());
-        wrapper.put("course_steps",stepmap);
-        wrapper.put("course_qa",questionmap);
-        Map total = new HashMap();
-        total.put("course_detail",wrapper);
-        return total;
-    }
 
     private Map question(Long courseId){
         HashMap course_qas = new HashMap();
@@ -263,18 +185,6 @@ public class CourseController {
         }
         course_steps.put("course_steps",stepList);
         return course_steps;
-    }
-
-
-    @ResponseBody
-    @RequestMapping("/Insert")
-    public String insert(){
-        Dataer dataer = new Dataer();
-        dataer.setName("hongjiayong");
-        dataer.setEmail("3@163.com");
-        dataer.setPassword("fgfdgs");
-        dataerServiceImpl.save(dataer);
-        return "true";
     }
 
 
