@@ -17,6 +17,7 @@ import java.util.*;
 /**
  * Created by ocean on 16-12-1.
  */
+
 @RestController
 @RequestMapping("/dataset")
 public class DatasetController {
@@ -204,7 +205,7 @@ public class DatasetController {
 
     @RequestMapping("/getDemoContent")
     public DatasetContent getDatasetTitle(@RequestParam(value = "datasetname") String datesetName,
-//                                          @RequestParam(value = "page") Integer page,
+//                                        @RequestParam(value = "page") Integer page,
                                           @RequestParam(value = "username") String username) {
         DatasetContent datasetContent = new DatasetContent();
 
