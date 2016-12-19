@@ -3,9 +3,13 @@ package fundata.control;
 import fundata.model.*;
 import fundata.repository.DataFileRepository;
 import fundata.service.*;
+import fundata.viewmodel.BCourse;
+import fundata.viewmodel.TopClass;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -31,6 +35,19 @@ public class CourseController {
     @Autowired
     AnswerServiceImpl answerServiceImpl;
 
+
+    @ResponseBody
+    @RequestMapping("/boutique_course/more/{pagenum}")
+    public BCourse boutique_course(@PathVariable int pagenum/*,@PageableDefault(page = size = 1,sort = "registerNum",direction = Sort.Direction.DESC)Pageable pageable*/)throws IOException{
+        BCourse bc = new BCourse();
+        List<TopClass> topClasses = new ArrayList<TopClass>();
+        List<Course> courses = courseServiceImpl.findHotest(new PageRequest(pagenum,8));
+        for (int i = 0;i < courses.size();++i) {
+            topClasses.add(new TopClass(courses.get(i).getId(),courses.get(i).getName(),i,courses.get(i).getRegisterNum(),courses.get(i).getHoster().getName()));
+        }
+        bc.setBoutique_course(topClasses);
+        return bc;
+    }
 
     /*添加问题*/
     @ResponseBody
