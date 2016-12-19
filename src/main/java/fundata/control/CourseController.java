@@ -73,17 +73,15 @@ public class CourseController {
 
     /*添加问题的回答*/
     @ResponseBody
-    @RequestMapping("/answer/{userid}/{courseId}/q{numq}/a{numa}/{courseName}/{content}")
-    public boolean add_answer(@PathVariable Long userid,@PathVariable Long courseId,@PathVariable String numq,@PathVariable String numa,@PathVariable String courseName,@PathVariable String content){
+    @RequestMapping(value = "/answer", method = RequestMethod.POST)
+    public boolean add_answer(@RequestParam String username, @RequestParam Long questionId, @RequestParam String content){
         try{
-            Long question_id = Long.parseLong(userid.toString()+ courseId.toString()+ numq);
-            Question question = questionServiceImpl.findById(question_id);
+            Question question = questionServiceImpl.findById(questionId);
             if (!question.getAnswered()) {
                 question.setAnswered(true);
                 questionServiceImpl.save(question);
             }
             Answer answer = new Answer();
-            answer.setId(Long.parseLong(userid.toString() + courseId.toString() + numq + numa));
             answer.setCreatetime(getCurrentTime());
             answer.setContent(content);
             answer.setQuestion(question);
