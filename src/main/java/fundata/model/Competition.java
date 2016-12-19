@@ -1,5 +1,7 @@
 package fundata.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -98,6 +100,7 @@ public class Competition {
         this.registerNum = registerNum;
     }
 
+    @JsonBackReference
     public Set<Dataer> getDataers() {
         return dataers;
     }
@@ -122,6 +125,7 @@ public class Competition {
         this.endtime = endtime;
     }
 
+    @JsonBackReference
     public Set<Commentcomp> getCommentComps() {
         return commentComps;
     }
@@ -130,6 +134,7 @@ public class Competition {
         this.commentComps = commentComps;
     }
 
+    @JsonBackReference
     public Dataer getHoster() {
         return hoster;
     }

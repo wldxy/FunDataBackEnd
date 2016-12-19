@@ -1,6 +1,8 @@
 package fundata.model;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,6 +23,7 @@ public class Dataset {
     private String name;
 
     @ManyToMany(mappedBy = "datasets")
+    @JsonBackReference
     private Set<Dataer> dataers = new HashSet<>();
 
     @Column(name = "description")

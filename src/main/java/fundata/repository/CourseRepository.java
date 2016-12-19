@@ -24,6 +24,9 @@ public interface CourseRepository extends JpaRepository<Course,Long> {
     @Query("select c.step from Course c where c.id = ?1")
     int getStepNum(Long id);
 
+    @Query("select u from Course u where u.name like ?1")
+    Set<Course> findLikeName(String name);
+
     @Query("select c from Course c order by c.registerNum DESC")
     List<Course> findHotest(Pageable pagable);
 

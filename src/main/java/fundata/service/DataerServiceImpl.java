@@ -39,5 +39,10 @@ public class DataerServiceImpl implements DataerService {
         return dataerRepository.findByUserName(dataerName);
     }
 
+    @Override
+    public Set<Dataer> findLikeName(String dataerName) {
+        return dataerRepository.findLikeName(dataerName);
+    }
+
 
 }

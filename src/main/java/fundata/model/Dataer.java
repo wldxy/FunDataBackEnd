@@ -1,5 +1,8 @@
 package fundata.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -25,6 +28,7 @@ public class Dataer {
     private String name;
 
     @Column(name = "role")
+    @JsonBackReference
     private Integer user_flag;
 
     @Column(name = "head_href")

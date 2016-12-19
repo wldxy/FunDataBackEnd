@@ -30,7 +30,12 @@ public class CompetitionServiceImpl implements CompetitionService {
         return competitionRepostiory.findById(id);
     }
 
-   // @Override
+    @Override
+    public Set<Competition> findLikeName(String name) {
+        return competitionRepostiory.findLikeName(name);
+    }
+
+    // @Override
    // public Dataer findHost(Competition competition) {
       //  return competitionRepostiory.findByDataer(competition);
  //   }

@@ -7,9 +7,7 @@ import fundata.repository.DatasetTitleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by ocean on 16-12-1.
@@ -37,6 +35,11 @@ public class DatasetServiceImpl implements DatasetService {
         Dataer dataer = dataerRepository.findByUserName(userName);
 
         return dataer.getDatasets();
+    }
+
+    @Override
+    public Set<Dataset> findLikeName(String name) {
+        return datasetRepository.findLikeName(name);
     }
 
 //    @Override

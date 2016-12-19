@@ -16,6 +16,8 @@ public interface CompetitionService {
 
     Competition findById(Long id);
 
+
+    Set<Competition> findLikeName(String name);
   //  Dataer findHost(Competition competition);
    // Set<Dataer> findContester(Competition competition);
     Page<Competition> findAll(Pageable pageable);

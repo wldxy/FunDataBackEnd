@@ -17,4 +17,6 @@ public interface DataerService {
     Dataer findByHostcompetition(Competition competition);
 
     Dataer findByDataerName(String dataerName);
+
+    Set<Dataer> findLikeName(String dataerName);
 }

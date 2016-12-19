@@ -35,6 +35,11 @@ public class CourseServiceImpl implements CourseService{
     }
 
     @Override
+    public Set<Course> findLikeName(String course_name) {
+        return courseRepository.findLikeName(course_name);
+    }
+
+    @Override
     public Course findById(Long id) {
         return courseRepository.findById(id);
     }
