@@ -1,7 +1,10 @@
 package fundata.control;
 
+import fundata.model.DataFile;
 import fundata.model.Dataer;
+import fundata.repository.DataFileRepository;
 import fundata.repository.DataerRepository;
+import fundata.service.QiniuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +18,12 @@ import java.util.Map;
 public class DataerController {
     @Autowired
     DataerRepository dataerRepository;
+
+    @Autowired
+    DataFileRepository dataFileRepository;
+
+    @Autowired
+    QiniuService qiniuService;
 
     @RequestMapping("/authorize/register")
     public Map<String, String> add(@RequestParam(name = "email") String email,
@@ -72,6 +81,7 @@ public class DataerController {
         }
     }
 
+    // 修改密码
     @ResponseBody
     @RequestMapping(value = "/authorize/edit", method = RequestMethod.POST)
     public boolean editProfile(@RequestParam String username, @RequestParam String oldpwd, @RequestParam String newpwd){
@@ -88,6 +98,43 @@ public class DataerController {
             e.printStackTrace();
             return false;
         }
+    }
+
+    // 修改头像
+    @ResponseBody
+    @RequestMapping(value = "/authorize/confirmImg",method = RequestMethod.POST)
+    public Map confirmImg(@RequestParam(name = "key") String key,
+                              @RequestParam(name = "username") String username){
+        System.out.println("===============");
+        System.out.println("Img  "+key+" is confirmed");
+        System.out.println("===============");
+
+        Long fileid = Long.parseLong(key.substring(0, key.lastIndexOf('.')));
+        DataFile dataFile = dataFileRepository.findById(fileid);
+
+        Map map = new HashMap<>();
+
+        if (dataFile == null) {
+            map.put("flag", false);
+            return map;
+        }
+
+        Dataer dataer = dataerRepository.findByUserName(username);
+        if (dataer == null) {
+            map.put("flag", false);
+            return map;
+        }
+
+        String url = qiniuService.createDownloadUrl(dataFile);
+
+        dataer.setHead_href(url);
+        dataerRepository.save(dataer);
+
+        map.put("flag", true);
+        map.put("url", url);
+
+        return map;
+
     }
 
 }
