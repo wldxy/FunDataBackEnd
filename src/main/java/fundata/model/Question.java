@@ -11,6 +11,7 @@ import java.util.Set;
 @Table(name = "question")
 public class Question {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id",nullable = false)
     private Long id;
 
@@ -34,8 +35,6 @@ public class Question {
 
     @OneToMany
     private Set<Answer> answers = new HashSet<>();
-
-
 
 
     public boolean getAnswered() {

@@ -7,7 +7,6 @@ import fundata.viewmodel.BCourse;
 import fundata.viewmodel.TopClass;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -38,12 +37,6 @@ public class CourseController {
 
 
     @ResponseBody
-    @RequestMapping("/screen_hot_course")
-    public List<Course> screen_hot_course(Model model) throws IOException{
-        return courseServiceImpl.findHotest(new PageRequest(0,5));
-    }
-
-    @ResponseBody
     @RequestMapping("/boutique_course/more/{pagenum}")
     public BCourse boutique_course(@PathVariable int pagenum/*,@PageableDefault(page = size = 1,sort = "registerNum",direction = Sort.Direction.DESC)Pageable pageable*/)throws IOException{
         BCourse bc = new BCourse();
@@ -59,21 +52,18 @@ public class CourseController {
 
     /*添加问题*/
     @ResponseBody
-    @RequestMapping("/question/{userid}/{courseId}/q{num}/{courseMame}/{content}")
-    public boolean add_question(@PathVariable Long userid,@PathVariable Long courseId,@PathVariable String courseMame,@PathVariable String content,@PathVariable String num){
+    @RequestMapping(value = "/addquestion", method = RequestMethod.POST)
+    public boolean add_question(@RequestParam String username, @RequestParam Long courseId, @RequestParam String content){
         try{
             String time = getCurrentTime();
             Course course = courseServiceImpl.findById(courseId);
-            Dataer dataer = dataerServiceImpl.findById(userid);
+            Dataer dataer = dataerServiceImpl.findByDataerName(username);
             Question question = new Question();
-            Long key = Long.parseLong(userid.toString()+ courseId.toString()+ num);
-            question.setId(key);
-            question.setDataer(dataer);
-            question.setCourse(course);
             question.setUpdatetime(time);
             question.setCreatetime(time);
             question.setContent(content);
-            question.setAnswered(false);
+            question.setDataer(dataer);
+            question.setCourse(course);
             questionServiceImpl.save(question);
             return true;
         }catch (Exception e) {
@@ -130,6 +120,7 @@ public class CourseController {
             HashMap total = new HashMap();
             HashMap questionMap = new HashMap();
             questionMap.put("question_id",q.getId());
+            questionMap.put("head_href", q.getDataer().getHead_href());
             questionMap.put("question_owner_name",q.getDataer().getName());
             questionMap.put("question_owner_id",q.getDataer().getId());
             questionMap.put("question_createtime",q.getCreatetime());
@@ -148,6 +139,7 @@ public class CourseController {
                     answerMap.put("answer_id",a.getId());
                     answerMap.put("answer_owner_name",a.getQuestion().getDataer().getName());
                     answerMap.put("answer_owner_id",a.getQuestion().getDataer().getId());
+                    answerMap.put("head_href", a.getQuestion().getDataer().getHead_href());
                     answerMap.put("answer_time",a.getCreatetime());
                     answerMap.put("answer_content",a.getContent());
                     question_answer.add(answerMap);
@@ -365,15 +357,35 @@ public class CourseController {
             step.setStepname(name);
             step.setContent(content);
             step.setCourse(course);
+            step.setPictureUrl("http://localhost:3000/images/loginbg.jpg");
             //step.setPictureUrl("dsf");
             stepServiceImpl.save(step);
             Map map = new HashMap();
             map.put("step_id", step.getStepid());
             map.put("step_header", step.getStepname());
+            map.put("step_content", step.getContent());
+            map.put("step_pic_url", step.getPictureUrl());
             return map;
         }catch (Exception e){
             e.printStackTrace();;
             return null;
+        }
+    }
+
+    // 修改step的文字信息
+    @ResponseBody
+    @RequestMapping(value = "editstepcontent", method = RequestMethod.POST)
+    public boolean editStepContent(@RequestParam Long id, @RequestParam String content){
+        try{
+            Step step = stepServiceImpl.findById(id);
+
+            step.setContent(content);
+            stepServiceImpl.save(step);
+
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
         }
     }
 
