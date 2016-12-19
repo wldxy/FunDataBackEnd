@@ -71,9 +71,11 @@ public class DatasetController {
                 });
                 temp.put("time", pullRequest.getUpdatetime());
                 temp.put("username", pullRequest.getDataer().getName());
+                temp.put("type", pullRequest.getStatus());
             } else {
                 temp.put("time", "");
                 temp.put("username", "");
+                temp.put("type", "");
             }
             dataset.add(temp);
         }
