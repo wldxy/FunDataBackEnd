@@ -8,6 +8,7 @@ import fundata.service.QiniuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.MessageDigest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,7 +49,7 @@ public class DataerController {
 
     @RequestMapping(value = "/authorize/login", method = RequestMethod.POST)
     public Map<String, String> checkLoginByName(@RequestParam(value = "email") String email,
-                                    @RequestParam(value = "pwd") String password) {
+                                                @RequestParam(value = "pwd") String password) {
         Dataer user = dataerRepository.findByUserEmail(email);
         Map<String, String> map = new HashMap<>();
         if (user == null) {
@@ -84,7 +85,9 @@ public class DataerController {
     // 修改密码
     @ResponseBody
     @RequestMapping(value = "/authorize/edit", method = RequestMethod.POST)
-    public boolean editProfile(@RequestParam String username, @RequestParam String oldpwd, @RequestParam String newpwd){
+    public boolean editProfile(@RequestParam String username,
+                               @RequestParam String oldpwd,
+                               @RequestParam String newpwd){
         try{
             Dataer dataer = dataerRepository.findByUserName(username);
             if (dataer.getPassword().equals(oldpwd)){
@@ -104,7 +107,7 @@ public class DataerController {
     @ResponseBody
     @RequestMapping(value = "/authorize/confirmImg",method = RequestMethod.POST)
     public Map confirmImg(@RequestParam(name = "key") String key,
-                              @RequestParam(name = "username") String username){
+                          @RequestParam(name = "username") String username){
         System.out.println("===============");
         System.out.println("Img  "+key+" is confirmed");
         System.out.println("===============");

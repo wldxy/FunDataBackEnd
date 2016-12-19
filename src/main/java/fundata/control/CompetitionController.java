@@ -437,8 +437,11 @@ public class CompetitionController {
     //修改比赛
     @ResponseBody
     @RequestMapping("/modifyCompetition")
-    public boolean modify(@RequestParam(name = "compId")Long compId,@RequestParam(name = "com_name")String comp_name,@RequestParam(name = "com_des")String com_des,
-                          @RequestParam(name = "com_start_time")String start_time,@RequestParam(name = "com_end_time")String endtime/*TODO:com_download,answer*/){
+    public boolean modify(@RequestParam(name = "compId")Long compId,
+                          @RequestParam(name = "com_name")String comp_name,
+                          @RequestParam(name = "com_des")String com_des,
+                          @RequestParam(name = "com_start_time")String start_time,
+                          @RequestParam(name = "com_end_time")String endtime/*TODO:com_download,answer*/){
         try{
             Competition competition = competitionServiceImpl.findById(compId);
             competition.setName(comp_name);

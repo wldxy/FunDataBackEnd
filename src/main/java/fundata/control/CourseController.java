@@ -38,7 +38,11 @@ public class CourseController {
 
     @ResponseBody
     @RequestMapping("/boutique_course/more/{pagenum}")
+<<<<<<< HEAD
     public BCourse boutique_course(@PathVariable int pagenum/*,@PageableDefault(page = size = 1,sort = "registerNum",direction = Sort.Direction.DESC)Pageable pageable*/)throws IOException{
+=======
+    public BCourse boutique_course(@PathVariable int pagenum/*,@PageableDefault(page = size = 1,sort = "registerNum",direction = Sort.Direction.DESC)Pageable pageable*/)throws IOException {
+>>>>>>> 08754efb0616ea564eee8c79277aafdf9ee152cc
         BCourse bc = new BCourse();
         List<TopClass> topClasses = new ArrayList<TopClass>();
         List<Course> courses = courseServiceImpl.findHotest(new PageRequest(pagenum,8));
@@ -49,10 +53,16 @@ public class CourseController {
         return bc;
     }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 08754efb0616ea564eee8c79277aafdf9ee152cc
     /*添加问题*/
     @ResponseBody
     @RequestMapping(value = "/addquestion", method = RequestMethod.POST)
-    public boolean add_question(@RequestParam String username, @RequestParam Long courseId, @RequestParam String content){
+    public boolean add_question(@RequestParam String username,
+                                @RequestParam Long courseId,
+                                @RequestParam String content){
         try{
             String time = getCurrentTime();
             Course course = courseServiceImpl.findById(courseId);
@@ -180,7 +190,9 @@ public class CourseController {
     // 添加课程
     @ResponseBody
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public Map addCourse(@RequestParam String username, @RequestParam String coursename, @RequestParam String des){
+    public Map addCourse(@RequestParam String username,
+                         @RequestParam String coursename,
+                         @RequestParam String des){
         try{
             Dataer dataer = dataerServiceImpl.findByDataerName(username);
             Set<Course> courses = dataer.getHostCourses();
@@ -205,7 +217,8 @@ public class CourseController {
     // 删除课程
     @ResponseBody
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    public boolean deleteCourse(@RequestParam String username, @RequestParam Long id){
+    public boolean deleteCourse(@RequestParam String username,
+                                @RequestParam Long id){
         try{
             courseServiceImpl.deleteCourseById(id);
             return true;
@@ -331,7 +344,8 @@ public class CourseController {
     // 修改overview
     @ResponseBody
     @RequestMapping(value = "/editoverview", method = RequestMethod.POST)
-    public boolean editOverview(@RequestParam Long id, @RequestParam String content){
+    public boolean editOverview(@RequestParam Long id,
+                                @RequestParam String content){
         try{
             Course course = courseServiceImpl.findById(id);
             course.setOverview(content);
@@ -347,7 +361,9 @@ public class CourseController {
     //add step
     @ResponseBody
     @RequestMapping(value = "/addstep", method = RequestMethod.POST)
-    public Map addStep(@RequestParam Long id, @RequestParam String name, @RequestParam String content){
+    public Map addStep(@RequestParam Long id,
+                       @RequestParam String name,
+                       @RequestParam String content){
         try{
             Course course = courseServiceImpl.findById(id);
             Step step = new Step();
@@ -371,8 +387,9 @@ public class CourseController {
 
     // 修改step的文字信息
     @ResponseBody
-    @RequestMapping(value = "editstepcontent", method = RequestMethod.POST)
-    public boolean editStepContent(@RequestParam Long id, @RequestParam String content){
+    @RequestMapping(value = "/editstepcontent", method = RequestMethod.POST)
+    public boolean editStepContent(@RequestParam Long id,
+                                   @RequestParam String content){
         try{
             Step step = stepServiceImpl.findById(id);
 
@@ -395,7 +412,9 @@ public class CourseController {
     // step上传图片
     @ResponseBody
     @RequestMapping(value = "/confirmsteppic", method = RequestMethod.POST)
-    public Map confirmStepPic(@RequestParam String key, @RequestParam Long stepId, @RequestParam Long courseId){
+    public Map confirmStepPic(@RequestParam String key,
+                              @RequestParam Long stepId,
+                              @RequestParam Long courseId){
         System.out.println("===============");
         System.out.println("Step pic "+key+" is confirmed");
         System.out.println("===============");
