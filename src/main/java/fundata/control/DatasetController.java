@@ -2,6 +2,7 @@ package fundata.control;
 
 import fundata.model.*;
 import fundata.repository.DataFileRepository;
+import fundata.repository.DatasetRepository;
 import fundata.repository.FileProperties;
 import fundata.service.*;
 import fundata.viewmodel.DSCommentView;
@@ -40,6 +41,44 @@ public class DatasetController {
 
     @Autowired
     DatasetTitleService datasetTitleService;
+
+    @Autowired
+    DatasetRepository datasetRepository;
+
+    @RequestMapping("/getDataset")
+    public Map getDataset() {
+        List<Dataset> datasets = datasetRepository.findAll();
+
+        Map map = new HashMap();
+
+        List<Map> dataset = new ArrayList<>();
+        for (Dataset d : datasets) {
+            Map temp = new HashMap();
+            temp.put("url", "http://4493bz.1985t.com/uploads/allimg/150127/4-15012G52133.jpg");
+            temp.put("name", d.getName());
+            temp.put("filenum", d.getPullRequests().size());
+
+            Set<PullRequest> pullRequests = d.getPullRequests();
+
+            if (pullRequests.size() != 0) {
+                PullRequest pullRequest = Collections.max(pullRequests, new Comparator<PullRequest>() {
+                    @Override
+                    public int compare(PullRequest o1, PullRequest o2) {
+                        return o1.getUpdatetime().compareTo(o2.getUpdatetime());
+                    }
+                });
+                temp.put("time", pullRequest.getUpdatetime());
+                temp.put("username", pullRequest.getDataer().getName());
+            } else {
+                temp.put("time", "");
+                temp.put("username", "");
+            }
+            dataset.add(temp);
+        }
+
+        map.put("datasets", dataset);
+        return map;
+    }
 
     @RequestMapping("/createDataset")
     public boolean createDataset(@RequestParam(value = "username") String username,
@@ -129,7 +168,6 @@ public class DatasetController {
 //            return null;
 //        }
 //    }
-
 
     @RequestMapping("/getMyContribute")
     public Map getMyContribute(@RequestParam("username") String username) {
