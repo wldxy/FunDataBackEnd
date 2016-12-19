@@ -12,6 +12,7 @@ import java.util.Set;
  */
 public interface CourseService {
     Set<Course> findByName(String course_name);
+    Set<Course> findLikeName(String course_name);
     Course findById(Long id);
     void save(Course course);
     void deleteCourseById(Long id);

@@ -14,6 +14,8 @@ import java.util.Set;
 public interface DatasetService {
     Set<Dataset> findByUserName(String username);
 
+    Set<Dataset> findLikeName(String username);
+
     void addDataset(String username, String datasetname, String desc);
 
     Set<DatasetTitle> getDatasetTitle(String datasetName);
@@ -27,6 +29,7 @@ public interface DatasetService {
     Dataset findByDatasetName(String datasetName);
 
     void save(Dataset dataset);
+
 
 //    List<Dataset> findAll();
 }
