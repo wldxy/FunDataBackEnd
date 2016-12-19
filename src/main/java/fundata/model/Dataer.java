@@ -18,7 +18,7 @@ public class Dataer {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "password", length = 20, nullable = false)
+    @Column(name = "password", length = 2048, nullable = false)
     private String password;
 
     @Column(name = "email", length = 100, nullable = false)
