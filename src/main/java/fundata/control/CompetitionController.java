@@ -9,10 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -43,6 +40,18 @@ public class CompetitionController {
         Date endDate = sdf.parse(competition.getEndtime());
         Date now = new Date();
         return startDate.compareTo(now) <= 0 && now.compareTo(endDate) <= 0;
+    }
+
+    public boolean compareTime(String time1, String time2) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date data1 = sdf.parse(time1);
+        Date data2 = sdf.parse(time2);
+
+        if (data1.compareTo(data2) <= 0){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     /*添加竞赛*/
@@ -254,9 +263,6 @@ public class CompetitionController {
         detail.put("com_id",competition.getId());
         detail.put("com_name",competition.getName());
         detail.put("com_des",competition.getDes());
-        /*
-        * TODO:com_format_des  detail.put("com_format_des",....)
-        * */
         detail.put("com_owner_id",competition.getHoster().getId());
         detail.put("com_owner_name",competition.getHoster().getName());
         detail.put("com_start_time",competition.getStarttime());
@@ -455,6 +461,62 @@ public class CompetitionController {
         }
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/editname", method = RequestMethod.POST)
+    public boolean editName(@RequestParam String name, @RequestParam Long id){
+        try{
+            Competition competition = competitionServiceImpl.findById(id);
+            competition.setName(name);
+            competitionServiceImpl.save(competition);
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/editdes", method = RequestMethod.POST)
+    public boolean editDes(@RequestParam String des, @RequestParam Long id){
+        try{
+            Competition competition = competitionServiceImpl.findById(id);
+            competition.setDes(des);
+            competitionServiceImpl.save(competition);
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/editstarttime", method = RequestMethod.POST)
+    public boolean editStartTime(@RequestParam String time, @RequestParam Long id){
+        try{
+            Competition competition = competitionServiceImpl.findById(id);
+            competition.setStarttime(time);
+            competitionServiceImpl.save(competition);
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/editendtime", method = RequestMethod.POST)
+    public boolean editEndTime(@RequestParam String time, @RequestParam Long id){
+        try{
+            Competition competition = competitionServiceImpl.findById(id);
+            competition.setEndtime(time);
+            competitionServiceImpl.save(competition);
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     //加入评论
     @ResponseBody
     @RequestMapping("/comment/add")
@@ -594,10 +656,24 @@ public class CompetitionController {
         //Page<Accurate> accuratePage = accurateServiveImpl.findAll(pageable);
         Dataer dataer = dataerServiceImpl.findByDataerName(username);
         Set<Accurate> accuratePage = dataer.getAccurates();
+        ArrayList<Accurate> accurates = new ArrayList<>();
+        for (Accurate a : accuratePage){
+            accurates.add(a);
+        }
+
+        for (int i = 0; i < accurates.size() - 1; i++){
+            for (int k = i + 1; k < accurates.size(); k++){
+                if (compareTime(accurates.get(i).getUploadDate(), accurates.get(k).getUploadDate())){
+                    Accurate temp = accurates.get(i);
+                    accurates.set(i, accurates.get(k));
+                    accurates.set(k, temp);
+                }
+            }
+        }
         List<Map> mapList = new ArrayList<>();
         Competition competition = competitionServiceImpl.findById(compId);
         if(isActive(competition) && competition.getDataers().contains(dataer)){
-            for (Accurate a: accuratePage) {
+            for (Accurate a: accurates) {
                 Map temp = new HashMap();
                 temp.put("user_id",a.getDataer().getId());
                 temp.put("value",a.getValue());
