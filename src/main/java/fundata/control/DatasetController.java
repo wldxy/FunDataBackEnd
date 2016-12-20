@@ -219,7 +219,20 @@ public class DatasetController {
         } else {
             datasetContent.setAdmin(0);
         }
-        datasetContent.setContribute(0);
+        String url = fileProperties.getDatasetPath() + datesetName + ".csv";
+        datasetContent.setUrl(url);
+
+        int count = 0;
+        Set<PullRequest> pullRequests = dataset.getPullRequests();
+        if (pullRequests != null) {
+            for (PullRequest pullRequest : pullRequests) {
+                if (pullRequest.getStatus() == 1) {
+                    count++;
+                }
+            }
+        }
+
+        datasetContent.setContribute(count);
         datasetContent.setDescription(dataset.getDescription());
 
         Set<DatasetTitle> datasetTitles = dataset.getDatasetTitles();

@@ -15,6 +15,8 @@ public class DatasetContent {
 
     private Integer count;
 
+    private String url;
+
     private List<Content> content = new ArrayList<>();
 
     public DatasetContent() { }
@@ -61,6 +63,14 @@ public class DatasetContent {
 
     public void setContent(List<Content> content) {
         this.content = content;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }
 

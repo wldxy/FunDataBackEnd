@@ -1,13 +1,19 @@
 package fundata.service;
 
+import com.csvreader.CsvReader;
+import com.csvreader.CsvWriter;
 import fundata.model.*;
-import fundata.repository.DataerRepository;
-import fundata.repository.DatasetRepository;
-import fundata.repository.DatasetTitleRepository;
+import fundata.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by ocean on 16-12-1.
@@ -103,5 +109,65 @@ public class DatasetServiceImpl implements DatasetService {
     public void save(Dataset dataset) {
         datasetRepository.save(dataset);
     }
+
+    @Autowired
+    QiniuService qiniuService;
+
+    @Autowired
+    FileProperties fileProperties;
+
+    @Autowired
+    DataFileRepository dataFileRepository;
+
+    @Override
+    public void combineDataset(String datasetName) {
+//        DataFile dataFile = new DataFile();
+//        dataFile.setName(datasetName + ".csv");
+//        dataFile.setUpdateTime(new Date());
+//        dataFileRepository.save(dataFile);
+//
+        Dataset dataset = datasetRepository.findByDatasetName(datasetName);
+
+        List<String> files = new ArrayList<>();
+        for (PullRequest pullRequest : dataset.getPullRequests()) {
+            if (pullRequest.getStatus() == 1) {
+                String url = qiniuService.downloadFile(pullRequest.getDataFile(), fileProperties.getDatasetPath());
+                files.add(url);
+            }
+        }
+
+        String writeUrl = fileProperties.getDatasetPath() + datasetName + ".csv";
+        CsvWriter csvWriter = new CsvWriter(writeUrl, ',', Charset.forName("UTF-8"));
+
+        Set<DatasetTitle> datasetTitles = dataset.getDatasetTitles();
+        List<String> titles = new ArrayList<>();
+        for (DatasetTitle datasetTitle : datasetTitles) {
+            titles.add(datasetTitle.getTitleName());
+        }
+        String[] tt = (String[]) titles.toArray();
+        try {
+            csvWriter.writeRecord(tt);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        for (String path : files) {
+            CsvReader csvReader = null;
+            try {
+                csvReader = new CsvReader(path, ',', Charset.forName("UTF-8"));
+                csvReader.readRecord();
+                while (csvReader.readRecord()) {
+                    String[] temp = csvReader.getValues();
+                    csvWriter.writeRecord(temp);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            csvReader.close();
+        }
+        csvWriter.close();
+        qiniuService.uploadFile(writeUrl, datasetName + ".csv");
+    }
+
 }
 

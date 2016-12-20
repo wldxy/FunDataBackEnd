@@ -5,6 +5,7 @@ import fundata.model.Dataer;
 import fundata.model.Dataset;
 import fundata.model.DatasetTitle;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Set;
 
@@ -30,6 +31,7 @@ public interface DatasetService {
 
     void save(Dataset dataset);
 
+    void combineDataset(String datasetName) throws FileNotFoundException;
 
 //    List<Dataset> findAll();
 }
