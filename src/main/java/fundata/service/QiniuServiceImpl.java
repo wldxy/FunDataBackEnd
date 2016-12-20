@@ -2,10 +2,13 @@ package fundata.service;
 
 import com.qiniu.common.QiniuException;
 import com.qiniu.common.Zone;
+import com.qiniu.http.Response;
 import com.qiniu.storage.BucketManager;
 import com.qiniu.storage.Configuration;
+import com.qiniu.storage.UploadManager;
 import com.qiniu.util.Auth;
 import fundata.model.DataFile;
+import fundata.model.Dataset;
 import fundata.repository.QiniuProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -62,6 +65,12 @@ public class QiniuServiceImpl implements QiniuService {
     }
 
     @Override
+    public String createDownloadUrl(Dataset dataset) {
+        String url = "http://" + qiniuProperties.getDomain() + "/" + dataset.getName() + ".csv";
+        return url;
+    }
+
+    @Override
     public String createUploadToken() {
         return auth.uploadToken(qiniuProperties.getBucket());
     }
@@ -103,11 +112,11 @@ public class QiniuServiceImpl implements QiniuService {
     }
 
     @Override
-    public void downloadFile(DataFile dataFile, String dir) {
+    public String downloadFile(DataFile dataFile, String dir) {
         String url = createDownloadUrl(dataFile);
         String fileName = dataFile.getName();
         this.downloadFile(url, fileName, dir);
-
+        return url;
 //        try {
 //            URL url = new URL(createDownloadUrl(dataFile));
 //            String fileName = dataFile.getFileName();
@@ -155,6 +164,28 @@ public class QiniuServiceImpl implements QiniuService {
             e.printStackTrace();
         } finally {
             return fileSize;
+        }
+    }
+
+    @Override
+    public void uploadFile(String path, String key) {
+        UploadManager uploadManager = new UploadManager(configuration);
+
+        try {
+            //调用put方法上传
+            Response res = uploadManager.put(path, key, this.createUploadToken());
+            //打印返回的信息
+            System.out.println(res.bodyString());
+        } catch (QiniuException e) {
+            Response r = e.response;
+            // 请求失败时打印的异常的信息
+            System.out.println(r.toString());
+            try {
+                //响应的文本信息
+                System.out.println(r.bodyString());
+            } catch (QiniuException e1) {
+                //ignore
+            }
         }
     }
 }
