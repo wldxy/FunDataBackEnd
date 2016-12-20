@@ -61,6 +61,7 @@ public class DatasetServiceImpl implements DatasetService {
         Dataset dataset = new Dataset(datasetname);
         dataset.setDescription(desc);
         datasetRepository.save(dataset);
+
         dataer.getDatasets().add(dataset);
         dataerRepository.save(dataer);
         System.out.println(datasetname + " success");
@@ -128,6 +129,13 @@ public class DatasetServiceImpl implements DatasetService {
 //
         Dataset dataset = datasetRepository.findByDatasetName(datasetName);
 
+        DataFile dataFile = new DataFile();
+        dataFile.setCreateTime(new Date());
+        dataFileRepository.save(dataFile);
+
+        dataset.setAllFile(dataFile);
+        datasetRepository.save(dataset);
+
         List<String> files = new ArrayList<>();
         for (PullRequest pullRequest : dataset.getPullRequests()) {
             if (pullRequest.getStatus() == 1) {
@@ -136,7 +144,7 @@ public class DatasetServiceImpl implements DatasetService {
             }
         }
 
-        String writeUrl = fileProperties.getDatasetPath() + datasetName + ".csv";
+        String writeUrl = fileProperties.getDatasetPath() + dataFile.getFileid() + ".csv";
         CsvWriter csvWriter = new CsvWriter(writeUrl, ',', Charset.forName("UTF-8"));
 
         Set<DatasetTitle> datasetTitles = dataset.getDatasetTitles();
@@ -144,7 +152,8 @@ public class DatasetServiceImpl implements DatasetService {
         for (DatasetTitle datasetTitle : datasetTitles) {
             titles.add(datasetTitle.getTitleName());
         }
-        String[] tt = (String[]) titles.toArray();
+        String[] tt = new String[titles.size()];
+        titles.toArray(tt);
         try {
             csvWriter.writeRecord(tt);
         } catch (IOException e) {
@@ -163,10 +172,18 @@ public class DatasetServiceImpl implements DatasetService {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            csvReader.close();
+            if (csvReader != null) {
+                csvReader.close();
+            }
         }
         csvWriter.close();
-        qiniuService.uploadFile(writeUrl, datasetName + ".csv");
+
+
+
+        String qiniuUrl = dataFile.getFileid() + ".csv";
+
+        qiniuService.uploadFile(writeUrl, qiniuUrl);
+
     }
 
 }

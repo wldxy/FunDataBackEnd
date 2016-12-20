@@ -44,6 +44,9 @@ public class Dataset {
     @OneToMany(mappedBy = "dataset")
     private Set<DSComment> dsComments = new HashSet<>();
 
+    @OneToOne
+    DataFile allFile;
+
     public Dataset() { }
 
     public Dataset(String name) {
@@ -72,6 +75,14 @@ public class Dataset {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public DataFile getAllFile() {
+        return allFile;
+    }
+
+    public void setAllFile(DataFile allFile) {
+        this.allFile = allFile;
     }
 
     public Set<Dataer> getDataers() {

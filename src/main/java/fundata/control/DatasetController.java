@@ -4,6 +4,7 @@ import fundata.model.*;
 import fundata.repository.DataFileRepository;
 import fundata.repository.DatasetRepository;
 import fundata.repository.FileProperties;
+import fundata.repository.QiniuProperties;
 import fundata.service.*;
 import fundata.viewmodel.DSCommentView;
 import fundata.viewmodel.DatasetContent;
@@ -205,6 +206,9 @@ public class DatasetController {
         return myDataset;
     }
 
+    @Autowired
+    QiniuProperties qiniuProperties;
+
     @RequestMapping("/getDemoContent")
     public DatasetContent getDatasetTitle(@RequestParam(value = "datasetname") String datesetName,
 //                                        @RequestParam(value = "page") Integer page,
@@ -219,7 +223,11 @@ public class DatasetController {
         } else {
             datasetContent.setAdmin(0);
         }
-        String url = fileProperties.getDatasetPath() + datesetName + ".csv";
+
+        String url = "";
+        if (dataset.getAllFile() != null) {
+            url = "http://" + qiniuProperties.getDomain() + "/" + dataset.getAllFile().getFileid() + ".csv";
+        }
         datasetContent.setUrl(url);
 
         int count = 0;

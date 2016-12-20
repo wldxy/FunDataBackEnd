@@ -116,7 +116,7 @@ public class QiniuServiceImpl implements QiniuService {
         String url = createDownloadUrl(dataFile);
         String fileName = dataFile.getName();
         this.downloadFile(url, fileName, dir);
-        return url;
+        return dir + "/" + fileName;
 //        try {
 //            URL url = new URL(createDownloadUrl(dataFile));
 //            String fileName = dataFile.getFileName();
