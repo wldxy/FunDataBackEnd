@@ -1,7 +1,11 @@
 package fundata.control;
 
+import fundata.model.Dataset;
 import fundata.model.PullRequest;
 import fundata.repository.DataerRepository;
+import fundata.repository.DatasetRepository;
+import fundata.repository.PullRequestRepository;
+import fundata.service.DatasetService;
 import fundata.service.PullRequestService;
 import fundata.service.QiniuService;
 import fundata.viewmodel.HotProject;
@@ -14,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Set;
 
@@ -57,10 +62,23 @@ public class PullRequestController {
         return true;
     }
 
+    @Autowired
+    PullRequestRepository pullRequestRepository;
+
+    @Autowired
+    DatasetService datasetService;
+
     @RequestMapping(value = "/confirmRequest", method = RequestMethod.POST)
     public boolean confirmRequest(@RequestParam(name = "confirm") Integer confirm,
                                   @RequestParam(name = "id") Long requestId) {
-        return pullRequestService.setPullRequest(requestId, confirm);
+        pullRequestService.setPullRequest(requestId, confirm);
+        Dataset dataset = pullRequestRepository.findOne(requestId).getDataset();
+        try {
+            datasetService.combineDataset(dataset.getName());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return true;
     }
 
     @RequestMapping(value = "/requestFileConfirm", method = RequestMethod.POST)
