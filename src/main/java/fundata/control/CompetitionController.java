@@ -648,6 +648,47 @@ public class CompetitionController {
     }
 
     //getUserAllAccurate() (Sorted)
+//    @ResponseBody
+//    @RequestMapping("/person/accurate")
+//    public Map getDataerAllAccurate(@RequestParam(name = "username")String username,
+//                                    @RequestParam(name = "compId")Long compId) throws ParseException {
+//        //Pageable pageable = new PageRequest(page,1,new Sort(Sort.Direction.DESC,"value"));
+//        //Page<Accurate> accuratePage = accurateServiveImpl.findAll(pageable);
+//        Dataer dataer = dataerServiceImpl.findByDataerName(username);
+//        Set<Accurate> accuratePage = dataer.getAccurates();
+//        ArrayList<Accurate> accurates = new ArrayList<>();
+//        for (Accurate a : accuratePage){
+//            accurates.add(a);
+//        }
+//
+//        for (int i = 0; i < accurates.size() - 1; i++){
+//            for (int k = i + 1; k < accurates.size(); k++){
+//                if (compareTime(accurates.get(i).getUploadDate(), accurates.get(k).getUploadDate())){
+//                    Accurate temp = accurates.get(i);
+//                    accurates.set(i, accurates.get(k));
+//                    accurates.set(k, temp);
+//                }
+//            }
+//        }
+//        List<Map> mapList = new ArrayList<>();
+//        Competition competition = competitionServiceImpl.findById(compId);
+//        if(isActive(competition) && competition.getDataers().contains(dataer)){
+//            for (Accurate a: dataer.getAccurates()) {
+////                Set<Dataer> dataers = competition.getDataers();
+////                for (Dataer d : dataers){
+////                    d.getAccurates().contains(a);
+//                    Map temp = new HashMap();
+//                    temp.put("user_id",a.getDataer().getId());
+//                    temp.put("value",a.getValue());
+//                    temp.put("uploadtime",a.getUploadDate());
+//                    mapList.add(temp);
+//                }
+//        }
+//        Map total = new HashMap();
+//        total.put("user_accurate",mapList);
+//        return total;
+//    }
+
     @ResponseBody
     @RequestMapping("/person/accurate")
     public Map getDataerAllAccurate(@RequestParam(name = "username")String username,
@@ -656,24 +697,11 @@ public class CompetitionController {
         //Page<Accurate> accuratePage = accurateServiveImpl.findAll(pageable);
         Dataer dataer = dataerServiceImpl.findByDataerName(username);
         Set<Accurate> accuratePage = dataer.getAccurates();
-        ArrayList<Accurate> accurates = new ArrayList<>();
-        for (Accurate a : accuratePage){
-            accurates.add(a);
-        }
-
-        for (int i = 0; i < accurates.size() - 1; i++){
-            for (int k = i + 1; k < accurates.size(); k++){
-                if (compareTime(accurates.get(i).getUploadDate(), accurates.get(k).getUploadDate())){
-                    Accurate temp = accurates.get(i);
-                    accurates.set(i, accurates.get(k));
-                    accurates.set(k, temp);
-                }
-            }
-        }
         List<Map> mapList = new ArrayList<>();
         Competition competition = competitionServiceImpl.findById(compId);
         if(isActive(competition) && competition.getDataers().contains(dataer)){
-            for (Accurate a: accurates) {
+            for (Accurate a: accuratePage) {
+
                 Map temp = new HashMap();
                 temp.put("user_id",a.getDataer().getId());
                 temp.put("value",a.getValue());
