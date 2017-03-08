@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/fundata.iml" filepath="$PROJECT_DIR$/fundata.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/FunDataBackEnd.iml" filepath="$PROJECT_DIR$/.idea/FunDataBackEnd.iml" />
     </modules>
   </component>
 </project>
