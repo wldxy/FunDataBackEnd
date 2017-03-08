@@ -8,15 +8,11 @@ import fundata.repository.DataFileRepository;
 import fundata.repository.DataerRepository;
 import fundata.repository.DatasetRepository;
 import fundata.repository.PullRequestRepository;
-import fundata.viewmodel.HotProject;
-import oracle.sql.TIMESTAMP;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.jws.Oneway;

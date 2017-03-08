@@ -1,8 +1,5 @@
 package fundata.model;
 
-import oracle.sql.TIMESTAMP;
-import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Set;
