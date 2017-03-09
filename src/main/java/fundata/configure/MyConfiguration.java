@@ -1,17 +1,42 @@
 package fundata.configure;
 
+import fundata.interceptor.AuthorizationInterceptor;
+import fundata.resolver.CurrentUserMethodArgumentResolver;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+
+import java.util.List;
 
 /**
  * Created by huang on 16-12-19.
  */
 @Configuration
-public class MyConfiguration {
+public class MyConfiguration extends WebMvcConfigurerAdapter {
+
+    @Autowired
+    private AuthorizationInterceptor authorizationInterceptor;
+
+    @Autowired
+    private CurrentUserMethodArgumentResolver currentUserMethodArgumentResolver;
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(authorizationInterceptor);
+    }
+
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+        argumentResolvers.add(currentUserMethodArgumentResolver);
+    }
 
     @Bean
     public FilterRegistrationBean corsFilter() {

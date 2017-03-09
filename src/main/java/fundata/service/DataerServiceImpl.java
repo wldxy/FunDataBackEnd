@@ -30,6 +30,11 @@ public class DataerServiceImpl implements DataerService {
     }
 
     @Override
+    public Dataer findByEmail(String email) {
+        return dataerRepository.findByUserEmail(email);
+    }
+
+    @Override
     public Dataer findByHostcompetition(Competition competition) {
         return dataerRepository.findByHostcompetition(competition);
     }
