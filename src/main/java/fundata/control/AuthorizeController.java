@@ -1,5 +1,6 @@
 package fundata.control;
 
+import fundata.annotation.Authorization;
 import fundata.annotation.CurrentUser;
 import fundata.model.Dataer;
 import fundata.model.Token;
@@ -28,29 +29,33 @@ public class AuthorizeController {
     TokenRepository tokenRepository;
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public Map<String, String> login(@RequestParam(value = "email") String email,
+    public Map<String, String> signIn(@RequestParam(value = "email") String email,
                                      @RequestParam(value = "pwd") String password) {
         Dataer user = dataerService.findByEmail(email);
         Map<String, String> map = new HashMap<>();
         if (user == null || !user.getPassword().equals(password)) {
             map.put("token", "");
         }
-        Token token= tokenRepository.createToken(user.getId());
-        map.put("token", token.getToken());
-        map.put("userId", user.getId().toString());
+        else {
+            Token token= tokenRepository.createToken(user.getId());
+            map.put("token", token.getToken());
+            map.put("userId", user.getId().toString());
+        }
+
         return map;
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
+    @Authorization
     public Map<String, String> logOut(@CurrentUser Dataer user) {
         tokenRepository.deleteToken(user.getId());
         Map<String, String> map = new HashMap();
-        map.put("status", "OK");
+        map.put("code", "200");
         return map;
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public Map<String, String> add(@RequestParam(name = "email") String email,
+    public Map<String, String> signUp(@RequestParam(name = "email") String email,
                                    @RequestParam(name = "name") String name,
                                    @RequestParam(name = "pwd") String pwd) {
         Map<String, String> map = new HashMap<>();
@@ -63,9 +68,11 @@ public class AuthorizeController {
             dataer.setName(name);
             dataer.setHead_href("http://img1.3lian.com/gif/more/11/201209/905adae6a744ae04f0c9ceaceb72d672.jpg");
             dataerService.save(dataer);
-            map.put("username", name);
+            Token token= tokenRepository.createToken(dataer.getId());
+            map.put("token", token.getToken());
+            map.put("userId", dataer.getId().toString());
         } else {
-            map.put("username", "");
+            map.put("token", "");
         }
         return map;
     }
