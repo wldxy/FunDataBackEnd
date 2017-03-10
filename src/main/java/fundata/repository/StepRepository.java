@@ -5,6 +5,7 @@ import fundata.model.Step;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
@@ -12,6 +13,7 @@ import java.util.Set;
 /**
  * Created by stanforxc on 2016/12/5.
  */
+@Repository
 public interface StepRepository extends JpaRepository<Step,Long> {
     @Transactional
     @Modifying

@@ -26,42 +26,7 @@ public class DataerController {
     @Autowired
     QiniuService qiniuService;
 
-    @RequestMapping("/authorize/register")
-    public Map<String, String> add(@RequestParam(name = "email") String email,
-                                   @RequestParam(name = "name") String name,
-                                   @RequestParam(name = "pwd") String pwd) {
-        Map<String, String> map = new HashMap<>();
-        Dataer dataer1 = dataerRepository.findByUserEmail(email);
-        Dataer dataer2 = dataerRepository.findByUserName(name);
-        if (dataer1 == null && dataer2 == null) {
-            Dataer dataer = new Dataer();
-            dataer.setEmail(email);
-            dataer.setPassword(pwd);
-            dataer.setName(name);
-            dataer.setHead_href("http://img1.3lian.com/gif/more/11/201209/905adae6a744ae04f0c9ceaceb72d672.jpg");
-            dataerRepository.save(dataer);
-            map.put("username", name);
-        } else {
-            map.put("username", "");
-        }
-        return map;
-    }
 
-    @RequestMapping(value = "/authorize/login", method = RequestMethod.POST)
-    public Map<String, String> checkLoginByName(@RequestParam(value = "email") String email,
-                                                @RequestParam(value = "pwd") String password) {
-        Dataer user = dataerRepository.findByUserEmail(email);
-        Map<String, String> map = new HashMap<>();
-        if (user == null) {
-            map.put("username", "");
-        }
-        if (user.getPassword().equals(password)) {
-            map.put("username", user.getName());
-        } else {
-            map.put("username", "");
-        }
-        return map;
-    }
 
     @ResponseBody
     @RequestMapping(value = "/authorize/user", method = RequestMethod.POST)

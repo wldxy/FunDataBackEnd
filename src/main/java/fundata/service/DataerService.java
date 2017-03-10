@@ -18,5 +18,7 @@ public interface DataerService {
 
     Dataer findByDataerName(String dataerName);
 
+    Dataer findByEmail(String email);
+
     Set<Dataer> findLikeName(String dataerName);
 }
