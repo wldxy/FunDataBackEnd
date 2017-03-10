@@ -54,7 +54,7 @@ public class TokenRepository {
         if (model == null) {
             return false;
         }
-        String token = redisTemplate.boundValueOps(model.getUserId()).get().toString();
+        String token = (String)redisTemplate.boundValueOps(model.getUserId()).get();
         if (token == null || !token.equals(model.getToken())) {
             return false;
         }

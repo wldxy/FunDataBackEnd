@@ -8,7 +8,7 @@ import org.springframework.context.annotation.ComponentScan;
  * Created by ocean on 16-11-23.
  */
 
-@ComponentScan({"fundata.control", "fundata.repository", "fundata.service", "fundata.configure", "fundata.resolver", "fundata.interceptor"})
+@ComponentScan({"fundata.control", "fundata.repository", "fundata.service", "fundata.configure", "fundata.resolver", "fundata.interceptor", "fundata.advice"})
 @SpringBootApplication
 public class Application {
     public static void main(String[] args) {
