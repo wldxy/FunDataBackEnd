@@ -1,5 +1,6 @@
 package fundata.advice;
 
+import fundata.configure.Constants;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
@@ -7,9 +8,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 /**
@@ -25,7 +24,12 @@ public class CookieAdvice {
         if("".equals(token) == false) {
             ServletRequestAttributes servletContainer = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             HttpServletResponse response = servletContainer.getResponse();
-            response.addCookie(new Cookie("token", result.get("userId") + "_" + token));
+            Cookie cookie = new Cookie(Constants.AUTHORIZATION, result.get("userId") + "_" + token);
+            cookie.setDomain(Constants.FRONT_DOMAIN);
+            cookie.setPath(Constants.COOKIE_PATH);
+            cookie.setMaxAge(Constants.TOKEN_EXPIRES_HOUR*60*60);
+            cookie.setHttpOnly(false);
+            response.addCookie(cookie);
             result.clear();
             result.put("code", "200");
         }
@@ -42,7 +46,7 @@ public class CookieAdvice {
         if("".equals(token) == false) {
             ServletRequestAttributes servletContainer = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             HttpServletResponse response = servletContainer.getResponse();
-            Cookie cookie = new Cookie("token", null);
+            Cookie cookie = new Cookie(Constants.AUTHORIZATION, null);
             cookie.setMaxAge(0);
             response.addCookie(cookie);
             result.clear();
