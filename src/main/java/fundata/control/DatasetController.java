@@ -1,5 +1,10 @@
 package fundata.control;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import fundata.configure.Constants;
 import fundata.model.*;
 import fundata.repository.DataFileRepository;
 import fundata.repository.DatasetRepository;
@@ -13,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -87,14 +93,30 @@ public class DatasetController {
     }
 
     @RequestMapping("/createDataset")
-    public boolean createDataset(@RequestParam(value = "username") String username,
-                                 @RequestParam(value = "datasetname") String datasetname,
-                                 @RequestParam(value = "desc") String desc) {
+    public boolean createDataset(@RequestAttribute(value = Constants.CURRENT_USER_ID) Long userId,
+                                 @RequestParam(value = "ds_name") String datasetname,
+                                 @RequestParam(value = "ds_desc") String dsDesc,
+                                 @RequestParam(value = "format_desc") String formatDesc,
+                                 @RequestParam(value = "columns") String columnsString) {
         Dataset dataset = datasetService.findByDatasetName(datasetname);
-        if (dataset != null)
+        if (dataset != null) {
             return false;
-
-        datasetService.addDataset(username, datasetname, desc);
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Integer> columns = new HashMap<>();
+        try {
+            columns = mapper.readValue(columnsString, new TypeReference<Map<String, Integer>>() {});
+        }
+        catch (JsonGenerationException e) {
+            e.printStackTrace();
+        }
+        catch (JsonMappingException e) {
+            e.printStackTrace();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        datasetService.addDataset(userId, datasetname, dsDesc, formatDesc, columns);
         return true;
     }
 
@@ -241,7 +263,7 @@ public class DatasetController {
         }
 
         datasetContent.setContribute(count);
-        datasetContent.setDescription(dataset.getDescription());
+        datasetContent.setDescription(dataset.getDsDescription());
 
         Set<DatasetTitle> datasetTitles = dataset.getDatasetTitles();
         for (DatasetTitle datasetTitle : datasetTitles) {

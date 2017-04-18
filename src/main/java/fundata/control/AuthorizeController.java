@@ -71,7 +71,8 @@ public class AuthorizeController {
             Token token= tokenRepository.createToken(dataer.getId());
             map.put("token", token.getToken());
             map.put("userId", dataer.getId().toString());
-        } else {
+        }
+        else {
             map.put("token", "");
         }
         return map;

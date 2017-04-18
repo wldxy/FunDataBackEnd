@@ -7,6 +7,7 @@ import fundata.model.DatasetTitle;
 
 import java.io.FileNotFoundException;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -17,7 +18,7 @@ public interface DatasetService {
 
     Set<Dataset> findLikeName(String username);
 
-    void addDataset(String username, String datasetname, String desc);
+    void addDataset(Long id, String datasetName, String dsDesc, String formatDesc, Map<String, Integer> columns);
 
     Set<DatasetTitle> getDatasetTitle(String datasetName);
 

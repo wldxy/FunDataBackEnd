@@ -21,7 +21,7 @@ public class MyDataset {
 
     public MyDataset(Iterable<Dataset> datasets) {
         for (Dataset item: datasets) {
-            DatasetInfo datasetInfo = new DatasetInfo(item.getName(), item.getDescription(), item.getPullRequests().size());
+            DatasetInfo datasetInfo = new DatasetInfo(item.getName(), item.getDsDescription(), item.getPullRequests().size());
             this.datasets.add(datasetInfo);
         }
     }

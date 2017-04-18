@@ -26,8 +26,31 @@ public class Dataset {
     @JsonBackReference
     private Set<Dataer> dataers = new HashSet<>();
 
-    @Column(name = "description")
-    private String description;
+    public Set<MetaData> getColumns() {
+        return columns;
+    }
+
+    public void setColumns(Set<MetaData> columns) {
+        this.columns = columns;
+    }
+
+    @OneToMany(mappedBy = "dataset")
+    private Set<MetaData> columns = new HashSet<>();
+
+    @Column(name = "ds_description")
+    private String dsDescription;
+
+    public String getFormatDescription() {
+        return formatDescription;
+    }
+
+    public void setFormatDescription(String formatDescription) {
+        this.formatDescription = formatDescription;
+    }
+
+    @Column(name = "format_description")
+    private String formatDescription;
+
 
     @OneToMany(mappedBy = "dataset")
     private Set<DatasetTitle> datasetTitles = new HashSet<>();
@@ -109,12 +132,12 @@ public class Dataset {
         this.pullRequests = pullRequests;
     }
 
-    public String getDescription() {
-        return description;
+    public String getDsDescription() {
+        return dsDescription;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setDsDescription(String dsDescription) {
+        this.dsDescription = dsDescription;
     }
 
     public Set<DatasetTitle> getDatasetTitles() {
