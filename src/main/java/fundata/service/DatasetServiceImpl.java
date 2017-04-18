@@ -51,15 +51,15 @@ public class DatasetServiceImpl implements DatasetService {
 //    }
 
     @Override
-    public void addDataset(Long id, String datasetName, String dsDesc, String formatDesc, Map<String, Integer> columns) {
+    public void addDataset(Long id, String datasetName, String dsDesc, String formatDesc, List<MetaData> columns) {
         Dataer dataer = dataerRepository.findById(id);
         System.out.println(dataer.getEmail());
         Dataset dataset = new Dataset(datasetName);
         dataset.setDsDescription(dsDesc);
         dataset.setFormatDescription(formatDesc);
         Set<MetaData> cols = dataset.getColumns();
-        for (Map.Entry<String, Integer> pair : columns.entrySet()) {
-            cols.add(new MetaData(pair.getKey(), pair.getValue(), dataset));
+        for (MetaData data : columns) {
+            cols.add(data);
         }
         datasetRepository.save(dataset);
 

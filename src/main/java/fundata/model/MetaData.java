@@ -20,15 +20,14 @@ public class MetaData {
     private Dataset dataset;
 
     @Column(name = "col_name")
-    private String colName;
+    private String name;
 
     @Column(name = "col_type")
-    private int colType;
+    private String type;
 
 
-    public MetaData(String colName, int colType, Dataset dataset) {
-        this.colName = colName;
-        this.colType = colType;
-        this.dataset = dataset;
+    public MetaData(String colName, String colType) {
+        this.name = colName;
+        this.type = colType;
     }
 }

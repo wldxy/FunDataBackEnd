@@ -1,8 +1,5 @@
 package fundata.control;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fundata.configure.Constants;
 import fundata.model.*;
@@ -14,11 +11,16 @@ import fundata.service.*;
 import fundata.viewmodel.DSCommentView;
 import fundata.viewmodel.DatasetContent;
 import fundata.viewmodel.MyDataset;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -93,31 +95,44 @@ public class DatasetController {
     }
 
     @RequestMapping("/createDataset")
-    public boolean createDataset(@RequestAttribute(value = Constants.CURRENT_USER_ID) Long userId,
+    public Map<String, String> createDataset(@RequestAttribute(value = Constants.CURRENT_USER_ID) Long userId,
                                  @RequestParam(value = "ds_name") String datasetname,
                                  @RequestParam(value = "ds_desc") String dsDesc,
                                  @RequestParam(value = "format_desc") String formatDesc,
                                  @RequestParam(value = "columns") String columnsString) {
+        Map<String, String> map = new HashMap<>();
         Dataset dataset = datasetService.findByDatasetName(datasetname);
         if (dataset != null) {
-            return false;
+            map.put("code", "-1");
+            return map;
         }
         ObjectMapper mapper = new ObjectMapper();
-        Map<String, Integer> columns = new HashMap<>();
+        List<MetaData> columns = new ArrayList<>();
         try {
-            columns = mapper.readValue(columnsString, new TypeReference<Map<String, Integer>>() {});
+            JSONArray jsonArray = new JSONArray(columnsString);
+
+            for (int i = 0; i < jsonArray.length(); i++){
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                JSONArray list = (JSONArray) jsonObject.get("limits");
+                String name = (String) jsonObject.get("name");
+                String type = (String) jsonObject.get("type");
+
+                MetaData temp = new MetaData(name, type);
+                columns.add(temp);
+            }
+
         }
-        catch (JsonGenerationException e) {
+        catch (JSONException e){
             e.printStackTrace();
-        }
-        catch (JsonMappingException e) {
-            e.printStackTrace();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
+            map.put("code", "-1");
+            return map;
         }
         datasetService.addDataset(userId, datasetname, dsDesc, formatDesc, columns);
-        return true;
+
+
+        map.put("code", "200");
+
+        return map;
     }
 
     @RequestMapping("/confirmTitle")
