@@ -7,13 +7,9 @@ import fundata.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by ocean on 16-12-1.
@@ -55,16 +51,21 @@ public class DatasetServiceImpl implements DatasetService {
 //    }
 
     @Override
-    public void addDataset(String username, String datasetname, String desc) {
-        Dataer dataer = dataerRepository.findByUserName(username);
+    public void addDataset(Long id, String datasetName, String dsDesc, String formatDesc, Map<String, Integer> columns) {
+        Dataer dataer = dataerRepository.findById(id);
         System.out.println(dataer.getEmail());
-        Dataset dataset = new Dataset(datasetname);
-        dataset.setDescription(desc);
+        Dataset dataset = new Dataset(datasetName);
+        dataset.setDsDescription(dsDesc);
+        dataset.setFormatDescription(formatDesc);
+        Set<MetaData> cols = dataset.getColumns();
+        for (Map.Entry<String, Integer> pair : columns.entrySet()) {
+            cols.add(new MetaData(pair.getKey(), pair.getValue(), dataset));
+        }
         datasetRepository.save(dataset);
 
         dataer.getDatasets().add(dataset);
         dataerRepository.save(dataer);
-        System.out.println(datasetname + " success");
+        System.out.println(datasetName + " success");
     }
 
     @Override
