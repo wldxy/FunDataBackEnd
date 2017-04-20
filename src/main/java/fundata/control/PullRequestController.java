@@ -1,5 +1,6 @@
 package fundata.control;
 
+import fundata.configure.Constants;
 import fundata.model.Dataset;
 import fundata.model.PullRequest;
 import fundata.repository.DataerRepository;
@@ -13,10 +14,7 @@ import fundata.viewmodel.PullRequestView;
 import fundata.viewmodel.UpFileInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.FileNotFoundException;
 import java.util.List;
@@ -83,15 +81,15 @@ public class PullRequestController {
 
     @RequestMapping(value = "/requestFileConfirm", method = RequestMethod.POST)
     public void confirmRequestFileUpload(@RequestParam(name = "confirm") Integer confirm,
-                                         @RequestParam(name = "fileid") Integer fileid) {
+                                         @RequestParam(name = "fileId") Integer fileId) {
 
     }
 
     @RequestMapping(value = "/getHotProject", method = RequestMethod.POST)
-    public HotProject getFreshDataset(String userName, int page) {
-        Page<PullRequest> pullRequestPage = pullRequestService.findLatestPullRequest(userName, page, 10);
-        List<PullRequest> pullRequests = pullRequestPage.getContent();
-
+    public HotProject getFreshDataset(@RequestAttribute(value = Constants.CURRENT_USER_ID) Long userId,
+                                      int curPage) {
+        Page<PullRequest> result = pullRequestService.findLatestPullRequest(userId, curPage);
+        List<PullRequest> pullRequests = result.getContent();
         HotProject hotProject = new HotProject();
         for (PullRequest pullRequest : pullRequests) {
             hotProject.addInfo(pullRequest.getDataset().getName(), pullRequest.getDataer().getName(), 1);

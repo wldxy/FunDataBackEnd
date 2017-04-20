@@ -1,6 +1,8 @@
 package fundata.service;
 
 import fundata.model.*;
+import org.springframework.beans.support.PagedListHolder;
+import org.springframework.data.domain.Page;
 
 import java.io.FileNotFoundException;
 import java.util.List;
@@ -10,7 +12,9 @@ import java.util.Set;
  * Created by ocean on 16-12-1.
  */
 public interface DatasetService {
-    Set<Dataset> findById(Long id);
+    PagedListHolder<Dataset> getUserDatasetsByPage(Long userId, int curPage);
+
+    List<Dataset> getAllUserDatasets(Long userId);
 
     Set<Dataset> findLikeName(String username);
 

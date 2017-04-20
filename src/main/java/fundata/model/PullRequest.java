@@ -1,8 +1,5 @@
 package fundata.model;
 
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
-
 import javax.persistence.*;
 import java.util.Date;
 
@@ -24,9 +21,9 @@ public class PullRequest {
     @Column(name = "status")
     private Integer status;
 
-    @Column(name = "updatetime")
+    @Column(name = "update_time")
     @Temporal(TemporalType.DATE)
-    private Date updatetime;
+    private Date updateTime;
 
     @OneToOne
     private DataFile dataFile;
@@ -37,12 +34,12 @@ public class PullRequest {
     @ManyToOne
     private Dataset dataset;
 
-    public Date getUpdatetime() {
-        return updatetime;
+    public Date getUpdateTime() {
+        return updateTime;
     }
 
-    public void setUpdatetime(Date updatetime) {
-        this.updatetime = updatetime;
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 
     public Dataer getDataer() {

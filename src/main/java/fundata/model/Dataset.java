@@ -4,6 +4,7 @@ package fundata.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,6 +29,18 @@ public class Dataset {
 
     @Column(name = "ds_description")
     private String dsDescription;
+
+    @Column(name = "create_time")
+    @Temporal(TemporalType.DATE)
+    private Date createTime;
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
 
     public String getFormatDescription() {
         return formatDescription;

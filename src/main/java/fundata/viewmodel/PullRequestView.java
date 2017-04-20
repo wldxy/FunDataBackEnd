@@ -1,10 +1,6 @@
 package fundata.viewmodel;
 
-import fundata.model.DataFile;
 import fundata.model.PullRequest;
-import fundata.service.QiniuService;
-import fundata.service.QiniuServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -63,7 +59,7 @@ class RequestInfo {
 
     public RequestInfo(PullRequest pullRequest, String url) {
         this.id = pullRequest.getId();
-        this.updatetime = pullRequest.getUpdatetime();
+        this.updatetime = pullRequest.getUpdateTime();
         this.type = pullRequest.getStatus();
         this.description = pullRequest.getDescription();
         this.username = pullRequest.getDataer().getName();

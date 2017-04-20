@@ -1,5 +1,6 @@
 package fundata.control;
 
+import fundata.annotation.Authorization;
 import fundata.configure.Constants;
 import fundata.model.*;
 import fundata.repository.DataFileRepository;
@@ -9,9 +10,9 @@ import fundata.repository.QiniuProperties;
 import fundata.service.*;
 import fundata.viewmodel.DSCommentView;
 import fundata.viewmodel.DatasetContent;
-import fundata.viewmodel.MyDataset;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.support.PagedListHolder;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -56,6 +57,7 @@ public class DatasetController {
 
 
     @RequestMapping("/createDataset")
+    @Authorization
     public Map<String, String> createDataset(@RequestAttribute(value = Constants.CURRENT_USER_ID) Long userId,
                                  @RequestParam(value = "ds_name") String datasetName,
                                  @RequestParam(value = "ds_desc") String dsDesc,
@@ -75,18 +77,21 @@ public class DatasetController {
 
 
     @RequestMapping("/getMyDataset")
-    public MyDataset getMyDataset(@RequestAttribute(value = Constants.CURRENT_USER_ID) Long userId) {
+    @Authorization
+    public Map<String, Object> getMyDataset(@RequestAttribute(value = Constants.CURRENT_USER_ID) Long userId,
+                                  @RequestParam(value = "curPage") short curPage) {
 
-        Set<Dataset> datasetList = datasetService.findById(userId);
-        MyDataset myDataset = new MyDataset(datasetList);
-
-        return myDataset;
+        PagedListHolder<Dataset> result = datasetService.getUserDatasetsByPage(userId, curPage);
+        Map<String, Object> map = new HashMap<>();
+        map.put("code", "200");
+        map.put("datasets", result.getPageList());
+        map.put("total", result.getNrOfElements());
+        return map;
     }
 
     @RequestMapping("/getDataset")
     public Map getDataset() {
         List<Dataset> datasets = datasetRepository.findAll();
-
         Map map = new HashMap();
 
         List<Map> dataset = new ArrayList<>();
@@ -102,10 +107,10 @@ public class DatasetController {
                 PullRequest pullRequest = Collections.max(pullRequests, new Comparator<PullRequest>() {
                     @Override
                     public int compare(PullRequest o1, PullRequest o2) {
-                        return o1.getUpdatetime().compareTo(o2.getUpdatetime());
+                        return o1.getUpdateTime().compareTo(o2.getUpdateTime());
                     }
                 });
-                temp.put("time", pullRequest.getUpdatetime());
+                temp.put("time", pullRequest.getUpdateTime());
                 temp.put("username", pullRequest.getDataer().getName());
                 temp.put("type", pullRequest.getStatus());
             } else {
@@ -178,23 +183,6 @@ public class DatasetController {
         return true;
     }
 
-//    @ResponseBody
-//    @RequestMapping(value = "/getHotProject", method = RequestMethod.POST)
-//    public Map getHotProject(){
-//        try{
-//            Map map = new HashMap<>();
-//
-//            List<Dataset> datasetList = new ArrayList<>();
-//
-////            Dataer dataer =
-//
-//            return map;
-//        }catch (Exception e){
-//            e.printStackTrace();
-//            return null;
-//        }
-//    }
-
     @RequestMapping("/getMyContribute")
     public Map getMyContribute(@RequestParam("username") String username) {
         Map map = new HashMap();
@@ -205,7 +193,7 @@ public class DatasetController {
         for (PullRequest pullRequest : pullRequests) {
             Map temp = new HashMap();
             temp.put("datasetname", pullRequest.getDataset().getName());
-            temp.put("updatetime", pullRequest.getUpdatetime().toString());
+            temp.put("updatetime", pullRequest.getUpdateTime().toString());
             temp.put("type", pullRequest.getStatus());
 
             dataset.add(temp);

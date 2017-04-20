@@ -63,7 +63,7 @@ public class CompetitionController {
                                   @RequestParam(name = "end") String end,
                                   @RequestParam(name = "des") String des) {
         try {
-//            Dataer dataer = dataerServiceImpl.findById(userid);
+//            Dataer dataer = dataerServiceImpl.getUserDatasetsByPage(userid);
             Dataer dataer = dataerServiceImpl.findByDataerName(username);
             Competition competition = new Competition();
             competition.setName(comName);
@@ -144,7 +144,7 @@ public class CompetitionController {
     @RequestMapping("/unregister")
     public boolean unregister(@RequestParam(name = "comId") Long comId,
                               @RequestParam(name = "username") String username) {
-//        Dataer dataer = dataerServiceImpl.findById(userId);
+//        Dataer dataer = dataerServiceImpl.getUserDatasetsByPage(userId);
         Dataer dataer = dataerServiceImpl.findByDataerName(username);
         Competition competition = competitionServiceImpl.findById(comId);
 
@@ -421,7 +421,7 @@ public class CompetitionController {
     @ResponseBody
     @RequestMapping("/compCenter")
     public Map myCompetitionCenter(@RequestParam(name = "username") String username) throws ParseException {
-//        Dataer dataer = dataerServiceImpl.findById(userid);
+//        Dataer dataer = dataerServiceImpl.getUserDatasetsByPage(userid);
         Dataer dataer = dataerServiceImpl.findByDataerName(username);
         Map total = new HashMap();
         List<Map> competitionList = new ArrayList<>();
@@ -525,7 +525,7 @@ public class CompetitionController {
                               @RequestParam(name = "content") String content){
         try {
             Commentcomp commentComp = new Commentcomp();
-//            Dataer dataer = dataerServiceImpl.findById(userid);
+//            Dataer dataer = dataerServiceImpl.getUserDatasetsByPage(userid);
             Dataer dataer = dataerServiceImpl.findByDataerName(username);
             Competition competition = competitionServiceImpl.findById(compId);
             if(isActive(competition)){
@@ -567,7 +567,7 @@ public class CompetitionController {
     @ResponseBody
     @RequestMapping("/comment/host")
     public Map getCompComment(@RequestParam(name = "username") String username){
-//        Dataer dataer = dataerServiceImpl.findById(userid);
+//        Dataer dataer = dataerServiceImpl.getUserDatasetsByPage(userid);
         Dataer dataer = dataerServiceImpl.findByDataerName(username);
         Set<Competition> competitionSet = dataer.getHostCompetition();
         Iterator<Competition> competitionIterator = competitionSet.iterator();
@@ -610,7 +610,7 @@ public class CompetitionController {
 //
 //
 //        try {
-//            Dataer dataer = dataerServiceImpl.findById(userid);
+//            Dataer dataer = dataerServiceImpl.getUserDatasetsByPage(userid);
 //            Set<Competition> competitions = dataer.getCompetitions();
 //            Set<Accurate> accurates = dataer.getAccurates();
 //            Iterator<Competition> competitionIterator = competitions.iterator();
@@ -671,7 +671,7 @@ public class CompetitionController {
 //            }
 //        }
 //        List<Map> mapList = new ArrayList<>();
-//        Competition competition = competitionServiceImpl.findById(compId);
+//        Competition competition = competitionServiceImpl.getUserDatasetsByPage(compId);
 //        if(isActive(competition) && competition.getDataers().contains(dataer)){
 //            for (Accurate a: dataer.getAccurates()) {
 ////                Set<Dataer> dataers = competition.getDataers();

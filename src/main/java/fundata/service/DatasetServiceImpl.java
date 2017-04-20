@@ -3,11 +3,14 @@ package fundata.service;
 import com.csvreader.CsvReader;
 import com.csvreader.CsvWriter;
 import com.google.gson.Gson;
+import fundata.configure.Constants;
 import fundata.document.Field;
 import fundata.document.MetaData;
 import fundata.model.*;
 import fundata.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.support.MutableSortDefinition;
+import org.springframework.beans.support.PagedListHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -32,10 +35,21 @@ public class DatasetServiceImpl implements DatasetService {
     DatasetTitleRepository datasetTitleRepository;
 
     @Override
-    public Set<Dataset> findById(Long id) {
-        Dataer dataer = dataerRepository.findById(id);
-        return dataer.getDatasets();
+    public PagedListHolder<Dataset> getUserDatasetsByPage(Long userId, int curPage) {
+        List<Dataset> datasets = getAllUserDatasets(userId);
+        PagedListHolder<Dataset> datasetPage = new PagedListHolder<Dataset>(datasets);
+        datasetPage.setSort(new MutableSortDefinition("name", true, true));
+        datasetPage.setPage(curPage);
+        datasetPage.setPageSize(Constants.pageSize);
+        return datasetPage;
     }
+
+    @Override
+    public List<Dataset> getAllUserDatasets(Long userId) {
+        Dataer dataer = dataerRepository.findById(userId);
+        return new ArrayList<Dataset>(dataer.getDatasets());
+    }
+
 
     @Override
     public Set<Dataset> findLikeName(String name) {
