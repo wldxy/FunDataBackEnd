@@ -26,17 +26,6 @@ public class Dataset {
     @JsonBackReference
     private Set<Dataer> dataers = new HashSet<>();
 
-    public Set<MetaData> getColumns() {
-        return columns;
-    }
-
-    public void setColumns(Set<MetaData> columns) {
-        this.columns = columns;
-    }
-
-    @OneToMany(mappedBy = "dataset")
-    private Set<MetaData> columns = new HashSet<>();
-
     @Column(name = "ds_description")
     private String dsDescription;
 

@@ -20,7 +20,7 @@ import java.util.List;
  * Created by huang on 16-12-19.
  */
 @Configuration
-public class MyConfiguration extends WebMvcConfigurerAdapter {
+public class WebContextConfiguration extends WebMvcConfigurerAdapter {
 
     @Autowired
     private AuthorizationInterceptor authorizationInterceptor;

@@ -10,11 +10,11 @@ import java.util.Set;
  * Created by ocean on 16-12-1.
  */
 public interface DatasetService {
-    Set<Dataset> findByUserName(String username);
+    Set<Dataset> findById(Long id);
 
     Set<Dataset> findLikeName(String username);
 
-    void addDataset(Long id, String datasetName, String dsDesc, String formatDesc, List<MetaData> columns);
+    void addDataset(Long id, String datasetName, String dsDesc, String formatDesc, String columnsJSONString);
 
     Set<DatasetTitle> getDatasetTitle(String datasetName);
 

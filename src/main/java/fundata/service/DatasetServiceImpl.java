@@ -2,6 +2,9 @@ package fundata.service;
 
 import com.csvreader.CsvReader;
 import com.csvreader.CsvWriter;
+import com.google.gson.Gson;
+import fundata.document.Field;
+import fundata.document.MetaData;
 import fundata.model.*;
 import fundata.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,22 +23,17 @@ public class DatasetServiceImpl implements DatasetService {
     DatasetRepository datasetRepository;
 
     @Autowired
+    MetaDataRepository metaDataRepository;
+
+    @Autowired
     DataerRepository dataerRepository;
 
     @Autowired
     DatasetTitleRepository datasetTitleRepository;
 
     @Override
-    public Set<Dataset> findByUserName(String userName) {
-//        List<Dataset> datasetList = datasetRepository.findAll(new Specification<Dataset>() {
-//            @Override
-//            public Predicate toPredicate(Root<Dataset> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-//                Join<Dataset, Dataer> dataerJoin = root.join("dataers", JoinType.INNER);
-//                return criteriaBuilder.equal(dataerJoin.get("name"), userName);
-//            }
-//        });
-        Dataer dataer = dataerRepository.findByUserName(userName);
-
+    public Set<Dataset> findById(Long id) {
+        Dataer dataer = dataerRepository.findById(id);
         return dataer.getDatasets();
     }
 
@@ -44,29 +42,25 @@ public class DatasetServiceImpl implements DatasetService {
         return datasetRepository.findLikeName(name);
     }
 
-//    @Override
-//    public List<Dataset> findAll(){
-//        return  datasetRepository.findAll();
-//
-//    }
 
     @Override
-    public void addDataset(Long id, String datasetName, String dsDesc, String formatDesc, List<MetaData> columns) {
+    public void addDataset(Long id, String datasetName, String dsDesc, String formatDesc, String fieldsString) {
         Dataer dataer = dataerRepository.findById(id);
         System.out.println(dataer.getEmail());
         Dataset dataset = new Dataset(datasetName);
         dataset.setDsDescription(dsDesc);
         dataset.setFormatDescription(formatDesc);
-        Set<MetaData> cols = dataset.getColumns();
-        for (MetaData data : columns) {
-            cols.add(data);
-        }
         datasetRepository.save(dataset);
-
+        Gson gson = new Gson();
+        Field[] fields = gson.fromJson(fieldsString, Field[].class);
+        MetaData meta = new MetaData(dataset.getId(), Arrays.asList(fields));
+        metaDataRepository.save(meta);
         dataer.getDatasets().add(dataset);
         dataerRepository.save(dataer);
         System.out.println(datasetName + " success");
     }
+
+
 
     @Override
     public Set<DatasetTitle> getDatasetTitle(String datasetName) {

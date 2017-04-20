@@ -1,6 +1,5 @@
 package fundata.control;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import fundata.configure.Constants;
 import fundata.model.*;
 import fundata.repository.DataFileRepository;
@@ -11,9 +10,6 @@ import fundata.service.*;
 import fundata.viewmodel.DSCommentView;
 import fundata.viewmodel.DatasetContent;
 import fundata.viewmodel.MyDataset;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RequestAttribute;
@@ -55,7 +51,37 @@ public class DatasetController {
     @Autowired
     DatasetRepository datasetRepository;
 
+    @Autowired
+    private PullRequestService pullRequestService;
 
+
+    @RequestMapping("/createDataset")
+    public Map<String, String> createDataset(@RequestAttribute(value = Constants.CURRENT_USER_ID) Long userId,
+                                 @RequestParam(value = "ds_name") String datasetName,
+                                 @RequestParam(value = "ds_desc") String dsDesc,
+                                 @RequestParam(value = "format_desc") String formatDesc,
+                                 @RequestParam(value = "columns") String fieldsString) {
+        Map<String, String> map = new HashMap<>();
+        Dataset dataset = datasetService.findByDatasetName(datasetName);
+        if (dataset != null) {
+            map.put("code", "-1");
+            return map;
+        }
+
+        datasetService.addDataset(userId, datasetName, dsDesc, formatDesc, fieldsString);
+        map.put("code", "200");
+        return map;
+    }
+
+
+    @RequestMapping("/getMyDataset")
+    public MyDataset getMyDataset(@RequestAttribute(value = Constants.CURRENT_USER_ID) Long userId) {
+
+        Set<Dataset> datasetList = datasetService.findById(userId);
+        MyDataset myDataset = new MyDataset(datasetList);
+
+        return myDataset;
+    }
 
     @RequestMapping("/getDataset")
     public Map getDataset() {
@@ -94,47 +120,6 @@ public class DatasetController {
         return map;
     }
 
-    @RequestMapping("/createDataset")
-    public Map<String, String> createDataset(@RequestAttribute(value = Constants.CURRENT_USER_ID) Long userId,
-                                 @RequestParam(value = "ds_name") String datasetname,
-                                 @RequestParam(value = "ds_desc") String dsDesc,
-                                 @RequestParam(value = "format_desc") String formatDesc,
-                                 @RequestParam(value = "columns") String columnsString) {
-        Map<String, String> map = new HashMap<>();
-        Dataset dataset = datasetService.findByDatasetName(datasetname);
-        if (dataset != null) {
-            map.put("code", "-1");
-            return map;
-        }
-        ObjectMapper mapper = new ObjectMapper();
-        List<MetaData> columns = new ArrayList<>();
-        try {
-            JSONArray jsonArray = new JSONArray(columnsString);
-
-            for (int i = 0; i < jsonArray.length(); i++){
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                JSONArray list = (JSONArray) jsonObject.get("limits");
-                String name = (String) jsonObject.get("name");
-                String type = (String) jsonObject.get("type");
-
-                MetaData temp = new MetaData(name, type);
-                columns.add(temp);
-            }
-
-        }
-        catch (JSONException e){
-            e.printStackTrace();
-            map.put("code", "-1");
-            return map;
-        }
-        datasetService.addDataset(userId, datasetname, dsDesc, formatDesc, columns);
-
-
-        map.put("code", "200");
-
-        return map;
-    }
-
     @RequestMapping("/confirmTitle")
     public boolean confirmDatasetTitle(@RequestParam(value = "datasetname") String datasetName,
                                        @RequestParam(value = "username") String username,
@@ -165,8 +150,6 @@ public class DatasetController {
         return true;
     }
 
-    @Autowired
-    private PullRequestService pullRequestService;
 
     @RequestMapping("/confirmFile")
     public boolean confirmDatasetFile(@RequestParam(value = "datasetname") String datasetName,
@@ -215,7 +198,6 @@ public class DatasetController {
     @RequestMapping("/getMyContribute")
     public Map getMyContribute(@RequestParam("username") String username) {
         Map map = new HashMap();
-
         List<Map> dataset = new ArrayList<>();
 
         Dataer dataer = dataerService.findByDataerName(username);
@@ -233,15 +215,7 @@ public class DatasetController {
         return map;
     }
 
-    @RequestMapping("/getMyDataset")
-    public MyDataset getMyDataset(@RequestParam(value = "username") String username) {
 
-        Set<Dataset> datasetList;
-        datasetList = datasetService.findByUserName(username);
-        MyDataset myDataset = new MyDataset(datasetList);
-
-        return myDataset;
-    }
 
     @Autowired
     QiniuProperties qiniuProperties;
