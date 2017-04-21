@@ -37,8 +37,9 @@ public class DatasetServiceImpl implements DatasetService {
     @Override
     public PagedListHolder<Dataset> getUserDatasetsByPage(Long userId, int curPage) {
         List<Dataset> datasets = getAllUserDatasets(userId);
-        PagedListHolder<Dataset> datasetPage = new PagedListHolder<Dataset>(datasets);
+        PagedListHolder<Dataset> datasetPage = new PagedListHolder<>(datasets);
         datasetPage.setSort(new MutableSortDefinition("name", true, true));
+        datasetPage.resort();
         datasetPage.setPage(curPage);
         datasetPage.setPageSize(Constants.pageSize);
         return datasetPage;
