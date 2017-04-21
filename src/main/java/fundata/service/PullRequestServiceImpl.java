@@ -1,7 +1,8 @@
 package fundata.service;
 
-import fundata.model.DataFile;
+import fundata.configure.Constants;
 import fundata.model.Dataer;
+import fundata.model.DataerDataset;
 import fundata.model.Dataset;
 import fundata.model.PullRequest;
 import fundata.repository.DataFileRepository;
@@ -9,19 +10,10 @@ import fundata.repository.DataerRepository;
 import fundata.repository.DatasetRepository;
 import fundata.repository.PullRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.beans.support.MutableSortDefinition;
+import org.springframework.beans.support.PagedListHolder;
 import org.springframework.stereotype.Service;
 
-import javax.jws.Oneway;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.criteria.*;
-import javax.xml.crypto.Data;
 import java.util.*;
 
 /**
@@ -67,7 +59,7 @@ public class PullRequestServiceImpl implements PullRequestService {
         pullRequest.setDataer(dataer);
         pullRequest.setDataset(dataset);
         pullRequest.setStatus(-1);
-        pullRequest.setUpdatetime(new Date());
+        pullRequest.setUpdateTime(new Date());
         pullRequestRepository.save(pullRequest);
 
         return pullRequest;
@@ -86,7 +78,27 @@ public class PullRequestServiceImpl implements PullRequestService {
     }
 
     @Override
-    public Page<PullRequest> findLatestPullRequest(String dataerName, int page, int size) {
+    public List<PullRequest> getAllUserPullRequests(Long userId) {
+        List<PullRequest> pullRequests = new ArrayList<>();
+        List<DataerDataset> datasets = datasetService.getAllUserDatasets(userId);
+        for (DataerDataset dataset : datasets) {
+            pullRequests.addAll(dataset.getDatasetId().getPullRequests());
+        }
+        return pullRequests;
+    }
+
+    @Override
+    public PagedListHolder<PullRequest> getUserPullRequestsByPage(Long userId, int curPage) {
+        List<PullRequest> pullRequests = getAllUserPullRequests(userId);
+        PagedListHolder<PullRequest> pullRequestPage = new PagedListHolder<PullRequest>(pullRequests);
+        pullRequestPage.setSort(new MutableSortDefinition("name", true, true));
+        pullRequestPage.setPage(curPage);
+        pullRequestPage.setPageSize(Constants.pageSize);
+        return pullRequestPage;
+    }
+
+    @Override
+    public PagedListHolder<PullRequest> findLatestPullRequest(Long userId, int curPage) {
 //        Specification<PullRequest> pullRequestSpecification = new Specification<PullRequest>() {
 //            @Override
 //            public Predicate toPredicate(Root<PullRequest> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
@@ -101,22 +113,11 @@ public class PullRequestServiceImpl implements PullRequestService {
 //                Predicate p2 = criteriaBuilder.
 //            }
 //        };
-        List<PullRequest> pullRequests = new ArrayList<>();
-        Set<Dataset> datasets = datasetService.findByUserName(dataerName);
-        for (Dataset dataset : datasets) {
-            for (PullRequest pullRequest : dataset.getPullRequests()) {
-                pullRequests.add(pullRequest);
-            }
-        }
-//        pullRequests.sort(new Comparator<PullRequest>() {
-//            @Override
-//            public int compare(PullRequest o1, PullRequest o2) {
-//                return (o1.getUpdatetime().compareTo(o2.getUpdatetime());
-//            }
-//        });
-        Page<PullRequest> pullRequestPage = new PageImpl<PullRequest>(pullRequests,
-                new PageRequest(page, size, new Sort(Sort.Direction.DESC, new String("updatetime"))),
-                pullRequests.size());
+        List<PullRequest> pullRequests = getAllUserPullRequests(userId);
+        PagedListHolder<PullRequest> pullRequestPage = new PagedListHolder<PullRequest>(pullRequests);
+        pullRequestPage.setSort(new MutableSortDefinition("updateTime", true, false));
+        pullRequestPage.setPage(curPage);
+        pullRequestPage.setPageSize(Constants.pageSize);
         return pullRequestPage;
     }
 

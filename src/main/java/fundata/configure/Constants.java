@@ -23,4 +23,6 @@ public class Constants {
 
     public static final String COOKIE_PATH = "/";
 
+    public static final int pageSize = 10;
+
 }

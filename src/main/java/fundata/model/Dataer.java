@@ -1,7 +1,6 @@
 package fundata.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -15,7 +14,7 @@ import java.util.Set;
 public class Dataer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "dataer_id", nullable = false)
     private Long id;
 
     @Column(name = "password", length = 2048, nullable = false)
@@ -40,8 +39,8 @@ public class Dataer {
     @ManyToMany
     private Set<Competition> competitions;
 
-    @ManyToMany
-    private Set<Dataset> datasets = new HashSet<>();
+    @OneToMany(mappedBy = "datasetId")
+    private Set<DataerDataset> datasets = new HashSet<>();
 
     @OneToMany(mappedBy = "dataer")
     private Set<PullRequest> pullRequests = new HashSet<>();
@@ -110,11 +109,11 @@ public class Dataer {
         this.name = name;
     }
 
-    public Set<Dataset> getDatasets() {
+    public Set<DataerDataset> getDatasets() {
         return datasets;
     }
 
-    public void setDatasets(Set<Dataset> datasets) {
+    public void setDatasets(Set<DataerDataset> datasets) {
         this.datasets = datasets;
     }
 

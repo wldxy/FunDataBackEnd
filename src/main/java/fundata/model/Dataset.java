@@ -4,6 +4,7 @@ package fundata.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,29 +17,32 @@ import java.util.Set;
 public class Dataset {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false,name = "ID")
+    @Column(nullable = false,name = "dataset_id")
     private Long id;
 
-    @Column(nullable = false,name = "NAME", length = 50)
+    @Column(nullable = false,name = "name", length = 50)
     private String name;
 
-    @ManyToMany(mappedBy = "datasets")
+    @OneToMany(mappedBy = "dataerId")
     @JsonBackReference
-    private Set<Dataer> dataers = new HashSet<>();
+    private Set<DataerDataset> dataers = new HashSet<DataerDataset>();
 
-    public Set<MetaData> getColumns() {
-        return columns;
-    }
-
-    public void setColumns(Set<MetaData> columns) {
-        this.columns = columns;
-    }
-
-    @OneToMany(mappedBy = "dataset")
-    private Set<MetaData> columns = new HashSet<>();
+    
 
     @Column(name = "ds_description")
     private String dsDescription;
+
+    @Column(name = "create_time")
+    @Temporal(TemporalType.DATE)
+    private Date createTime;
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
 
     public String getFormatDescription() {
         return formatDescription;
@@ -108,7 +112,7 @@ public class Dataset {
         this.allFile = allFile;
     }
 
-    public Set<Dataer> getDataers() {
+    public Set<DataerDataset> getDataers() {
         return dataers;
     }
 

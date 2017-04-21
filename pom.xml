@@ -41,13 +41,10 @@
             <artifactId>spring-security-web</artifactId>
             <version>4.2.0.RELEASE</version>
         </dependency>
-        <!--&lt;!&ndash; https://mvnrepository.com/artifact/com.oracle/ojdbc6 &ndash;&gt;-->
-        <!--<dependency>-->
-            <!--<groupId>com.oracle</groupId>-->
-            <!--<artifactId>ojdbc6</artifactId>-->
-            <!--<version>12.1.0.1-atlassian-hosted</version>-->
-        <!--</dependency>-->
-        <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
+        </dependency>
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -147,10 +144,6 @@
             <id>spring-releases</id>
             <url>https://repo.spring.io/libs-release</url>
         </repository>
-        <!--<repository>-->
-            <!--<id>Central Repository</id>-->
-            <!--<url>http://central.maven.org/maven2/</url>-->
-        <!--</repository>-->
     </repositories>
     <pluginRepositories>
         <pluginRepository>
@@ -158,5 +151,4 @@
             <url>https://repo.spring.io/libs-release</url>
         </pluginRepository>
     </pluginRepositories>
-
 </project>

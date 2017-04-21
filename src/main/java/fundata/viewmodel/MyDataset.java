@@ -9,6 +9,44 @@ import java.util.List;
  * Created by ocean on 16-12-1.
  */
 public class MyDataset {
+    private class DatasetInfo {
+        DatasetInfo(String datasetname, String description, Integer size) {
+            this.description = description;
+            this.datasetname = datasetname;
+            this.size = size;
+        }
+
+        private String datasetname;
+
+        private String description;
+
+        private Integer size;
+
+        public String getDatasetname() {
+            return datasetname;
+        }
+
+        public void setDatasetname(String datasetname) {
+            this.datasetname = datasetname;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public Integer getSize() {
+            return size;
+        }
+
+        public void setSize(Integer size) {
+            this.size = size;
+        }
+    }
+
     public List<DatasetInfo> getDatasets() {
         return datasets;
     }
@@ -27,40 +65,3 @@ public class MyDataset {
     }
 }
 
-class DatasetInfo {
-    DatasetInfo(String datasetname, String description, Integer size) {
-        this.description = description;
-        this.datasetname = datasetname;
-        this.size = size;
-    }
-
-    private String datasetname;
-
-    private String description;
-
-    private Integer size;
-
-    public String getDatasetname() {
-        return datasetname;
-    }
-
-    public void setDatasetname(String datasetname) {
-        this.datasetname = datasetname;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Integer getSize() {
-        return size;
-    }
-
-    public void setSize(Integer size) {
-        this.size = size;
-    }
-}

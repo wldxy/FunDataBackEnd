@@ -47,7 +47,7 @@ public class FileController {
 //        Integer point = key.lastIndexOf('.');
 //        String idstr = key.substring(0, point);
 //        Long id = Long.getLong(idstr);
-//        DataFile dataFile = dataFileRepository.findById(id);
+//        DataFile dataFile = dataFileRepository.getUserDatasetsByPage(id);
 //        if (dataFile != null) {
 //            dataFile.setStatus(1);
 //            dataFileRepository.save(dataFile);

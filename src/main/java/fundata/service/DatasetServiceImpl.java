@@ -2,9 +2,15 @@ package fundata.service;
 
 import com.csvreader.CsvReader;
 import com.csvreader.CsvWriter;
+import com.google.gson.Gson;
+import fundata.configure.Constants;
+import fundata.document.Field;
+import fundata.document.MetaData;
 import fundata.model.*;
 import fundata.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.support.MutableSortDefinition;
+import org.springframework.beans.support.PagedListHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -20,53 +26,58 @@ public class DatasetServiceImpl implements DatasetService {
     DatasetRepository datasetRepository;
 
     @Autowired
+    MetaDataRepository metaDataRepository;
+
+    @Autowired
     DataerRepository dataerRepository;
+
+    @Autowired
+    DataerDatasetRepository dataerDatasetRepository;
 
     @Autowired
     DatasetTitleRepository datasetTitleRepository;
 
     @Override
-    public Set<Dataset> findByUserName(String userName) {
-//        List<Dataset> datasetList = datasetRepository.findAll(new Specification<Dataset>() {
-//            @Override
-//            public Predicate toPredicate(Root<Dataset> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-//                Join<Dataset, Dataer> dataerJoin = root.join("dataers", JoinType.INNER);
-//                return criteriaBuilder.equal(dataerJoin.get("name"), userName);
-//            }
-//        });
-        Dataer dataer = dataerRepository.findByUserName(userName);
-
-        return dataer.getDatasets();
+    public PagedListHolder<DataerDataset> getUserDatasetsByPage(Long userId, int curPage) {
+        List<DataerDataset> datasets = getAllUserDatasets(userId);
+        PagedListHolder<DataerDataset> datasetPage = new PagedListHolder<>(datasets);
+        datasetPage.setSort(new MutableSortDefinition("name", true, true));
+        datasetPage.resort();
+        datasetPage.setPage(curPage);
+        datasetPage.setPageSize(Constants.pageSize);
+        return datasetPage;
     }
+
+    @Override
+    public List<DataerDataset> getAllUserDatasets(Long userId) {
+        return dataerDatasetRepository.findDataerDatasetByUser(dataerRepository.findById(userId));
+    }
+
 
     @Override
     public Set<Dataset> findLikeName(String name) {
         return datasetRepository.findLikeName(name);
     }
 
-//    @Override
-//    public List<Dataset> findAll(){
-//        return  datasetRepository.findAll();
-//
-//    }
 
     @Override
-    public void addDataset(Long id, String datasetName, String dsDesc, String formatDesc, List<MetaData> columns) {
+    public void addDataset(Long id, String datasetName, String dsDesc, String formatDesc, String fieldsString) {
         Dataer dataer = dataerRepository.findById(id);
         System.out.println(dataer.getEmail());
         Dataset dataset = new Dataset(datasetName);
         dataset.setDsDescription(dsDesc);
         dataset.setFormatDescription(formatDesc);
-        Set<MetaData> cols = dataset.getColumns();
-        for (MetaData data : columns) {
-            cols.add(data);
-        }
         datasetRepository.save(dataset);
-
-        dataer.getDatasets().add(dataset);
+        Gson gson = new Gson();
+        Field[] fields = gson.fromJson(fieldsString, Field[].class);
+        MetaData meta = new MetaData(dataset.getId(), Arrays.asList(fields));
+        dataerDatasetRepository.save(new DataerDataset(dataer, dataset, (short)(0)));
+        metaDataRepository.save(meta);
         dataerRepository.save(dataer);
         System.out.println(datasetName + " success");
     }
+
+
 
     @Override
     public Set<DatasetTitle> getDatasetTitle(String datasetName) {
