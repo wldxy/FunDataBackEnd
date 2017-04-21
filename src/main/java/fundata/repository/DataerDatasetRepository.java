@@ -19,4 +19,6 @@ public interface DataerDatasetRepository extends JpaRepository<DataerDataset, Da
     @Query("select c from DataerDataset c where c.dataerId = ?1")
     List<DataerDataset> findDataerDatasetByUser(Dataer dataer);
 
+    @Query("select c.dataerId from DataerDataset c where c.datasetId = ?1 and c.role = 0")
+    List<DataerDataset> findDataerDatasetOwner(Dataset dataset);
 }
