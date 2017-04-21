@@ -13,6 +13,7 @@ import fundata.viewmodel.HotProject;
 import fundata.viewmodel.PullRequestView;
 import fundata.viewmodel.UpFileInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.support.PagedListHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
@@ -88,8 +89,8 @@ public class PullRequestController {
     @RequestMapping(value = "/getHotProject", method = RequestMethod.POST)
     public HotProject getFreshDataset(@RequestAttribute(value = Constants.CURRENT_USER_ID) Long userId,
                                       int curPage) {
-        Page<PullRequest> result = pullRequestService.findLatestPullRequest(userId, curPage);
-        List<PullRequest> pullRequests = result.getContent();
+        PagedListHolder<PullRequest> result = pullRequestService.findLatestPullRequest(userId, curPage);
+        List<PullRequest> pullRequests = result.getPageList();
         HotProject hotProject = new HotProject();
         for (PullRequest pullRequest : pullRequests) {
             hotProject.addInfo(pullRequest.getDataset().getName(), pullRequest.getDataer().getName(), 1);
