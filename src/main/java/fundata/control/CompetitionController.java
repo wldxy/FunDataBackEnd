@@ -619,7 +619,7 @@ public class CompetitionController {
 //                if(isActive(temp) && temp.getId().equals(comId)){
 //                    Accurate a = new Accurate();
 //                    a.setValue(accurate);
-//                    a.setDataer(dataer);
+//                    a.setDataerId(dataer);
 //                    a.setUploadDate(getCurrentTime());
 //                    accurateServiveImpl.save(a);
 //                    accurates.add(a);
@@ -678,7 +678,7 @@ public class CompetitionController {
 ////                for (Dataer d : dataers){
 ////                    d.getAccurates().contains(a);
 //                    Map temp = new HashMap();
-//                    temp.put("user_id",a.getDataer().getId());
+//                    temp.put("user_id",a.getId().getId());
 //                    temp.put("value",a.getValue());
 //                    temp.put("uploadtime",a.getUploadDate());
 //                    mapList.add(temp);

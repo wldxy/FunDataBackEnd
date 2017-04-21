@@ -2,6 +2,7 @@ package fundata.service;
 
 import fundata.configure.Constants;
 import fundata.model.Dataer;
+import fundata.model.DataerDataset;
 import fundata.model.Dataset;
 import fundata.model.PullRequest;
 import fundata.repository.DataFileRepository;
@@ -79,9 +80,9 @@ public class PullRequestServiceImpl implements PullRequestService {
     @Override
     public List<PullRequest> getAllUserPullRequests(Long userId) {
         List<PullRequest> pullRequests = new ArrayList<>();
-        List<Dataset> datasets = datasetService.getAllUserDatasets(userId);
-        for (Dataset dataset : datasets) {
-            pullRequests.addAll(dataset.getPullRequests());
+        List<DataerDataset> datasets = datasetService.getAllUserDatasets(userId);
+        for (DataerDataset dataset : datasets) {
+            pullRequests.addAll(dataset.getDatasetId().getPullRequests());
         }
         return pullRequests;
     }

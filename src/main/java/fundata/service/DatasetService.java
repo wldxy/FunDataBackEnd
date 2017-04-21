@@ -12,9 +12,9 @@ import java.util.Set;
  * Created by ocean on 16-12-1.
  */
 public interface DatasetService {
-    PagedListHolder<Dataset> getUserDatasetsByPage(Long userId, int curPage);
+    PagedListHolder<DataerDataset> getUserDatasetsByPage(Long userId, int curPage);
 
-    List<Dataset> getAllUserDatasets(Long userId);
+    List<DataerDataset> getAllUserDatasets(Long userId);
 
     Set<Dataset> findLikeName(String username);
 

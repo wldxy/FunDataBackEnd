@@ -17,15 +17,15 @@ import java.util.Set;
 public class Dataset {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false,name = "ID")
+    @Column(nullable = false,name = "dataset_id")
     private Long id;
 
-    @Column(nullable = false,name = "NAME", length = 50)
+    @Column(nullable = false,name = "name", length = 50)
     private String name;
 
-    @ManyToMany(mappedBy = "datasets")
+    @OneToMany(mappedBy = "dataerId")
     @JsonBackReference
-    private Set<Dataer> dataers = new HashSet<>();
+    private Set<DataerDataset> dataers = new HashSet<DataerDataset>();
 
     @Column(name = "ds_description")
     private String dsDescription;
@@ -110,7 +110,7 @@ public class Dataset {
         this.allFile = allFile;
     }
 
-    public Set<Dataer> getDataers() {
+    public Set<DataerDataset> getDataers() {
         return dataers;
     }
 

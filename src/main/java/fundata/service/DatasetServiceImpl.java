@@ -32,12 +32,15 @@ public class DatasetServiceImpl implements DatasetService {
     DataerRepository dataerRepository;
 
     @Autowired
+    DataerDatasetRepository dataerDatasetRepository;
+
+    @Autowired
     DatasetTitleRepository datasetTitleRepository;
 
     @Override
-    public PagedListHolder<Dataset> getUserDatasetsByPage(Long userId, int curPage) {
-        List<Dataset> datasets = getAllUserDatasets(userId);
-        PagedListHolder<Dataset> datasetPage = new PagedListHolder<>(datasets);
+    public PagedListHolder<DataerDataset> getUserDatasetsByPage(Long userId, int curPage) {
+        List<DataerDataset> datasets = getAllUserDatasets(userId);
+        PagedListHolder<DataerDataset> datasetPage = new PagedListHolder<>(datasets);
         datasetPage.setSort(new MutableSortDefinition("name", true, true));
         datasetPage.resort();
         datasetPage.setPage(curPage);
@@ -46,9 +49,8 @@ public class DatasetServiceImpl implements DatasetService {
     }
 
     @Override
-    public List<Dataset> getAllUserDatasets(Long userId) {
-        Dataer dataer = dataerRepository.findById(userId);
-        return new ArrayList<Dataset>(dataer.getDatasets());
+    public List<DataerDataset> getAllUserDatasets(Long userId) {
+        return dataerDatasetRepository.findDataerDatasetByUser(dataerRepository.findById(userId));
     }
 
 
@@ -69,8 +71,8 @@ public class DatasetServiceImpl implements DatasetService {
         Gson gson = new Gson();
         Field[] fields = gson.fromJson(fieldsString, Field[].class);
         MetaData meta = new MetaData(dataset.getId(), Arrays.asList(fields));
+        dataerDatasetRepository.save(new DataerDataset(dataer, dataset, (short)(0)));
         metaDataRepository.save(meta);
-        dataer.getDatasets().add(dataset);
         dataerRepository.save(dataer);
         System.out.println(datasetName + " success");
     }

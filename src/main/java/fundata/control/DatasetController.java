@@ -10,6 +10,7 @@ import fundata.repository.QiniuProperties;
 import fundata.service.*;
 import fundata.viewmodel.DSCommentView;
 import fundata.viewmodel.DatasetContent;
+import fundata.viewmodel.DatasetInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.support.PagedListHolder;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * Created by ocean on 16-12-1.
@@ -81,10 +83,22 @@ public class DatasetController {
     public Map<String, Object> getMyDataset(@RequestAttribute(value = Constants.CURRENT_USER_ID) Long userId,
                                   @RequestParam(value = "curPage") short curPage) {
 
-        PagedListHolder<Dataset> result = datasetService.getUserDatasetsByPage(userId, curPage);
+        PagedListHolder<DataerDataset> result = datasetService.getUserDatasetsByPage(userId, curPage);
+        Object[] datasets = result.getPageList().stream().map(d -> {
+            DatasetInfo datasetInfo = new DatasetInfo();
+            Dataset dataset = d.getDatasetId();
+            Dataer dataer = d.getDataerId();
+            datasetInfo.setCreateTime(dataset.getCreateTime());
+            datasetInfo.setDsDescription(dataset.getDsDescription());
+            datasetInfo.setFormatDescription(dataset.getFormatDescription());
+            datasetInfo.setName(dataset.getName());
+            datasetInfo.setOwnerName(dataer.getName());
+            datasetInfo.setOwnerUrl(dataer.getHead_href());
+            return datasetInfo;
+        }).toArray();
         Map<String, Object> map = new HashMap<>();
         map.put("code", "200");
-        map.put("datasets", result.getPageList());
+        map.put("datasets", Arrays.asList(datasets));
         map.put("total", result.getNrOfElements());
         return map;
     }
@@ -215,7 +229,7 @@ public class DatasetController {
         DatasetContent datasetContent = new DatasetContent();
 
         Dataset dataset = datasetService.findByDatasetName(datesetName);
-        Set<Dataer> dataers = dataset.getDataers();
+        Set<DataerDataset> dataers = dataset.getDataers();
         Dataer dataer = dataerService.findByDataerName(username);
         if (dataers.contains(dataer)) {
             datasetContent.setAdmin(1);
