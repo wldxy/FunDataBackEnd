@@ -14,13 +14,15 @@ import fundata.viewmodel.DatasetInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.support.PagedListHolder;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.*;
-import java.util.stream.Stream;
 
 /**
  * Created by ocean on 16-12-1.
@@ -58,11 +60,30 @@ public class DatasetController {
     private PullRequestService pullRequestService;
 
 
+    @RequestMapping(value = "/uploadcover", method = RequestMethod.POST)
+    public Map<String, String> getUploadCSV(HttpServletRequest req, MultipartHttpServletRequest multiReq) throws IOException {
+        String name = multiReq.getFile("file").getOriginalFilename();
+        FileOutputStream fos=new FileOutputStream(new File(name));
+        FileInputStream fs=(FileInputStream) multiReq.getFile("file").getInputStream();
+        byte[] buffer=new byte[2048];
+        int len=0;
+        while((len=fs.read(buffer))!=-1){
+            fos.write(buffer, 0, len);
+        }
+        fos.close();
+        fs.close();
+        Map<String, String> map = new HashMap<>();
+        map.put("url", name);
+        map.put("code", "200");
+        return map;
+    }
+
     @RequestMapping("/createDataset")
     @Authorization
     public Map<String, String> createDataset(@RequestAttribute(value = Constants.CURRENT_USER_ID) Long userId,
                                  @RequestParam(value = "ds_name") String datasetName,
                                  @RequestParam(value = "ds_desc") String dsDesc,
+                                 @RequestParam(value = "cover_url") String coverUrl,
                                  @RequestParam(value = "format_desc") String formatDesc,
                                  @RequestParam(value = "columns") String fieldsString) {
         Map<String, String> map = new HashMap<>();
@@ -72,7 +93,7 @@ public class DatasetController {
             return map;
         }
 
-        datasetService.addDataset(userId, datasetName, dsDesc, formatDesc, fieldsString);
+        datasetService.addDataset(userId, datasetName, dsDesc, formatDesc, fieldsString, coverUrl);
         map.put("code", "200");
         return map;
     }

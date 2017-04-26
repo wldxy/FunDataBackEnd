@@ -25,7 +25,20 @@ public class DataerServiceImpl implements DataerService {
     }
 
     @Override
-    public Dataer findById(Long id) {
+    public boolean editUserInfo(Long id, String newName, String newPwd, String newUrl) {
+        Dataer dataer = dataerRepository.findById(id);
+        if (newName != null) {
+            dataer.setName(newName);
+        }
+        if (newPwd != null) {
+            dataer.setPassword(newPwd);
+        }
+        Dataer d = dataerRepository.save(dataer);
+        return d != null;
+    }
+
+    @Override
+    public Dataer getUserById(Long id) {
         return dataerRepository.findById(id);
     }
 

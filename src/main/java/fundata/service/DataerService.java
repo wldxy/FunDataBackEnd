@@ -12,7 +12,9 @@ import java.util.Set;
 public interface DataerService {
     void save(Dataer dataer);
 
-    Dataer findById(Long id);
+    boolean editUserInfo(Long id, String newName, String newPwd, String newUrl);
+
+    Dataer getUserById(Long id);
 
     Dataer findByHostcompetition(Competition competition);
 

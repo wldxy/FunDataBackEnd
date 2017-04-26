@@ -8,6 +8,7 @@ import fundata.service.QiniuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,6 +20,7 @@ import java.util.Map;
  * Created by ocean on 16-11-29.
  */
 @RestController
+@RequestMapping("/file")
 public class FileController {
     @Autowired
     @Qualifier("qiniuServiceImpl")
@@ -30,7 +32,9 @@ public class FileController {
     @Autowired
     private DatasetRepository datasetRepository;
 
-//    @RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
+
+
+//    @RequestMapping(value = "/upload", method = RequestMethod.POST)
 //    public UpFileInfo getUploadCSV() {
 //        DataFile dataFile = new DataFile();
 //        dataFile.setCreateTime(new Date());

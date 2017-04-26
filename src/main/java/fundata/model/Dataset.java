@@ -27,10 +27,19 @@ public class Dataset {
     @JsonBackReference
     private Set<DataerDataset> dataers = new HashSet<DataerDataset>();
 
-    
-
     @Column(name = "ds_description")
     private String dsDescription;
+
+    @Column(name = "cover_url")
+    private String coverUrl;
+
+    public String getCoverUrl() {
+        return coverUrl;
+    }
+
+    public void setCoverUrl(String coverUrl) {
+        this.coverUrl = coverUrl;
+    }
 
     @Column(name = "create_time")
     @Temporal(TemporalType.DATE)

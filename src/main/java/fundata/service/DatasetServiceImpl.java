@@ -41,7 +41,7 @@ public class DatasetServiceImpl implements DatasetService {
     public PagedListHolder<DataerDataset> getUserDatasetsByPage(Long userId, int curPage) {
         List<DataerDataset> datasets = getAllUserDatasets(userId);
         PagedListHolder<DataerDataset> datasetPage = new PagedListHolder<>(datasets);
-        datasetPage.setSort(new MutableSortDefinition("name", true, true));
+        datasetPage.setSort(new MutableSortDefinition("datasetId.name", true, true));
         datasetPage.resort();
         datasetPage.setPage(curPage);
         datasetPage.setPageSize(Constants.pageSize);
@@ -61,11 +61,12 @@ public class DatasetServiceImpl implements DatasetService {
 
 
     @Override
-    public void addDataset(Long id, String datasetName, String dsDesc, String formatDesc, String fieldsString) {
+    public void addDataset(Long id, String datasetName, String dsDesc, String formatDesc, String fieldsString, String coverUrl) {
         Dataer dataer = dataerRepository.findById(id);
         System.out.println(dataer.getEmail());
         Dataset dataset = new Dataset(datasetName);
         dataset.setDsDescription(dsDesc);
+        dataset.setCoverUrl(coverUrl);
         dataset.setFormatDescription(formatDesc);
         datasetRepository.save(dataset);
         Gson gson = new Gson();
