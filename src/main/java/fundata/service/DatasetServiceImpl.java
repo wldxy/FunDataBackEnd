@@ -8,6 +8,7 @@ import fundata.document.Field;
 import fundata.document.MetaData;
 import fundata.model.*;
 import fundata.repository.*;
+import fundata.viewmodel.DatasetInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.support.MutableSortDefinition;
 import org.springframework.beans.support.PagedListHolder;
@@ -37,6 +38,40 @@ public class DatasetServiceImpl implements DatasetService {
     @Autowired
     DatasetTitleRepository datasetTitleRepository;
 
+    private List<DataerDataset> getDatasetOwner(List<DataerDataset> dataerDatasets) {
+        Object[] datasets = dataerDatasets.stream().map(d -> {
+            return d.getDatasetId();
+        }).toArray();
+        return dataerDatasetRepository.findDatasetOwner(datasets);
+    }
+
+    private List<DataerDataset> getAllDatasets() {
+        List<DataerDataset> dataerDatasets = dataerDatasetRepository.findAllDatasets();
+        return getDatasetOwner(dataerDatasets);
+    }
+
+    @Override
+    public List<DataerDataset> getAllUserDatasets(Long userId) {
+        List<DataerDataset> dataerDatasets = dataerDatasetRepository.findAllDatasetsByUser(dataerRepository.findById(userId));
+        return getDatasetOwner(dataerDatasets);
+    }
+
+    @Override
+    public Object[] assembleDatasetInfo(PagedListHolder<DataerDataset> result) {
+        return result.getPageList().stream().map(d -> {
+            DatasetInfo datasetInfo = new DatasetInfo();
+            Dataset dataset = d.getDatasetId();
+            Dataer dataer = d.getDataerId();
+            datasetInfo.setCreateTime(dataset.getCreateTime());
+            datasetInfo.setDsDescription(dataset.getDsDescription());
+            datasetInfo.setFormatDescription(dataset.getFormatDescription());
+            datasetInfo.setName(dataset.getName());
+            datasetInfo.setOwnerName(dataer.getName());
+            datasetInfo.setOwnerUrl(dataer.getHead_href());
+            return datasetInfo;
+        }).toArray();
+    }
+
     @Override
     public PagedListHolder<DataerDataset> getUserDatasetsByPage(Long userId, int curPage) {
         List<DataerDataset> datasets = getAllUserDatasets(userId);
@@ -49,19 +84,18 @@ public class DatasetServiceImpl implements DatasetService {
     }
 
     @Override
-    public List<DataerDataset> getAllUserDatasets(Long userId) {
-        return dataerDatasetRepository.findDataerDatasetByUser(dataerRepository.findById(userId));
+    public PagedListHolder<DataerDataset> getAllDatasetsByPage(int curPage) {
+        List<DataerDataset> datasets = getAllDatasets();
+        PagedListHolder<DataerDataset> datasetPage = new PagedListHolder<>(datasets);
+        datasetPage.setSort(new MutableSortDefinition("datasetId.name", true, true));
+        datasetPage.resort();
+        datasetPage.setPage(curPage);
+        datasetPage.setPageSize(Constants.pageSize);
+        return datasetPage;
     }
 
-
     @Override
-    public Set<Dataset> findLikeName(String name) {
-        return datasetRepository.findLikeName(name);
-    }
-
-
-    @Override
-    public void addDataset(Long id, String datasetName, String dsDesc, String formatDesc, String fieldsString, String coverUrl) {
+    public void createNewDataset(Long id, String datasetName, String dsDesc, String formatDesc, String fieldsString, String coverUrl) {
         Dataer dataer = dataerRepository.findById(id);
         System.out.println(dataer.getEmail());
         Dataset dataset = new Dataset(datasetName);
@@ -78,7 +112,10 @@ public class DatasetServiceImpl implements DatasetService {
         System.out.println(datasetName + " success");
     }
 
-
+    @Override
+    public Set<Dataset> findLikeName(String name) {
+        return datasetRepository.findLikeName(name);
+    }
 
     @Override
     public Set<DatasetTitle> getDatasetTitle(String datasetName) {

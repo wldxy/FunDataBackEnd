@@ -11,13 +11,17 @@ import java.util.Set;
  * Created by ocean on 16-12-1.
  */
 public interface DatasetService {
-    PagedListHolder<DataerDataset> getUserDatasetsByPage(Long userId, int curPage);
-
     List<DataerDataset> getAllUserDatasets(Long userId);
 
-    Set<Dataset> findLikeName(String username);
+    Object[] assembleDatasetInfo(PagedListHolder<DataerDataset> result);
 
-    void addDataset(Long id, String datasetName, String dsDesc, String formatDesc, String columnsJSONString, String coverUrl);
+    PagedListHolder<DataerDataset> getAllDatasetsByPage(int curPage);
+
+    PagedListHolder<DataerDataset> getUserDatasetsByPage(Long userId, int curPage);
+
+    void createNewDataset(Long id, String datasetName, String dsDesc, String formatDesc, String columnsJSONString, String coverUrl);
+
+    Set<Dataset> findLikeName(String username);
 
     Set<DatasetTitle> getDatasetTitle(String datasetName);
 

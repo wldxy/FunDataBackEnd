@@ -60,7 +60,7 @@ public class DatasetController {
     private PullRequestService pullRequestService;
 
 
-    @RequestMapping(value = "/uploadcover", method = RequestMethod.POST)
+    @RequestMapping(value = "/uploadCover", method = RequestMethod.POST)
     public Map<String, String> getUploadCSV(HttpServletRequest req, MultipartHttpServletRequest multiReq) throws IOException {
         String name = multiReq.getFile("file").getOriginalFilename();
         FileOutputStream fos=new FileOutputStream(new File("files/".concat(name)));
@@ -93,7 +93,7 @@ public class DatasetController {
             return map;
         }
 
-        datasetService.addDataset(userId, datasetName, dsDesc, formatDesc, fieldsString, coverUrl);
+        datasetService.createNewDataset(userId, datasetName, dsDesc, formatDesc, fieldsString, coverUrl);
         map.put("code", "200");
         return map;
     }
@@ -105,21 +105,9 @@ public class DatasetController {
                                   @RequestParam(value = "curPage") short curPage) {
 
         PagedListHolder<DataerDataset> result = datasetService.getUserDatasetsByPage(userId, curPage);
-        Object[] datasets = result.getPageList().stream().map(d -> {
-            DatasetInfo datasetInfo = new DatasetInfo();
-            Dataset dataset = d.getDatasetId();
-            Dataer dataer = d.getDataerId();
-            datasetInfo.setCreateTime(dataset.getCreateTime());
-            datasetInfo.setDsDescription(dataset.getDsDescription());
-            datasetInfo.setFormatDescription(dataset.getFormatDescription());
-            datasetInfo.setName(dataset.getName());
-            datasetInfo.setOwnerName(dataer.getName());
-            datasetInfo.setOwnerUrl(dataer.getHead_href());
-            return datasetInfo;
-        }).toArray();
         Map<String, Object> map = new HashMap<>();
         map.put("code", "200");
-        map.put("datasets", Arrays.asList(datasets));
+        map.put("datasets", Arrays.asList(datasetService.assembleDatasetInfo(result)));
         map.put("total", result.getNrOfElements());
         return map;
     }
