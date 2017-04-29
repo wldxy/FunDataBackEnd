@@ -8,10 +8,9 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class Receiver {
-
     @JmsListener(destination = "sample.queue")
-    public void receiveMessage(String text) {
-        System.out.println(text);
+    public void receiveMessage(Email email) {
+        System.out.println(email.getBody());
     }
 
 }
