@@ -17,8 +17,12 @@ import java.util.List;
 @Repository
 public interface DataerDatasetRepository extends JpaRepository<DataerDataset, DataerDatasetId>, JpaSpecificationExecutor<DataerDataset> {
     @Query("select c from DataerDataset c where c.dataerId = ?1")
-    List<DataerDataset> findDataerDatasetByUser(Dataer dataer);
+    List<DataerDataset> findAllDatasetsByUser(Dataer dataer);
 
-    @Query("select c.dataerId from DataerDataset c where c.datasetId = ?1 and c.role = 0")
-    List<DataerDataset> findDataerDatasetOwner(Dataset dataset);
+    @Query("select c from DataerDataset c")
+    List<DataerDataset> findAllDatasets();
+
+    @Query("select c from DataerDataset c where c.datasetId in ?1 and c.role = 0")
+    List<DataerDataset> findDatasetOwner(Object[] datasets);
+
 }
