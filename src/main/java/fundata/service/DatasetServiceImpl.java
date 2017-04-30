@@ -40,7 +40,7 @@ public class DatasetServiceImpl implements DatasetService {
 
     private List<DataerDataset> getDatasetOwner(List<DataerDataset> dataerDatasets) {
         Object[] datasets = dataerDatasets.stream().map(d -> {
-            return d.getDatasetId();
+            return d.getDataset();
         }).toArray();
         return dataerDatasetRepository.findDatasetOwner(datasets);
     }
@@ -57,11 +57,11 @@ public class DatasetServiceImpl implements DatasetService {
     }
 
     @Override
-    public Object[] assembleDatasetInfo(PagedListHolder<DataerDataset> result) {
-        return result.getPageList().stream().map(d -> {
+    public List<Object> assembleDatasetInfo(PagedListHolder<DataerDataset> result) {
+        return Arrays.asList(result.getPageList().stream().map(d -> {
             DatasetInfo datasetInfo = new DatasetInfo();
-            Dataset dataset = d.getDatasetId();
-            Dataer dataer = d.getDataerId();
+            Dataset dataset = d.getDataset();
+            Dataer dataer = d.getDataer();
             datasetInfo.setCreateTime(dataset.getCreateTime());
             datasetInfo.setDsDescription(dataset.getDsDescription());
             datasetInfo.setFormatDescription(dataset.getFormatDescription());
@@ -69,14 +69,14 @@ public class DatasetServiceImpl implements DatasetService {
             datasetInfo.setOwnerName(dataer.getName());
             datasetInfo.setOwnerUrl(dataer.getHead_href());
             return datasetInfo;
-        }).toArray();
+        }).toArray());
     }
 
     @Override
     public PagedListHolder<DataerDataset> getUserDatasetsByPage(Long userId, int curPage) {
         List<DataerDataset> datasets = getAllUserDatasets(userId);
         PagedListHolder<DataerDataset> datasetPage = new PagedListHolder<>(datasets);
-        datasetPage.setSort(new MutableSortDefinition("datasetId.name", true, true));
+        datasetPage.setSort(new MutableSortDefinition("dataset.name", true, true));
         datasetPage.resort();
         datasetPage.setPage(curPage);
         datasetPage.setPageSize(Constants.pageSize);
@@ -87,7 +87,7 @@ public class DatasetServiceImpl implements DatasetService {
     public PagedListHolder<DataerDataset> getAllDatasetsByPage(int curPage) {
         List<DataerDataset> datasets = getAllDatasets();
         PagedListHolder<DataerDataset> datasetPage = new PagedListHolder<>(datasets);
-        datasetPage.setSort(new MutableSortDefinition("datasetId.name", true, true));
+        datasetPage.setSort(new MutableSortDefinition("dataset.name", true, true));
         datasetPage.resort();
         datasetPage.setPage(curPage);
         datasetPage.setPageSize(Constants.pageSize);

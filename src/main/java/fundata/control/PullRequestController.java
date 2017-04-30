@@ -3,18 +3,14 @@ package fundata.control;
 import fundata.configure.Constants;
 import fundata.model.Dataset;
 import fundata.model.PullRequest;
-import fundata.repository.DataerRepository;
-import fundata.repository.DatasetRepository;
 import fundata.repository.PullRequestRepository;
 import fundata.service.DatasetService;
 import fundata.service.PullRequestService;
 import fundata.service.QiniuService;
 import fundata.viewmodel.HotProject;
 import fundata.viewmodel.PullRequestView;
-import fundata.viewmodel.UpFileInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.support.PagedListHolder;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.FileNotFoundException;
@@ -37,7 +33,7 @@ public class PullRequestController {
     public PullRequestView getPullRequest(@RequestParam(name = "datasetname") String datasetName,
 //                                        @RequestParam(name = "page") int page,
                                           @RequestParam(name = "username") String username) {
-        Set<PullRequest> pullRequests = pullRequestService.findByDatasetName(datasetName);
+        Set<PullRequest> pullRequests = pullRequestService.getDatasetAllPullRequestsByPage(datasetName);
         if (pullRequests.size() != 0) {
 //            return new PullRequestView(pullRequests);
             PullRequestView pullRequestView = new PullRequestView(0);

@@ -619,7 +619,7 @@ public class CompetitionController {
 //                if(isActive(temp) && temp.getId().equals(comId)){
 //                    Accurate a = new Accurate();
 //                    a.setValue(accurate);
-//                    a.setDataerId(dataer);
+//                    a.setDataer(dataer);
 //                    a.setUploadDate(getCurrentTime());
 //                    accurateServiveImpl.save(a);
 //                    accurates.add(a);

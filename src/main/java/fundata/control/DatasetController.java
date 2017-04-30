@@ -64,14 +64,14 @@ public class DatasetController {
     public Map<String, String> getUploadCSV(HttpServletRequest req, MultipartHttpServletRequest multiReq) throws IOException {
         String name = multiReq.getFile("file").getOriginalFilename();
         FileOutputStream fos=new FileOutputStream(new File("files/".concat(name)));
-        FileInputStream fs=(FileInputStream) multiReq.getFile("file").getInputStream();
+        FileInputStream fis=(FileInputStream) multiReq.getFile("file").getInputStream();
         byte[] buffer=new byte[2048];
-        int len=0;
-        while((len=fs.read(buffer))!=-1){
+        int len;
+        while((len=fis.read(buffer))!=-1){
             fos.write(buffer, 0, len);
         }
         fos.close();
-        fs.close();
+        fis.close();
         Map<String, String> map = new HashMap<>();
         map.put("url", name);
         map.put("code", "200");
@@ -99,52 +99,36 @@ public class DatasetController {
     }
 
 
-    @RequestMapping("/getMyDataset")
+    @RequestMapping("/getMyDatasets")
     @Authorization
     public Map<String, Object> getMyDataset(@RequestAttribute(value = Constants.CURRENT_USER_ID) Long userId,
                                   @RequestParam(value = "curPage") short curPage) {
-
         PagedListHolder<DataerDataset> result = datasetService.getUserDatasetsByPage(userId, curPage);
         Map<String, Object> map = new HashMap<>();
         map.put("code", "200");
-        map.put("datasets", Arrays.asList(datasetService.assembleDatasetInfo(result)));
+        map.put("datasets", datasetService.assembleDatasetInfo(result));
         map.put("total", result.getNrOfElements());
         return map;
     }
 
-    @RequestMapping("/getDataset")
-    public Map getDataset() {
-        List<Dataset> datasets = datasetRepository.findAll();
+    @RequestMapping("/getAllDatasets")
+    public Map getDataset(@RequestParam(value = "curPage") short curPage) {
+        PagedListHolder<DataerDataset> result = datasetService.getAllDatasetsByPage(curPage);
+        Map<String, Object> map = new HashMap<>();
+        map.put("code", "200");
+        map.put("datasets", datasetService.assembleDatasetInfo(result));
+        map.put("total", result.getNrOfElements());
+        return map;
+    }
+
+    @RequestMapping("/getMyContribute")
+    public Map getMyContribute(@RequestAttribute(value = Constants.CURRENT_USER_ID) Long userId,
+                               @RequestParam(value = "curPage") short curPage) {
         Map map = new HashMap();
-
-        List<Map> dataset = new ArrayList<>();
-        for (Dataset d : datasets) {
-            Map temp = new HashMap();
-            temp.put("url", "http://4493bz.1985t.com/uploads/allimg/150127/4-15012G52133.jpg");
-            temp.put("name", d.getName());
-            temp.put("filenum", d.getPullRequests().size());
-
-            Set<PullRequest> pullRequests = d.getPullRequests();
-
-            if (pullRequests.size() != 0) {
-                PullRequest pullRequest = Collections.max(pullRequests, new Comparator<PullRequest>() {
-                    @Override
-                    public int compare(PullRequest o1, PullRequest o2) {
-                        return o1.getUpdateTime().compareTo(o2.getUpdateTime());
-                    }
-                });
-                temp.put("time", pullRequest.getUpdateTime());
-                temp.put("username", pullRequest.getDataer().getName());
-                temp.put("type", pullRequest.getStatus());
-            } else {
-                temp.put("time", "");
-                temp.put("username", "");
-                temp.put("type", "");
-            }
-            dataset.add(temp);
-        }
-
-        map.put("datasets", dataset);
+        PagedListHolder<PullRequest> result = pullRequestService.getUserPullRequestsByPage(userId, curPage);
+        map.put("code", "200");
+        map.put("pullrequests", pullRequestService.assemblePullRequestInfo(result));
+        map.put("total", result.getNrOfElements());
         return map;
     }
 
@@ -206,25 +190,7 @@ public class DatasetController {
         return true;
     }
 
-    @RequestMapping("/getMyContribute")
-    public Map getMyContribute(@RequestParam("username") String username) {
-        Map map = new HashMap();
-        List<Map> dataset = new ArrayList<>();
 
-        Dataer dataer = dataerService.findByDataerName(username);
-        Set<PullRequest> pullRequests = dataer.getPullRequests();
-        for (PullRequest pullRequest : pullRequests) {
-            Map temp = new HashMap();
-            temp.put("datasetname", pullRequest.getDataset().getName());
-            temp.put("updatetime", pullRequest.getUpdateTime().toString());
-            temp.put("type", pullRequest.getStatus());
-
-            dataset.add(temp);
-        }
-
-        map.put("dataset", dataset);
-        return map;
-    }
 
 
 

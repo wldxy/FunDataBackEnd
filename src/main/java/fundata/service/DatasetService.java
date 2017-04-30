@@ -13,7 +13,7 @@ import java.util.Set;
 public interface DatasetService {
     List<DataerDataset> getAllUserDatasets(Long userId);
 
-    Object[] assembleDatasetInfo(PagedListHolder<DataerDataset> result);
+    List<Object> assembleDatasetInfo(PagedListHolder<DataerDataset> result);
 
     PagedListHolder<DataerDataset> getAllDatasetsByPage(int curPage);
 
