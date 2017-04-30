@@ -42,7 +42,7 @@ public class DatasetServiceImpl implements DatasetService {
         Object[] datasets = dataerDatasets.stream().map(d -> {
             return d.getDataset();
         }).toArray();
-        return dataerDatasetRepository.findDatasetOwner(datasets);
+        return datasets.length == 0 ? new ArrayList<>() : dataerDatasetRepository.findDatasetOwner(datasets);
     }
 
     private List<DataerDataset> getAllDatasets() {
@@ -62,12 +62,14 @@ public class DatasetServiceImpl implements DatasetService {
             DatasetInfo datasetInfo = new DatasetInfo();
             Dataset dataset = d.getDataset();
             Dataer dataer = d.getDataer();
+            datasetInfo.setId(dataset.getId());
             datasetInfo.setCreateTime(dataset.getCreateTime());
             datasetInfo.setDsDescription(dataset.getDsDescription());
             datasetInfo.setFormatDescription(dataset.getFormatDescription());
             datasetInfo.setName(dataset.getName());
             datasetInfo.setOwnerName(dataer.getName());
-            datasetInfo.setOwnerUrl(dataer.getHead_href());
+            datasetInfo.setCoverUrl(dataset.getCoverUrl());
+            datasetInfo.setContributeNum(dataset.getPullRequests().size());
             return datasetInfo;
         }).toArray());
     }

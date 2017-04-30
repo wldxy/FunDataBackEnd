@@ -63,7 +63,8 @@ public class DatasetController {
     @RequestMapping(value = "/uploadCover", method = RequestMethod.POST)
     public Map<String, String> getUploadCSV(HttpServletRequest req, MultipartHttpServletRequest multiReq) throws IOException {
         String name = multiReq.getFile("file").getOriginalFilename();
-        FileOutputStream fos=new FileOutputStream(new File("files/".concat(name)));
+        String coverUrl = "files/".concat(name);
+        FileOutputStream fos=new FileOutputStream(new File(coverUrl));
         FileInputStream fis=(FileInputStream) multiReq.getFile("file").getInputStream();
         byte[] buffer=new byte[2048];
         int len;
@@ -73,7 +74,7 @@ public class DatasetController {
         fos.close();
         fis.close();
         Map<String, String> map = new HashMap<>();
-        map.put("url", name);
+        map.put("url", coverUrl);
         map.put("code", "200");
         return map;
     }

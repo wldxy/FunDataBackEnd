@@ -6,16 +6,25 @@ import java.util.Date;
  * Created by huang on 17-4-21.
  */
 public class DatasetInfo {
+    private Long id;
     private String name;
-    private String ownerUrl;
+    private String coverUrl;
     private String ownerName;
+    private String dsDescription;
+    private String formatDescription;
+    private Date createTime;
+    private int contributeNum;
 
-    public String getName() {
-        return name;
+    public Long getId() {
+        return id;
     }
 
-    public String getOwnerUrl() {
-        return ownerUrl;
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getCoverUrl() {
+        return coverUrl;
     }
 
     public String getOwnerName() {
@@ -34,12 +43,24 @@ public class DatasetInfo {
         return createTime;
     }
 
+    public int getContributeNum() {
+        return contributeNum;
+    }
+
+    public void setContributeNum(int contributeNum) {
+        this.contributeNum = contributeNum;
+    }
+
+    public String getName() {
+        return name;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setOwnerUrl(String ownerUrl) {
-        this.ownerUrl = ownerUrl;
+    public void setCoverUrl(String coverUrl) {
+        this.coverUrl = coverUrl;
     }
 
     public void setOwnerName(String ownerName) {
@@ -58,7 +79,4 @@ public class DatasetInfo {
         this.createTime = createTime;
     }
 
-    private String dsDescription;
-    private String formatDescription;
-    private Date createTime;
 }
