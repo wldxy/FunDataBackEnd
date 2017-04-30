@@ -9,6 +9,7 @@ import fundata.repository.DataFileRepository;
 import fundata.repository.DataerRepository;
 import fundata.repository.DatasetRepository;
 import fundata.repository.PullRequestRepository;
+import fundata.viewmodel.PullRequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.support.MutableSortDefinition;
 import org.springframework.beans.support.PagedListHolder;
@@ -37,7 +38,34 @@ public class PullRequestServiceImpl implements PullRequestService {
     DatasetService datasetService;
 
     @Override
-    public Set<PullRequest> findByDatasetName(String datasetName) {
+    public List<Object> assemblePullRequestInfo(PagedListHolder<PullRequest> result) {
+        return Arrays.asList(result.getPageList().stream().map(p -> {
+            PullRequestInfo pullRequestInfo = new PullRequestInfo();
+            Dataset dataset = p.getDataset();
+            Dataer dataer = p.getDataer();
+//            datasetInfo.setCreateTime(dataset.getCreateTime());
+//            datasetInfo.setDsDescription(dataset.getDsDescription());
+//            datasetInfo.setFormatDescription(dataset.getFormatDescription());
+//            datasetInfo.setName(dataset.getName());
+//            datasetInfo.setOwnerName(dataer.getName());
+//            datasetInfo.setOwnerUrl(dataer.getHead_href());
+            return pullRequestInfo;
+        }).toArray());
+    }
+
+    @Override
+    public PagedListHolder<PullRequest> getUserPullRequestsByPage(Long userId, short curPage) {
+        List<PullRequest> pullRequests = getAllUserPullRequests(userId);
+        PagedListHolder<PullRequest> pullRequestPage = new PagedListHolder<PullRequest>(pullRequests);
+        pullRequestPage.setSort(new MutableSortDefinition("dataer.name", true, true));
+        pullRequestPage.resort();
+        pullRequestPage.setPage(curPage);
+        pullRequestPage.setPageSize(Constants.pageSize);
+        return pullRequestPage;
+    }
+
+    @Override
+    public Set<PullRequest> getDatasetAllPullRequestsByPage(String datasetName) {
         Dataset dataset = datasetRepository.findByDatasetName(datasetName);
         if (dataset != null) {
             return dataset.getPullRequests();
@@ -82,20 +110,12 @@ public class PullRequestServiceImpl implements PullRequestService {
         List<PullRequest> pullRequests = new ArrayList<>();
         List<DataerDataset> datasets = datasetService.getAllUserDatasets(userId);
         for (DataerDataset dataset : datasets) {
-            pullRequests.addAll(dataset.getDatasetId().getPullRequests());
+            pullRequests.addAll(dataset.getDataset().getPullRequests());
         }
         return pullRequests;
     }
 
-    @Override
-    public PagedListHolder<PullRequest> getUserPullRequestsByPage(Long userId, int curPage) {
-        List<PullRequest> pullRequests = getAllUserPullRequests(userId);
-        PagedListHolder<PullRequest> pullRequestPage = new PagedListHolder<PullRequest>(pullRequests);
-        pullRequestPage.setSort(new MutableSortDefinition("name", true, true));
-        pullRequestPage.setPage(curPage);
-        pullRequestPage.setPageSize(Constants.pageSize);
-        return pullRequestPage;
-    }
+
 
     @Override
     public PagedListHolder<PullRequest> findLatestPullRequest(Long userId, int curPage) {

@@ -13,41 +13,41 @@ public class DataerDataset {
     @Id
     @ManyToOne(cascade= CascadeType.ALL)
     @JoinColumn(name="dataer_id",nullable=false, insertable=false, updatable=false)
-    private Dataer dataerId;
+    private Dataer dataer;
 
     @Id
     @ManyToOne(cascade=CascadeType.ALL)
     @JoinColumn(name="dataset_id",nullable=false, insertable=false, updatable=false)
-    private Dataset datasetId;
+    private Dataset dataset;
 
     @Column(name = "role")
     private short role;
 
-    public Dataer getDataerId() {
-        return dataerId;
+    public Dataer getDataer() {
+        return dataer;
     }
 
     public DataerDataset() {
 
     }
 
-    public DataerDataset(Dataer dataerId, Dataset datasetId, short role) {
+    public DataerDataset(Dataer dataer, Dataset dataset, short role) {
 
-        this.dataerId = dataerId;
-        this.datasetId = datasetId;
+        this.dataer = dataer;
+        this.dataset = dataset;
         this.role = role;
     }
 
-    public void setDataerId(Dataer dataerId) {
-        this.dataerId = dataerId;
+    public void setDataer(Dataer dataer) {
+        this.dataer = dataer;
     }
 
-    public Dataset getDatasetId() {
-        return datasetId;
+    public Dataset getDataset() {
+        return dataset;
     }
 
-    public void setDatasetId(Dataset datasetId) {
-        this.datasetId = datasetId;
+    public void setDataset(Dataset dataset) {
+        this.dataset = dataset;
     }
 
     public short getRole() {

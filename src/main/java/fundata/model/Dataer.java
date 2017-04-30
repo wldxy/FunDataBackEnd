@@ -39,7 +39,7 @@ public class Dataer {
     @ManyToMany
     private Set<Competition> competitions;
 
-    @OneToMany(mappedBy = "datasetId")
+    @OneToMany(mappedBy = "dataset")
     private Set<DataerDataset> datasets = new HashSet<>();
 
     @OneToMany(mappedBy = "dataer")

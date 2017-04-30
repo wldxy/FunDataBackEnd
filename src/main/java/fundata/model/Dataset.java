@@ -23,7 +23,7 @@ public class Dataset {
     @Column(nullable = false,name = "name", length = 50)
     private String name;
 
-    @OneToMany(mappedBy = "dataerId")
+    @OneToMany(mappedBy = "dataer")
     @JsonBackReference
     private Set<DataerDataset> dataers = new HashSet<DataerDataset>();
 
