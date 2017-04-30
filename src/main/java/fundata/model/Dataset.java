@@ -41,7 +41,7 @@ public class Dataset {
         this.coverUrl = coverUrl;
     }
 
-    @Column(name = "create_time")
+    @Column(name = "create_time", columnDefinition="DATETIME")
     @Temporal(TemporalType.DATE)
     private Date createTime;
 
