@@ -48,7 +48,7 @@ public class PullRequestServiceImpl implements PullRequestService {
 //            datasetInfo.setFormatDescription(dataset.getFormatDescription());
 //            datasetInfo.setName(dataset.getName());
 //            datasetInfo.setOwnerName(dataer.getName());
-//            datasetInfo.setOwnerUrl(dataer.getHead_href());
+//            datasetInfo.setCoverUrl(dataer.getHead_href());
             return pullRequestInfo;
         }).toArray());
     }

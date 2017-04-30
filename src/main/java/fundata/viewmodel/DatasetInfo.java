@@ -8,7 +8,7 @@ import java.util.Date;
 public class DatasetInfo {
     private Long id;
     private String name;
-    private String ownerUrl;
+    private String coverUrl;
     private String ownerName;
     private String dsDescription;
     private String formatDescription;
@@ -23,8 +23,8 @@ public class DatasetInfo {
         this.id = id;
     }
 
-    public String getOwnerUrl() {
-        return ownerUrl;
+    public String getCoverUrl() {
+        return coverUrl;
     }
 
     public String getOwnerName() {
@@ -59,8 +59,8 @@ public class DatasetInfo {
         this.name = name;
     }
 
-    public void setOwnerUrl(String ownerUrl) {
-        this.ownerUrl = ownerUrl;
+    public void setCoverUrl(String coverUrl) {
+        this.coverUrl = coverUrl;
     }
 
     public void setOwnerName(String ownerName) {

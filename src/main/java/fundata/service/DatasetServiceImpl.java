@@ -68,7 +68,7 @@ public class DatasetServiceImpl implements DatasetService {
             datasetInfo.setFormatDescription(dataset.getFormatDescription());
             datasetInfo.setName(dataset.getName());
             datasetInfo.setOwnerName(dataer.getName());
-            datasetInfo.setOwnerUrl(dataer.getHead_href());
+            datasetInfo.setCoverUrl(dataset.getCoverUrl());
             datasetInfo.setContributeNum(dataset.getPullRequests().size());
             return datasetInfo;
         }).toArray());
