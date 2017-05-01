@@ -19,7 +19,7 @@ public class PullRequest {
 
     // 1 means success 0 means waiting -1 means file waiting to check
     @Column(name = "status")
-    private Integer status;
+    private short status;
 
     @Column(name = "update_time")
     @Temporal(TemporalType.DATE)
@@ -74,11 +74,11 @@ public class PullRequest {
         this.dataFile = dataFile;
     }
 
-    public Integer getStatus() {
+    public short getStatus() {
         return status;
     }
 
-    public void setStatus(Integer status) {
+    public void setStatus(short status) {
         this.status = status;
     }
 

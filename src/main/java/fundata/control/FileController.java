@@ -37,7 +37,7 @@ public class FileController {
 //    @RequestMapping(value = "/upload", method = RequestMethod.POST)
 //    public UpFileInfo getUploadCSV() {
 //        DataFile dataFile = new DataFile();
-//        dataFile.setCreateTime(new Date());
+//        dataFile.setUpdateTime(new Date());
 //        dataFile.setUpdateTime(new Date());
 //        dataFile.setStatus(0);
 //        dataFile.setSuffix("csv");
@@ -65,6 +65,9 @@ public class FileController {
     public Map getToken() {
         Map map = new HashMap();
         map.put("uptoken", qiniuService.createUploadToken());
+        System.out.println("===============================");
+        System.out.println("get token");
+        System.out.println("===============================");
         return map;
     }
 

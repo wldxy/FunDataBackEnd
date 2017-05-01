@@ -79,7 +79,7 @@ class RequestInfo {
 
     private Long id;
 
-    private Integer type;
+    private short type;
 
     private String description;
 
@@ -117,11 +117,11 @@ class RequestInfo {
         this.id = id;
     }
 
-    public Integer getType() {
+    public short getType() {
         return type;
     }
 
-    public void setType(Integer type) {
+    public void setType(short type) {
         this.type = type;
     }
 

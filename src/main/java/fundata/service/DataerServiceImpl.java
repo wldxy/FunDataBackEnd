@@ -26,7 +26,7 @@ public class DataerServiceImpl implements DataerService {
 
     @Override
     public boolean editUserInfo(Long id, String newName, String newPwd, String newUrl) {
-        Dataer dataer = dataerRepository.findById(id);
+        Dataer dataer = dataerRepository.findOne(id);
         if (newName != null) {
             dataer.setName(newName);
         }
@@ -39,7 +39,7 @@ public class DataerServiceImpl implements DataerService {
 
     @Override
     public Dataer getUserById(Long id) {
-        return dataerRepository.findById(id);
+        return dataerRepository.findOne(id);
     }
 
     @Override

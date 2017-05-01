@@ -10,7 +10,6 @@ import fundata.repository.QiniuProperties;
 import fundata.service.*;
 import fundata.viewmodel.DSCommentView;
 import fundata.viewmodel.DatasetContent;
-import fundata.viewmodel.DatasetInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.support.PagedListHolder;
@@ -48,13 +47,8 @@ public class DatasetController {
     private DSCommentService dsCommentService;
 
     @Autowired
-    DataFileRepository dataFileRepository;
-
-    @Autowired
     DatasetTitleService datasetTitleService;
 
-    @Autowired
-    DatasetRepository datasetRepository;
 
     @Autowired
     private PullRequestService pullRequestService;
@@ -63,8 +57,10 @@ public class DatasetController {
     @RequestMapping(value = "/uploadCover", method = RequestMethod.POST)
     public Map<String, String> getUploadCSV(HttpServletRequest req, MultipartHttpServletRequest multiReq) throws IOException {
         String name = multiReq.getFile("file").getOriginalFilename();
-        String coverUrl = "files/".concat(name);
-        FileOutputStream fos=new FileOutputStream(new File(coverUrl));
+        String coverUrl = Thread.currentThread().getContextClassLoader().getResource("files").toString().concat("/").concat(name);
+        File f = new File(coverUrl);
+        f.createNewFile();
+        FileOutputStream fos=new FileOutputStream(f);
         FileInputStream fis=(FileInputStream) multiReq.getFile("file").getInputStream();
         byte[] buffer=new byte[2048];
         int len;
@@ -103,7 +99,7 @@ public class DatasetController {
     @RequestMapping("/getMyDatasets")
     @Authorization
     public Map<String, Object> getMyDataset(@RequestAttribute(value = Constants.CURRENT_USER_ID) Long userId,
-                                  @RequestParam(value = "curPage") short curPage) {
+                                            @RequestParam(value = "curPage") short curPage) {
         PagedListHolder<DataerDataset> result = datasetService.getUserDatasetsByPage(userId, curPage);
         Map<String, Object> map = new HashMap<>();
         map.put("code", "200");
@@ -133,67 +129,35 @@ public class DatasetController {
         return map;
     }
 
-    @RequestMapping("/confirmTitle")
-    public boolean confirmDatasetTitle(@RequestParam(value = "datasetname") String datasetName,
-                                       @RequestParam(value = "username") String username,
-                                       @RequestParam(value = "key") String key,
-                                       @RequestParam(value = "description") String desc) {
-
-        System.out.println("===============");
-        System.out.println("DataFileTitle "+key+" is confirmed");
-        System.out.println("===============");
-
-        Long id = Long.parseLong(key.substring(0, key.lastIndexOf('.')));
-        DataFile dataFile = dataFileRepository.findById(id);
-
-        Dataer dataer = dataerService.findByDataerName(username);
-        Dataset dataset = datasetService.findByDatasetName(datasetName);
-
-        if (dataer == null || dataset == null || dataFile == null)
-            return false;
-
-        dataset.setTitleFile(dataFile);
-        datasetService.save(dataset);
-
-        qiniuService.downloadFile(dataFile, fileProperties.getTitlePath());
-        String url = fileProperties.getTitlePath() + dataFile.getName();
-
-        datasetTitleService.addTitleInfo(url, dataer, dataset);
-
-        return true;
-    }
-
-
-    @RequestMapping("/confirmFile")
-    public boolean confirmDatasetFile(@RequestParam(value = "datasetname") String datasetName,
-                                      @RequestParam(value = "username") String username,
-                                      @RequestParam(value = "key") String key,
-                                      @RequestParam(value = "description") String desc) {
-
-        System.out.println("===============");
-        System.out.println("DataFile "+key+" is confirmed");
-        System.out.println("===============");
-
-        Long id = Long.parseLong(key.substring(0, key.lastIndexOf('.')));
-        DataFile dataFile = dataFileRepository.findById(id);
-
-        Dataer dataer = dataerService.findByDataerName(username);
-        Dataset dataset = datasetService.findByDatasetName(datasetName);
-
-        if (dataer == null || dataset == null || dataFile == null)
-            return false;
-
-        PullRequest pullRequest = pullRequestService.newPullRequest(username, datasetName);
-        pullRequest.setDataFile(dataFile);
-        pullRequest.setDescription(desc);
-        pullRequestService.save(pullRequest);
-
-        return true;
-    }
-
-
-
-
+//    @RequestMapping("/confirmTitle")
+//    public boolean confirmDatasetTitle(@RequestParam(value = "datasetname") String datasetName,
+//                                       @RequestParam(value = "username") String username,
+//                                       @RequestParam(value = "key") String key,
+//                                       @RequestParam(value = "description") String desc) {
+//
+//        System.out.println("===============");
+//        System.out.println("DataFileTitle "+key+" is confirmed");
+//        System.out.println("===============");
+//
+//        Long id = Long.parseLong(key.substring(0, key.lastIndexOf('.')));
+//        DataFile dataFile = dataFileRepository.findById(id);
+//
+//        Dataer dataer = dataerService.findByDataerName(username);
+//        Dataset dataset = datasetService.findByDatasetName(datasetName);
+//
+//        if (dataer == null || dataset == null || dataFile == null)
+//            return false;
+//
+//        dataset.setTitleFile(dataFile);
+//        datasetService.save(dataset);
+//
+//        qiniuService.downloadFile(dataFile, fileProperties.getTitlePath());
+//        String url = fileProperties.getTitlePath() + dataFile.getName();
+//
+//        datasetTitleService.addTitleInfo(url, dataer, dataset);
+//
+//        return true;
+//    }
 
     @Autowired
     QiniuProperties qiniuProperties;
@@ -220,7 +184,7 @@ public class DatasetController {
         datasetContent.setUrl(url);
 
         int count = 0;
-        Set<PullRequest> pullRequests = dataset.getPullRequests();
+        List<PullRequest> pullRequests = dataset.getPullRequests();
         if (pullRequests != null) {
             for (PullRequest pullRequest : pullRequests) {
                 if (pullRequest.getStatus() == 1) {

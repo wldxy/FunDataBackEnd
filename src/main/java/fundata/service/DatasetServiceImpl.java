@@ -52,7 +52,7 @@ public class DatasetServiceImpl implements DatasetService {
 
     @Override
     public List<DataerDataset> getAllUserDatasets(Long userId) {
-        List<DataerDataset> dataerDatasets = dataerDatasetRepository.findAllDatasetsByUser(dataerRepository.findById(userId));
+        List<DataerDataset> dataerDatasets = dataerDatasetRepository.findAllDatasetsByUser(dataerRepository.findOne(userId));
         return getDatasetOwner(dataerDatasets);
     }
 
@@ -98,12 +98,13 @@ public class DatasetServiceImpl implements DatasetService {
 
     @Override
     public void createNewDataset(Long id, String datasetName, String dsDesc, String formatDesc, String fieldsString, String coverUrl) {
-        Dataer dataer = dataerRepository.findById(id);
+        Dataer dataer = dataerRepository.findOne(id);
         System.out.println(dataer.getEmail());
         Dataset dataset = new Dataset(datasetName);
         dataset.setDsDescription(dsDesc);
         dataset.setCoverUrl(coverUrl);
         dataset.setFormatDescription(formatDesc);
+        dataset.setCreateTime(new Date());
         datasetRepository.save(dataset);
         Gson gson = new Gson();
         Field[] fields = gson.fromJson(fieldsString, Field[].class);
@@ -136,7 +137,7 @@ public class DatasetServiceImpl implements DatasetService {
     @Override
     public List<Dataer> getContribute(String datasetNsame) {
         Dataset dataset = datasetRepository.findByDatasetName(datasetNsame);
-        Set<PullRequest> pullRequests = dataset.getPullRequests();
+        List<PullRequest> pullRequests = dataset.getPullRequests();
         List<Dataer> dataers = new ArrayList<>();
         for (PullRequest pullRequest : pullRequests) {
             dataers.add(pullRequest.getDataer());
@@ -173,13 +174,13 @@ public class DatasetServiceImpl implements DatasetService {
     DataFileRepository dataFileRepository;
 
     @Override
-    public void combineDataset(String datasetName) {
+    public void combineDataset(Long datasetId) {
 //        DataFile dataFile = new DataFile();
 //        dataFile.setName(datasetName + ".csv");
 //        dataFile.setUpdateTime(new Date());
 //        dataFileRepository.save(dataFile);
 //
-        Dataset dataset = datasetRepository.findByDatasetName(datasetName);
+        Dataset dataset = datasetRepository.findOne(datasetId);
 
         DataFile dataFile = new DataFile();
         dataFile.setCreateTime(new Date());
