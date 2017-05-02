@@ -4,9 +4,7 @@ package fundata.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by stanforxc on 2016/11/29.
@@ -75,7 +73,7 @@ public class Dataset {
     private DataFile titleFile;
 
     @OneToMany(mappedBy = "dataset")
-    private Set<PullRequest> pullRequests = new HashSet<>();
+    private List<PullRequest> pullRequests = new ArrayList<>();
 
     @OneToMany(mappedBy = "dataset")
     private Set<DSComment> dsComments = new HashSet<>();
@@ -137,11 +135,11 @@ public class Dataset {
         this.files = files;
     }
 
-    public Set<PullRequest> getPullRequests() {
+    public List<PullRequest> getPullRequests() {
         return pullRequests;
     }
 
-    public void setPullRequests(Set<PullRequest> pullRequests) {
+    public void setPullRequests(List<PullRequest> pullRequests) {
         this.pullRequests = pullRequests;
     }
 

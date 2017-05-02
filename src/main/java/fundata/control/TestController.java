@@ -2,14 +2,10 @@ package fundata.control;
 
 import com.csvreader.CsvReader;
 import com.csvreader.CsvWriter;
-import fundata.model.DataFile;
-import fundata.model.Dataer;
-import fundata.model.Dataset;
-import fundata.model.DatasetTitle;
 import fundata.repository.DataFileRepository;
 import fundata.repository.DataerRepository;
 import fundata.repository.DatasetRepository;
-import fundata.repository.FileProperties;
+import fundata.configure.FileProperties;
 import fundata.service.DatasetTitleService;
 import fundata.service.QiniuService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +13,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.*;

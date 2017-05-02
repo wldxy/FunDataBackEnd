@@ -3,7 +3,9 @@ package fundata.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -40,7 +42,7 @@ public class Dataer {
     private Set<Competition> competitions;
 
     @OneToMany(mappedBy = "dataset")
-    private Set<DataerDataset> datasets = new HashSet<>();
+    private List<DataerDataset> datasets = new ArrayList<>();
 
     @OneToMany(mappedBy = "dataer")
     private Set<PullRequest> pullRequests = new HashSet<>();
@@ -109,11 +111,11 @@ public class Dataer {
         this.name = name;
     }
 
-    public Set<DataerDataset> getDatasets() {
+    public List<DataerDataset> getDatasets() {
         return datasets;
     }
 
-    public void setDatasets(Set<DataerDataset> datasets) {
+    public void setDatasets(List<DataerDataset> datasets) {
         this.datasets = datasets;
     }
 

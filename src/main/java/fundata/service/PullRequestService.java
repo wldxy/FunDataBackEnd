@@ -1,13 +1,10 @@
 package fundata.service;
 
-import fundata.model.DataerDataset;
+import fundata.model.DataFile;
 import fundata.model.PullRequest;
 import org.springframework.beans.support.PagedListHolder;
-import org.springframework.data.domain.Page;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by ocean on 16-12-7.
@@ -15,15 +12,17 @@ import java.util.Set;
 public interface PullRequestService {
     List<Object> assemblePullRequestInfo(PagedListHolder<PullRequest> result);
 
-    Set<PullRequest> getDatasetAllPullRequestsByPage(String datasetName);
+    PagedListHolder<PullRequest> getDatasetPullRequestsByPage(Long datasetId, short curPage);
 
-    PullRequest newPullRequest(String dataerName, String datasetName);
-
-    boolean setPullRequest(Long id, Integer status);
-
-    List<PullRequest> getAllUserPullRequests(Long userId);
+    List<PullRequest> getDatasetPullRequests(Long datasetId);
 
     PagedListHolder<PullRequest> getUserPullRequestsByPage(Long userId, short curPage);
+
+    List<PullRequest> getUserPullRequests(Long datasetId);
+
+    boolean createPullRequest(Long dataerId, Long datasetId, String description, String key);
+
+    boolean setPullRequestStatus(Long id, short status);
 
     PagedListHolder<PullRequest> findLatestPullRequest(Long userId, int curPage);
 

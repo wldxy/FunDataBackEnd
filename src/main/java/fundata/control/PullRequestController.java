@@ -3,25 +3,24 @@ package fundata.control;
 import fundata.configure.Constants;
 import fundata.model.Dataset;
 import fundata.model.PullRequest;
-import fundata.repository.PullRequestRepository;
 import fundata.service.DatasetService;
 import fundata.service.PullRequestService;
 import fundata.service.QiniuService;
 import fundata.viewmodel.HotProject;
-import fundata.viewmodel.PullRequestView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.support.PagedListHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.FileNotFoundException;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 /**
  * Created by ocean on 16-12-6.
  */
 @RestController
-@RequestMapping(value = "/dataset")
+@RequestMapping(value = "/pullrequest")
 public class PullRequestController {
     @Autowired
     private PullRequestService pullRequestService;
@@ -29,51 +28,56 @@ public class PullRequestController {
     @Autowired
     private QiniuService qiniuService;
 
-    @RequestMapping(value = "/getPullRequest", method = RequestMethod.POST)
-    public PullRequestView getPullRequest(@RequestParam(name = "datasetname") String datasetName,
-//                                        @RequestParam(name = "page") int page,
-                                          @RequestParam(name = "username") String username) {
-        Set<PullRequest> pullRequests = pullRequestService.getDatasetAllPullRequestsByPage(datasetName);
-        if (pullRequests.size() != 0) {
-//            return new PullRequestView(pullRequests);
-            PullRequestView pullRequestView = new PullRequestView(0);
-
-            for (PullRequest pullRequest : pullRequests) {
-                pullRequestView.add(pullRequest, qiniuService.createDownloadUrl(pullRequest.getDataFile()));
-            }
-            return pullRequestView;
-        } else {
-            return new PullRequestView(0);
-        }
-    }
-
-    @RequestMapping(value = "/newPullRequest", method = RequestMethod.POST)
-    public boolean newPullRequest(@RequestParam(name = "datasetname") String datasetname,
-                                  @RequestParam(name = "username") String username) {
-        PullRequest pullRequest = pullRequestService.newPullRequest(username, datasetname);
-//        UpFileInfo returnValue = new UpFileInfo();
-//        returnValue.setKey(pullRequest.getDataFile().getFileName());
-//        returnValue.setUptoken(qiniuService.createUploadToken(pullRequest.getDataFile()));
-        return true;
-    }
-
-    @Autowired
-    PullRequestRepository pullRequestRepository;
-
     @Autowired
     DatasetService datasetService;
 
-    @RequestMapping(value = "/confirmRequest", method = RequestMethod.POST)
-    public boolean confirmRequest(@RequestParam(name = "confirm") Integer confirm,
-                                  @RequestParam(name = "id") Long requestId) {
-        pullRequestService.setPullRequest(requestId, confirm);
-        Dataset dataset = pullRequestRepository.findOne(requestId).getDataset();
-        try {
-            datasetService.combineDataset(dataset.getName());
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+    @RequestMapping(value = "/getDatasetPullRequest", method = RequestMethod.POST)
+    public Map<String, Object> getPullRequest(@RequestParam(name = "datasetId") Long datasetId,
+                                          @RequestParam(value = "curPage") short curPage) {
+        PagedListHolder<PullRequest> pullRequests = pullRequestService.getDatasetPullRequestsByPage(datasetId, curPage);
+        Map<String, Object> map = new HashMap<>();
+        map.put("code", "200");
+        map.put("pullrequests", pullRequestService.assemblePullRequestInfo(pullRequests));
+        map.put("total", pullRequests.getNrOfElements());
+        return map;
+    }
+
+    @RequestMapping(value = "/newPullRequest", method = RequestMethod.POST)
+    public Map<String, String> newPullRequest(@RequestParam(value = "datasetId") Long datasetId,
+                                  @RequestAttribute(value = Constants.CURRENT_USER_ID) Long userId,
+                                  @RequestParam(value = "key") String key,
+                                  @RequestParam(value = "description") String description) {
+
+        System.out.println("===============");
+        System.out.println("DataFile "+key+" is confirmed");
+        System.out.println("===============");
+
+        Map<String, String> map = new HashMap<>();
+
+        if (pullRequestService.createPullRequest(userId, datasetId, description, key)) {
+            map.put("code", "200");
         }
-        return true;
+        else {
+            map.put("code", "-1");
+        }
+        return map;
+    }
+
+    @RequestMapping(value = "/confirmRequest", method = RequestMethod.POST)
+    public Map<String, String> confirmRequest(@RequestParam(name = "isConfirm") short isConfirm,
+                                  @RequestParam(name = "requestId") Long requestId,
+                                  @RequestParam(name = "datasetId") Long datasetId) {
+        pullRequestService.setPullRequestStatus(requestId, isConfirm);
+        Map<String, String> map = new HashMap<>();
+        try {
+            datasetService.combineDataset(datasetId);
+            map.put("code", "200");
+        }
+        catch (FileNotFoundException e) {
+            e.printStackTrace();
+            map.put("code", "-1");
+        }
+        return map;
     }
 
     @RequestMapping(value = "/requestFileConfirm", method = RequestMethod.POST)

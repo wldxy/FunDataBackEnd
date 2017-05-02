@@ -35,7 +35,7 @@ public interface DatasetService {
 
     void save(Dataset dataset);
 
-    void combineDataset(String datasetName) throws FileNotFoundException;
+    void combineDataset(Long datasetId) throws FileNotFoundException;
 
 //    List<Dataset> findAll();
 }

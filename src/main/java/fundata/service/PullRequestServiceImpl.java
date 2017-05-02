@@ -1,10 +1,7 @@
 package fundata.service;
 
 import fundata.configure.Constants;
-import fundata.model.Dataer;
-import fundata.model.DataerDataset;
-import fundata.model.Dataset;
-import fundata.model.PullRequest;
+import fundata.model.*;
 import fundata.repository.DataFileRepository;
 import fundata.repository.DataerRepository;
 import fundata.repository.DatasetRepository;
@@ -41,21 +38,29 @@ public class PullRequestServiceImpl implements PullRequestService {
     public List<Object> assemblePullRequestInfo(PagedListHolder<PullRequest> result) {
         return Arrays.asList(result.getPageList().stream().map(p -> {
             PullRequestInfo pullRequestInfo = new PullRequestInfo();
-            Dataset dataset = p.getDataset();
             Dataer dataer = p.getDataer();
-//            datasetInfo.setCreateTime(dataset.getCreateTime());
-//            datasetInfo.setDsDescription(dataset.getDsDescription());
-//            datasetInfo.setFormatDescription(dataset.getFormatDescription());
-//            datasetInfo.setName(dataset.getName());
-//            datasetInfo.setOwnerName(dataer.getName());
-//            datasetInfo.setCoverUrl(dataer.getHead_href());
+            pullRequestInfo.setUpdateTime(p.getUpdateTime());
+            pullRequestInfo.setPullDescription(p.getDescription());
+            pullRequestInfo.setDataerName(dataer.getName());
+            pullRequestInfo.setDataerUrl(dataer.getHead_href());
+            pullRequestInfo.setId(p.getId());
             return pullRequestInfo;
         }).toArray());
     }
 
     @Override
+    public List<PullRequest> getUserPullRequests(Long userId) {
+        List<DataerDataset> datasets = dataerRepository.findOne(userId).getDatasets();
+        List<PullRequest> pullRequests = new ArrayList<>();
+        for (DataerDataset dataset : datasets) {
+            pullRequests.addAll(getDatasetPullRequests(dataset.getDataset().getId()));
+        }
+        return pullRequests;
+    }
+
+    @Override
     public PagedListHolder<PullRequest> getUserPullRequestsByPage(Long userId, short curPage) {
-        List<PullRequest> pullRequests = getAllUserPullRequests(userId);
+        List<PullRequest> pullRequests = getUserPullRequests(userId);
         PagedListHolder<PullRequest> pullRequestPage = new PagedListHolder<PullRequest>(pullRequests);
         pullRequestPage.setSort(new MutableSortDefinition("dataer.name", true, true));
         pullRequestPage.resort();
@@ -65,55 +70,57 @@ public class PullRequestServiceImpl implements PullRequestService {
     }
 
     @Override
-    public Set<PullRequest> getDatasetAllPullRequestsByPage(String datasetName) {
-        Dataset dataset = datasetRepository.findByDatasetName(datasetName);
-        if (dataset != null) {
-            return dataset.getPullRequests();
-        } else {
-            return null;
-        }
+    public List<PullRequest> getDatasetPullRequests(Long datasetId) {
+        return datasetRepository.findOne(datasetId).getPullRequests();
     }
 
     @Override
-    public PullRequest newPullRequest(String dataerName, String datasetName) {
-        Dataset dataset = datasetRepository.findByDatasetName(datasetName);
-        Dataer dataer = dataerRepository.findByUserName(dataerName);
+    public PagedListHolder<PullRequest> getDatasetPullRequestsByPage(Long datasetId, short curPage) {
+        List<PullRequest> pullRequests = getDatasetPullRequests(datasetId);
+        PagedListHolder<PullRequest> pullRequestPage = new PagedListHolder<PullRequest>(pullRequests);
+        pullRequestPage.setSort(new MutableSortDefinition("dataer.name", true, true));
+        pullRequestPage.resort();
+        pullRequestPage.setPage(curPage);
+        pullRequestPage.setPageSize(Constants.pageSize);
+        return pullRequestPage;
+    }
+
+    @Override
+    public boolean createPullRequest(Long dataerId, Long datasetId, String description, String key) {
+        Dataset dataset = datasetRepository.findOne(datasetId);
+        Dataer dataer = dataerRepository.findOne(dataerId);
 
         if (dataer == null || dataset == null) {
-            return null;
+            return false;
         }
-
+        Long id = Long.parseLong(key.substring(0, key.lastIndexOf('.')));
+        DataFile dataFile = dataFileRepository.findById(id);
         PullRequest pullRequest = new PullRequest();
         pullRequest.setDataer(dataer);
         pullRequest.setDataset(dataset);
-        pullRequest.setStatus(-1);
+        pullRequest.setStatus((short)-1);
         pullRequest.setUpdateTime(new Date());
+        pullRequest.setDataFile(dataFile);
+        pullRequest.setDescription(description);
         pullRequestRepository.save(pullRequest);
 
-        return pullRequest;
+        return true;
     }
 
     @Override
-    public boolean setPullRequest(Long id, Integer status) {
+    public boolean setPullRequestStatus(Long id, short status) {
         PullRequest pullRequest = pullRequestRepository.findOne(id);
         if (pullRequest != null) {
             pullRequest.setStatus(status);
             pullRequestRepository.save(pullRequest);
             return true;
-        } else {
+        }
+        else {
             return false;
         }
     }
 
-    @Override
-    public List<PullRequest> getAllUserPullRequests(Long userId) {
-        List<PullRequest> pullRequests = new ArrayList<>();
-        List<DataerDataset> datasets = datasetService.getAllUserDatasets(userId);
-        for (DataerDataset dataset : datasets) {
-            pullRequests.addAll(dataset.getDataset().getPullRequests());
-        }
-        return pullRequests;
-    }
+
 
 
 
@@ -133,7 +140,7 @@ public class PullRequestServiceImpl implements PullRequestService {
 //                Predicate p2 = criteriaBuilder.
 //            }
 //        };
-        List<PullRequest> pullRequests = getAllUserPullRequests(userId);
+        List<PullRequest> pullRequests = getUserPullRequests(userId);
         PagedListHolder<PullRequest> pullRequestPage = new PagedListHolder<PullRequest>(pullRequests);
         pullRequestPage.setSort(new MutableSortDefinition("updateTime", true, false));
         pullRequestPage.setPage(curPage);
