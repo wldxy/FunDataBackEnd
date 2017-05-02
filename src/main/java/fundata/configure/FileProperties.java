@@ -1,4 +1,4 @@
-package fundata.repository;
+package fundata.configure;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;

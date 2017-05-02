@@ -1,14 +1,12 @@
 package fundata.control;
 
 import fundata.model.DataFile;
-import fundata.model.Dataset;
 import fundata.repository.DataFileRepository;
 import fundata.repository.DatasetRepository;
 import fundata.service.QiniuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -43,7 +41,7 @@ public class FileController {
 //        dataFile.setSuffix("csv");
 //        dataFileRepository.save(dataFile);
 //        String fileName = dataFile.getFileName();
-//        return new UpFileInfo(qiniuService.createUploadToken(fileName), fileName);
+//        return new UpFileInfo(qiniuService.createPrivateUploadToken(fileName), fileName);
 //    }
 //
 //    @RequestMapping(value = "/confirmUpload", method = RequestMethod.POST)
@@ -61,10 +59,19 @@ public class FileController {
 //        }
 //    }
 
-    @RequestMapping(value = "/getToken")
-    public Map getToken() {
-        Map map = new HashMap();
-        map.put("uptoken", qiniuService.createUploadToken());
+    @RequestMapping(value = "/getPubToken")
+    public Map<String, String> getPubToken() {
+        Map<String, String> map = new HashMap<>();
+        map.put("uptoken", qiniuService.createPublicUploadToken());
+        System.out.println("===============================");
+        System.out.println("get token");
+        System.out.println("===============================");
+        return map;
+    }
+    @RequestMapping(value = "/getPriToken")
+    public Map<String, String> getPriToken() {
+        Map<String, String> map = new HashMap<>();
+        map.put("uptoken", qiniuService.createPrivateUploadToken());
         System.out.println("===============================");
         System.out.println("get token");
         System.out.println("===============================");

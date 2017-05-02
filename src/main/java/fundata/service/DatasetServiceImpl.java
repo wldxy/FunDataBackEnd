@@ -4,6 +4,7 @@ import com.csvreader.CsvReader;
 import com.csvreader.CsvWriter;
 import com.google.gson.Gson;
 import fundata.configure.Constants;
+import fundata.configure.FileProperties;
 import fundata.document.Field;
 import fundata.document.MetaData;
 import fundata.model.*;

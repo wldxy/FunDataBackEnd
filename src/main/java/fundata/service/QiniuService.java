@@ -10,13 +10,14 @@ import fundata.model.Dataset;
  * Created by ocean on 16-11-29.
  */
 public interface QiniuService {
-    String createUploadToken(String key);
 
-//    String createUploadToken(DataFile dataFile);
+    String createPrivateUploadToken();
+
+    String createPublicUploadToken();
+
+//    String createPrivateUploadToken(DataFile dataFile);
 
     String createDownloadUrl(DataFile dataFile);
-
-    String createUploadToken();
 
     void deleteFile(String fileName) throws QiniuException;
 

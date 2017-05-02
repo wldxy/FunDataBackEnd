@@ -3,10 +3,8 @@ package fundata.control;
 import fundata.annotation.Authorization;
 import fundata.configure.Constants;
 import fundata.model.*;
-import fundata.repository.DataFileRepository;
-import fundata.repository.DatasetRepository;
-import fundata.repository.FileProperties;
-import fundata.repository.QiniuProperties;
+import fundata.configure.FileProperties;
+import fundata.configure.QiniuProperties;
 import fundata.service.*;
 import fundata.viewmodel.DSCommentView;
 import fundata.viewmodel.DatasetContent;
@@ -179,7 +177,7 @@ public class DatasetController {
 
         String url = "";
         if (dataset.getAllFile() != null) {
-            url = "http://" + qiniuProperties.getDomain() + "/" + dataset.getAllFile().getFileid() + ".csv";
+            url = "http://" + qiniuProperties.getDomain_private() + "/" + dataset.getAllFile().getFileid() + ".csv";
         }
         datasetContent.setUrl(url);
 

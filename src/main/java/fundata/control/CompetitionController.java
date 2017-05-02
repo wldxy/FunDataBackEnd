@@ -2,7 +2,7 @@ package fundata.control;
 
 import fundata.model.*;
 import fundata.repository.DataFileRepository;
-import fundata.repository.FileProperties;
+import fundata.configure.FileProperties;
 import fundata.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

@@ -9,7 +9,7 @@ import com.qiniu.storage.UploadManager;
 import com.qiniu.util.Auth;
 import fundata.model.DataFile;
 import fundata.model.Dataset;
-import fundata.repository.QiniuProperties;
+import fundata.configure.QiniuProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,43 +41,33 @@ public class QiniuServiceImpl implements QiniuService {
     }
 
     @Override
-    public String createUploadToken(String key) {
-//        return auth.uploadToken(qiniuProperties.getBucket(), key, 3600,
-//                new StringMap().put("insertOnly", 1));
-        System.out.println("===================");
-        System.out.println(qiniuProperties.getBucket());
-        System.out.println("===================");
-
-        return auth.uploadToken(qiniuProperties.getBucket());
+    public String createPublicUploadToken() {
+        return auth.uploadToken(qiniuProperties.getBucket_public());
     }
-//
-//    @Override
-//    public String createUploadToken(DataFile dataFile) {
-//        String key = dataFile.getName();
-//        String url = "http://" + qiniuProperties.getDomain() + "/" + key;
-//        return this.createUploadToken(url);
-//    }
+
+
+
+    @Override
+    public String createPrivateUploadToken() {
+        return auth.uploadToken(qiniuProperties.getBucket_private());
+
+    }
 
     @Override
     public String createDownloadUrl(DataFile dataFile) {
-        String url = "http://" + qiniuProperties.getDomain() + "/" + dataFile.getName();
+        String url = "http://" + qiniuProperties.getDomain_private() + "/" + dataFile.getName();
         return url;
     }
 
     @Override
     public String createDownloadUrl(Dataset dataset) {
-        String url = "http://" + qiniuProperties.getDomain() + "/" + dataset.getName() + ".csv";
+        String url = "http://" + qiniuProperties.getDomain_private() + "/" + dataset.getName() + ".csv";
         return url;
     }
 
     @Override
-    public String createUploadToken() {
-        return auth.uploadToken(qiniuProperties.getBucket());
-    }
-
-    @Override
     public void deleteFile(String fileName) throws QiniuException {
-        bucketManager.delete(qiniuProperties.getBucket(), fileName);
+        bucketManager.delete(qiniuProperties.getBucket_private(), fileName);
     }
 
     @Override
@@ -173,7 +163,7 @@ public class QiniuServiceImpl implements QiniuService {
 
         try {
             //调用put方法上传
-            Response res = uploadManager.put(path, key, this.createUploadToken());
+            Response res = uploadManager.put(path, key, this.createPrivateUploadToken());
             //打印返回的信息
             System.out.println(res.bodyString());
         } catch (QiniuException e) {
