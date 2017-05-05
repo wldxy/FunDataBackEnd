@@ -4,7 +4,6 @@ import fundata.annotation.Authorization;
 import fundata.configure.Constants;
 import fundata.model.*;
 import fundata.configure.FileProperties;
-import fundata.configure.QiniuProperties;
 import fundata.service.*;
 import fundata.viewmodel.DSCommentView;
 import fundata.viewmodel.DatasetContent;
@@ -131,79 +130,12 @@ public class DatasetController {
         return map;
     }
 
-//    @RequestMapping("/confirmTitle")
-//    public boolean confirmDatasetTitle(@RequestParam(value = "datasetname") String datasetName,
-//                                       @RequestParam(value = "username") String username,
-//                                       @RequestParam(value = "key") String key,
-//                                       @RequestParam(value = "description") String desc) {
-//
-//        System.out.println("===============");
-//        System.out.println("DataFileTitle "+key+" is confirmed");
-//        System.out.println("===============");
-//
-//        Long id = Long.parseLong(key.substring(0, key.lastIndexOf('.')));
-//        DataFile dataFile = dataFileRepository.findById(id);
-//
-//        Dataer dataer = dataerService.findByDataerName(username);
-//        Dataset dataset = datasetService.findByDatasetName(datasetName);
-//
-//        if (dataer == null || dataset == null || dataFile == null)
-//            return false;
-//
-//        dataset.setTitleFile(dataFile);
-//        datasetService.save(dataset);
-//
-//        qiniuService.downloadFile(dataFile, fileProperties.getTitlePath());
-//        String url = fileProperties.getTitlePath() + dataFile.getName();
-//
-//        datasetTitleService.addTitleInfo(url, dataer, dataset);
-//
-//        return true;
-//    }
-
-    @Autowired
-    QiniuProperties qiniuProperties;
-
     @RequestMapping("/getDemoContent")
-    public DatasetContent getDatasetTitle(@RequestParam(value = "datasetname") String datesetName,
-//                                        @RequestParam(value = "page") Integer page,
-                                          @RequestParam(value = "username") String username) {
-        DatasetContent datasetContent = new DatasetContent();
+    public DatasetContent getDatasetTitle(@RequestAttribute(value = Constants.CURRENT_USER_ID) Long userId,
+                                          @RequestParam(value = "datasetId") Long datasetId,
+                                          @RequestParam(value = "curPage") short curPage) {
 
-        Dataset dataset = datasetService.findByDatasetName(datesetName);
-        Set<DataerDataset> dataers = dataset.getDataers();
-        Dataer dataer = dataerService.findByDataerName(username);
-        if (dataers.contains(dataer)) {
-            datasetContent.setAdmin(1);
-        } else {
-            datasetContent.setAdmin(0);
-        }
-
-        String url = "";
-        if (dataset.getAllFile() != null) {
-            url = "http://" + qiniuProperties.getDomain_private() + "/" + dataset.getAllFile().getFileid() + ".csv";
-        }
-        datasetContent.setUrl(url);
-
-        int count = 0;
-        List<PullRequest> pullRequests = dataset.getPullRequests();
-        if (pullRequests != null) {
-            for (PullRequest pullRequest : pullRequests) {
-                if (pullRequest.getStatus() == 1) {
-                    count++;
-                }
-            }
-        }
-
-        datasetContent.setContribute(count);
-        datasetContent.setDescription(dataset.getDsDescription());
-
-        Set<DatasetTitle> datasetTitles = dataset.getDatasetTitles();
-        for (DatasetTitle datasetTitle : datasetTitles) {
-            datasetContent.addContent(datasetTitle.getTitleName(),
-                    datasetTitle.getTitleType(), datasetTitle.getMeaning());
-        }
-        return datasetContent;
+        return datasetService.getDatasetContent(datasetId, userId);
     }
 
     @RequestMapping("/getComment")

@@ -43,18 +43,18 @@ public class PullRequestController {
     }
 
     @RequestMapping(value = "/newPullRequest", method = RequestMethod.POST)
-    public Map<String, String> newPullRequest(@RequestParam(value = "datasetId") Long datasetId,
+    public Map<String, String> createNewPullRequest(@RequestParam(value = "datasetId") Long datasetId,
                                   @RequestAttribute(value = Constants.CURRENT_USER_ID) Long userId,
-                                  @RequestParam(value = "key") String key,
+                                  @RequestParam(value = "fileUrl") String fileUrl,
                                   @RequestParam(value = "description") String description) {
 
         System.out.println("===============");
-        System.out.println("DataFile "+key+" is confirmed");
+        System.out.println("DataFile "+fileUrl+" is confirmed");
         System.out.println("===============");
 
         Map<String, String> map = new HashMap<>();
 
-        if (pullRequestService.createPullRequest(userId, datasetId, description, key)) {
+        if (pullRequestService.createPullRequest(userId, datasetId, description, fileUrl)) {
             map.put("code", "200");
         }
         else {

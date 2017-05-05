@@ -79,7 +79,7 @@ public class Dataset {
     private Set<DSComment> dsComments = new HashSet<>();
 
     @OneToOne
-    DataFile allFile;
+    private DataFile allFile;
 
     public Dataset() { }
 
