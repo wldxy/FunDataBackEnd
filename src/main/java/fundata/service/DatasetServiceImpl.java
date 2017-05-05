@@ -9,6 +9,7 @@ import fundata.document.Field;
 import fundata.document.MetaData;
 import fundata.model.*;
 import fundata.repository.*;
+import fundata.viewmodel.DatasetDetail;
 import fundata.viewmodel.DatasetInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.support.MutableSortDefinition;
@@ -39,7 +40,7 @@ public class DatasetServiceImpl implements DatasetService {
     @Autowired
     DatasetTitleRepository datasetTitleRepository;
 
-    private List<DataerDataset> getDatasetOwner(List<DataerDataset> dataerDatasets) {
+    private List<DataerDataset> setDatasetOwner(List<DataerDataset> dataerDatasets) {
         Object[] datasets = dataerDatasets.stream().map(d -> {
             return d.getDataset();
         }).toArray();
@@ -48,31 +49,33 @@ public class DatasetServiceImpl implements DatasetService {
 
     private List<DataerDataset> getAllDatasets() {
         List<DataerDataset> dataerDatasets = dataerDatasetRepository.findAllDatasets();
-        return getDatasetOwner(dataerDatasets);
+        return setDatasetOwner(dataerDatasets);
     }
 
     @Override
     public List<DataerDataset> getAllUserDatasets(Long userId) {
         List<DataerDataset> dataerDatasets = dataerDatasetRepository.findAllDatasetsByUser(dataerRepository.findOne(userId));
-        return getDatasetOwner(dataerDatasets);
+        return setDatasetOwner(dataerDatasets);
+    }
+
+    public DatasetInfo assembleDatasetInfo(DataerDataset d) {
+        DatasetInfo datasetInfo = new DatasetInfo();
+        Dataset dataset = d.getDataset();
+        Dataer dataer = d.getDataer();
+        datasetInfo.setId(dataset.getId());
+        datasetInfo.setCreateTime(dataset.getCreateTime());
+        datasetInfo.setDsDescription(dataset.getDsDescription());
+        datasetInfo.setFormatDescription(dataset.getFormatDescription());
+        datasetInfo.setName(dataset.getName());
+        datasetInfo.setOwnerName(dataer.getName());
+        datasetInfo.setCoverUrl(dataset.getCoverUrl());
+        datasetInfo.setContributeNum(dataset.getPullRequests().size());
+        return datasetInfo;
     }
 
     @Override
-    public List<Object> assembleDatasetInfo(PagedListHolder<DataerDataset> result) {
-        return Arrays.asList(result.getPageList().stream().map(d -> {
-            DatasetInfo datasetInfo = new DatasetInfo();
-            Dataset dataset = d.getDataset();
-            Dataer dataer = d.getDataer();
-            datasetInfo.setId(dataset.getId());
-            datasetInfo.setCreateTime(dataset.getCreateTime());
-            datasetInfo.setDsDescription(dataset.getDsDescription());
-            datasetInfo.setFormatDescription(dataset.getFormatDescription());
-            datasetInfo.setName(dataset.getName());
-            datasetInfo.setOwnerName(dataer.getName());
-            datasetInfo.setCoverUrl(dataset.getCoverUrl());
-            datasetInfo.setContributeNum(dataset.getPullRequests().size());
-            return datasetInfo;
-        }).toArray());
+    public List<Object> assembleDatasetInfos(PagedListHolder<DataerDataset> result) {
+        return Arrays.asList(result.getPageList().stream().map(this::assembleDatasetInfo).toArray());
     }
 
     @Override
@@ -95,6 +98,17 @@ public class DatasetServiceImpl implements DatasetService {
         datasetPage.setPage(curPage);
         datasetPage.setPageSize(Constants.pageSize);
         return datasetPage;
+    }
+
+
+    public DatasetDetail getDatasetDetail(Long datasetId) {
+        DataerDataset d = dataerDatasetRepository.findDatasetByDatasetId(datasetId);
+        DatasetDetail datasetDetail = new DatasetDetail();
+        datasetDetail.setDatasetInfo(assembleDatasetInfo(d));
+        MetaData meta = metaDataRepository.findByDatasetId(d.getDataset().getId());
+        List<Field> fields = meta.getFields();
+        datasetDetail.setColumns(fields.toArray(new Field[fields.size()]));
+        return datasetDetail;
     }
 
     @Override

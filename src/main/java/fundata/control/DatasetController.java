@@ -8,17 +8,12 @@ import fundata.configure.QiniuProperties;
 import fundata.service.*;
 import fundata.viewmodel.DSCommentView;
 import fundata.viewmodel.DatasetContent;
+import fundata.viewmodel.DatasetDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.support.PagedListHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -50,28 +45,28 @@ public class DatasetController {
 
     @Autowired
     private PullRequestService pullRequestService;
-
-
-    @RequestMapping(value = "/uploadCover", method = RequestMethod.POST)
-    public Map<String, String> getUploadCSV(HttpServletRequest req, MultipartHttpServletRequest multiReq) throws IOException {
-        String name = multiReq.getFile("file").getOriginalFilename();
-        String coverUrl = Thread.currentThread().getContextClassLoader().getResource("files").toString().concat("/").concat(name);
-        File f = new File(coverUrl);
-        f.createNewFile();
-        FileOutputStream fos=new FileOutputStream(f);
-        FileInputStream fis=(FileInputStream) multiReq.getFile("file").getInputStream();
-        byte[] buffer=new byte[2048];
-        int len;
-        while((len=fis.read(buffer))!=-1){
-            fos.write(buffer, 0, len);
-        }
-        fos.close();
-        fis.close();
-        Map<String, String> map = new HashMap<>();
-        map.put("url", coverUrl);
-        map.put("code", "200");
-        return map;
-    }
+//
+//
+//    @RequestMapping(value = "/uploadCover", method = RequestMethod.POST)
+//    public Map<String, String> getUploadCSV(HttpServletRequest req, MultipartHttpServletRequest multiReq) throws IOException {
+//        String name = multiReq.getFile("file").getOriginalFilename();
+//        String coverUrl = Thread.currentThread().getContextClassLoader().getResource("files").toString().concat("/").concat(name);
+//        File f = new File(coverUrl);
+//        f.createNewFile();
+//        FileOutputStream fos=new FileOutputStream(f);
+//        FileInputStream fis=(FileInputStream) multiReq.getFile("file").getInputStream();
+//        byte[] buffer=new byte[2048];
+//        int len;
+//        while((len=fis.read(buffer))!=-1){
+//            fos.write(buffer, 0, len);
+//        }
+//        fos.close();
+//        fis.close();
+//        Map<String, String> map = new HashMap<>();
+//        map.put("url", coverUrl);
+//        map.put("code", "200");
+//        return map;
+//    }
 
     @RequestMapping("/createDataset")
     @Authorization
@@ -96,22 +91,31 @@ public class DatasetController {
 
     @RequestMapping("/getMyDatasets")
     @Authorization
-    public Map<String, Object> getMyDataset(@RequestAttribute(value = Constants.CURRENT_USER_ID) Long userId,
+    public Map<String, Object> getMyDatasets(@RequestAttribute(value = Constants.CURRENT_USER_ID) Long userId,
                                             @RequestParam(value = "curPage") short curPage) {
         PagedListHolder<DataerDataset> result = datasetService.getUserDatasetsByPage(userId, curPage);
         Map<String, Object> map = new HashMap<>();
         map.put("code", "200");
-        map.put("datasets", datasetService.assembleDatasetInfo(result));
+        map.put("datasets", datasetService.assembleDatasetInfos(result));
         map.put("total", result.getNrOfElements());
         return map;
     }
 
+    @RequestMapping("/getDatasetDetail")
+    @Authorization
+    public Map<String, Object> getDatasetDetail(@RequestParam(value = "datasetId") Long datasetId) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("code", "200");
+        map.put("detail", datasetService.getDatasetDetail(datasetId));
+        return map;
+    }
+
     @RequestMapping("/getAllDatasets")
-    public Map getDataset(@RequestParam(value = "curPage") short curPage) {
+    public Map getAllDatasets(@RequestParam(value = "curPage") short curPage) {
         PagedListHolder<DataerDataset> result = datasetService.getAllDatasetsByPage(curPage);
         Map<String, Object> map = new HashMap<>();
         map.put("code", "200");
-        map.put("datasets", datasetService.assembleDatasetInfo(result));
+        map.put("datasets", datasetService.assembleDatasetInfos(result));
         map.put("total", result.getNrOfElements());
         return map;
     }
