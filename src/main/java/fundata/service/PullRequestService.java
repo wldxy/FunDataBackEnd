@@ -20,7 +20,7 @@ public interface PullRequestService {
 
     List<PullRequest> getUserPullRequests(Long datasetId);
 
-    boolean createPullRequest(Long dataerId, Long datasetId, String description, String key);
+    boolean createPullRequest(Long dataerId, Long datasetId, String description, String fileUrl);
 
     boolean setPullRequestStatus(Long id, short status);
 

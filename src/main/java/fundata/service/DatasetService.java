@@ -1,6 +1,7 @@
 package fundata.service;
 
 import fundata.model.*;
+import fundata.viewmodel.DatasetContent;
 import fundata.viewmodel.DatasetDetail;
 import org.springframework.beans.support.PagedListHolder;
 
@@ -24,7 +25,9 @@ public interface DatasetService {
 
     DatasetDetail getDatasetDetail(Long datasetId);
 
-    Set<Dataset> findLikeName(String username);
+    DatasetContent getDatasetContent(Long datasetId, Long dataerId);
+
+    Set<Dataset> searchDatasets(String username);
 
     Set<DatasetTitle> getDatasetTitle(String datasetName);
 
@@ -40,5 +43,4 @@ public interface DatasetService {
 
     void combineDataset(Long datasetId) throws FileNotFoundException;
 
-//    List<Dataset> findAll();
 }

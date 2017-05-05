@@ -86,19 +86,20 @@ public class PullRequestServiceImpl implements PullRequestService {
     }
 
     @Override
-    public boolean createPullRequest(Long dataerId, Long datasetId, String description, String key) {
+    public boolean createPullRequest(Long dataerId, Long datasetId, String description, String fileUrl) {
         Dataset dataset = datasetRepository.findOne(datasetId);
         Dataer dataer = dataerRepository.findOne(dataerId);
 
         if (dataer == null || dataset == null) {
             return false;
         }
-        Long id = Long.parseLong(key.substring(0, key.lastIndexOf('.')));
-        DataFile dataFile = dataFileRepository.findById(id);
+        DataFile dataFile = new DataFile();
+        dataFile.setCreateTime(new Date());
+        dataFile.setUrl(fileUrl);
+        dataFileRepository.save(dataFile);
         PullRequest pullRequest = new PullRequest();
         pullRequest.setDataer(dataer);
         pullRequest.setDataset(dataset);
-        pullRequest.setStatus((short)-1);
         pullRequest.setUpdateTime(new Date());
         pullRequest.setDataFile(dataFile);
         pullRequest.setDescription(description);

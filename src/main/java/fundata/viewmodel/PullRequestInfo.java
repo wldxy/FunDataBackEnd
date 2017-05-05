@@ -11,6 +11,15 @@ public class PullRequestInfo {
     private String dataerUrl;
     private String pullDescription;
     private Date updateTime;
+    private String fileUrl;
+
+    public String getFileUrl() {
+        return fileUrl;
+    }
+
+    public void setFileUrl(String fileUrl) {
+        this.fileUrl = fileUrl;
+    }
 
     public Long getId() {
         return id;

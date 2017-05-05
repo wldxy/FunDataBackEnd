@@ -38,7 +38,7 @@ public class SearchController {
     @RequestMapping("/search/{name}")
     public Map searchAllInfo(@PathVariable String name){
         Map map = new HashMap();
-        map.put("datasets", datasetService.findLikeName(name));
+        map.put("datasets", datasetService.searchDatasets(name));
         map.put("competitions", competitionService.findLikeName(name));
         map.put("dataers", dataerService.findLikeName(name));
         map.put("courses", courseService.findLikeName(name));

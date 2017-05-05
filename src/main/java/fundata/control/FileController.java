@@ -64,16 +64,17 @@ public class FileController {
         Map<String, String> map = new HashMap<>();
         map.put("uptoken", qiniuService.createPublicUploadToken());
         System.out.println("===============================");
-        System.out.println("get token");
+        System.out.println("get pub token");
         System.out.println("===============================");
         return map;
     }
+
     @RequestMapping(value = "/getPriToken")
     public Map<String, String> getPriToken() {
         Map<String, String> map = new HashMap<>();
         map.put("uptoken", qiniuService.createPrivateUploadToken());
         System.out.println("===============================");
-        System.out.println("get token");
+        System.out.println("get pri token");
         System.out.println("===============================");
         return map;
     }
@@ -100,7 +101,7 @@ public class FileController {
     }
 
     @RequestMapping(value = "/getDownloadUrl")
-    public String getDownloadUrl(@RequestParam(name = "fileid") Long fileid) {
-        return qiniuService.createDownloadUrl(dataFileRepository.findById(fileid));
+    public String getDownloadUrl(@RequestParam(name = "fileId") Long fileId) {
+        return qiniuService.createDownloadUrl(dataFileRepository.findById(fileId));
     }
 }

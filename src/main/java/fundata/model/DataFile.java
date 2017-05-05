@@ -16,18 +16,6 @@ public class DataFile {
     @Column(name = "id")
     private Long id;
 
-//    @Id
-//    @GeneratedValue(generator = "uuid")
-//    @GenericGenerator(name = "uuid", strategy = "uuid")
-//    @Column(name = "id", length = 32)
-//    private String id;
-
-    @Column(name = "name")
-    private String name;
-
-    @Column(name = "oldname")
-    private String oldname;
-
     @Column(name = "createTime", updatable = false)
     @Temporal(TemporalType.DATE)
     private Date createTime;
@@ -39,21 +27,25 @@ public class DataFile {
     @Column(name = "status")
     private Integer status;
 
-    public String getOldname() {
-        return oldname;
+    public Long getId() {
+        return id;
     }
 
-    public void setOldname(String oldname) {
-        this.oldname = oldname;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getUrl() {
+
+        return url;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUrl(String url) {
+        this.url = url;
     }
+
+    @Column(name = "url")
+    private String url;
 
     public Integer getStatus() {
         return status;
@@ -62,23 +54,6 @@ public class DataFile {
     public void setStatus(Integer status) {
         this.status = status;
     }
-
-    public Long getFileid() {
-        return id;
-    }
-
-    public void setFileid(Long fileid) {
-        this.id = fileid;
-    }
-
-//
-//    public String getId() {
-//        return id;
-//    }
-//
-//    public void setId(String id) {
-//        this.id = id;
-//    }
 
     public Date getCreateTime() {
         return createTime;
