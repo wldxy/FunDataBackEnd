@@ -55,14 +55,14 @@ public class QiniuServiceImpl implements QiniuService {
 
     @Override
     public String createDownloadUrl(DataFile dataFile) {
-        String url = "http://" + qiniuProperties.getDomain_private() + "/" + dataFile.getName();
-        return url;
+//        String url = "http://" + qiniuProperties.getDomain_private() + "/" + dataFile.getName();
+//        return url;
+        return "";
     }
 
     @Override
     public String createDownloadUrl(Dataset dataset) {
-        String url = "http://" + qiniuProperties.getDomain_private() + "/" + dataset.getName() + ".csv";
-        return url;
+        return auth.privateDownloadUrl(dataset.getAllFile().getUrl());
     }
 
     @Override
@@ -104,7 +104,7 @@ public class QiniuServiceImpl implements QiniuService {
     @Override
     public String downloadFile(DataFile dataFile, String dir) {
         String url = createDownloadUrl(dataFile);
-        String fileName = dataFile.getName();
+        String fileName = "";//dataFile.getName();
         this.downloadFile(url, fileName, dir);
         return dir + "/" + fileName;
 //        try {
