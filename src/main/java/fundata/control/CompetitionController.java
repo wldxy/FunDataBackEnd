@@ -291,7 +291,7 @@ public class CompetitionController {
             Map temp = new HashMap();
             temp.put("url", qiniuService.createDownloadUrl(dataFile));
             temp.put("time", dataFile.getCreateTime().toString());
-            temp.put("name", dataFile.getOldname());
+            //temp.put("name", dataFile.getOldname());
             temp.put("size", qiniuService.getFileSize(dataFile));
             download.add(temp);
         }
@@ -386,12 +386,12 @@ public class CompetitionController {
         }
 
         Competition competition = competitionServiceImpl.findById(comId);
-        qiniuService.downloadFile(qiniuService.createDownloadUrl(dataFile), dataFile.getName(), fileProperties.getUserAnsPath());
-
-        String ansUrl = fileProperties.getAnsFilePath() + comId.toString() + ".csv";
-        String userAnsUrl = fileProperties.getUserAnsPath() + dataFile.getName();
-        Evaluator evaluator = new ClassifyEvaluator(ansUrl);
-        double accurate = evaluator.evaluate(userAnsUrl);
+//        qiniuService.downloadFile(qiniuService.createDownloadUrl(dataFile), dataFile.getName(), fileProperties.getUserAnsPath());
+//
+//        String ansUrl = fileProperties.getAnsFilePath() + comId.toString() + ".csv";
+//        String userAnsUrl = fileProperties.getUserAnsPath() + dataFile.getName();
+//        Evaluator evaluator = new ClassifyEvaluator(ansUrl);
+//        double accurate = evaluator.evaluate(userAnsUrl);
 
         try {
             Dataer dataer = dataerServiceImpl.findByDataerName(username);
@@ -402,7 +402,7 @@ public class CompetitionController {
                 Competition temp = competitionIterator.next();
                 if(isActive(temp) && temp.getId().equals(comId)){
                     Accurate a = new Accurate();
-                    a.setValue(accurate);
+                    //.setValue(accurate);
                     a.setDataer(dataer);
                     a.setUploadDate(getCurrentTime());
                     accurateServiveImpl.save(a);

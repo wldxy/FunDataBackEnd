@@ -87,16 +87,16 @@ public class FileController {
         dataFile.setCreateTime(new Date());
         dataFile.setUpdateTime(new Date());
         dataFile.setStatus(0);
-        dataFile.setOldname(name);
+//        dataFile.setOldname(name);
+//        dataFileRepository.save(dataFile);
+//
+//        Integer point = name.lastIndexOf('.');
+//        String suffix = name.substring(point, name.length());
+//        String fileName = dataFile.getFileid() + suffix;
+//        dataFile.setName(fileName);
         dataFileRepository.save(dataFile);
 
-        Integer point = name.lastIndexOf('.');
-        String suffix = name.substring(point, name.length());
-        String fileName = dataFile.getFileid() + suffix;
-        dataFile.setName(fileName);
-        dataFileRepository.save(dataFile);
-
-        map.put("name", fileName);
+//        map.put("name", fileName);
         return map;
     }
 
