@@ -31,22 +31,11 @@ public class PullRequestController {
     @Autowired
     DatasetService datasetService;
 
-    @RequestMapping(value = "/getDatasetPullRequest", method = RequestMethod.POST)
-    public Map<String, Object> getPullRequest(@RequestParam(name = "datasetId") Long datasetId,
-                                          @RequestParam(value = "curPage") short curPage) {
-        PagedListHolder<PullRequest> pullRequests = pullRequestService.getDatasetPullRequestsByPage(datasetId, curPage);
-        Map<String, Object> map = new HashMap<>();
-        map.put("code", "200");
-        map.put("pullrequests", pullRequestService.assemblePullRequestInfo(pullRequests));
-        map.put("total", pullRequests.getNrOfElements());
-        return map;
-    }
-
     @RequestMapping(value = "/newPullRequest", method = RequestMethod.POST)
     public Map<String, String> createNewPullRequest(@RequestParam(value = "datasetId") Long datasetId,
-                                  @RequestAttribute(value = Constants.CURRENT_USER_ID) Long userId,
-                                  @RequestParam(value = "fileUrl") String fileUrl,
-                                  @RequestParam(value = "description") String description) {
+                                                    @RequestAttribute(value = Constants.CURRENT_USER_ID) Long userId,
+                                                    @RequestParam(value = "fileUrl") String fileUrl,
+                                                    @RequestParam(value = "description") String description) {
 
         System.out.println("===============");
         System.out.println("DataFile "+fileUrl+" is confirmed");
@@ -62,6 +51,19 @@ public class PullRequestController {
         }
         return map;
     }
+
+    @RequestMapping(value = "/getDatasetPullRequest", method = RequestMethod.POST)
+    public Map<String, Object> getPullRequest(@RequestParam(name = "datasetId") Long datasetId,
+                                          @RequestParam(value = "curPage") short curPage) {
+        PagedListHolder<PullRequest> pullRequests = pullRequestService.getDatasetPullRequestsByPage(datasetId, curPage);
+        Map<String, Object> map = new HashMap<>();
+        map.put("code", "200");
+        map.put("pullrequests", pullRequestService.assemblePullRequestInfo(pullRequests));
+        map.put("total", pullRequests.getNrOfElements());
+        return map;
+    }
+
+
 
     @RequestMapping(value = "/confirmRequest", method = RequestMethod.POST)
     public Map<String, String> confirmRequest(@RequestParam(name = "isConfirm") short isConfirm,

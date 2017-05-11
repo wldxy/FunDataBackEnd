@@ -43,16 +43,10 @@ public class DatasetServiceImpl implements DatasetService {
     QiniuProperties qiniuProperties;
 
     @Autowired
-    DatasetTitleRepository datasetTitleRepository;
+    PullRequestService pullRequestService;
 
     @Autowired
     QiniuService qiniuService;
-
-    @Autowired
-    FileProperties fileProperties;
-
-    @Autowired
-    DataFileRepository dataFileRepository;
 
     private String getFileUrl(Dataset dataset) {
         String url = "";
@@ -126,8 +120,7 @@ public class DatasetServiceImpl implements DatasetService {
     public DatasetDetail getDatasetDetail(Long datasetId) {
         DataerDataset d = dataerDatasetRepository.findDatasetByDatasetId(datasetId);
         DatasetDetail datasetDetail = new DatasetDetail();
-        //datasetDetail.setUrl(qiniuService.createDownloadUrl(d.getDataset()));
-        datasetDetail.setUrl("");
+        datasetDetail.setUrl(qiniuService.createDownloadUrl(d.getDataset()));
         datasetDetail.setDatasetInfo(assembleDatasetInfo(d));
         MetaData meta = metaDataRepository.findByDatasetId(d.getDataset().getId());
         List<Field> fields = meta.getFields();
@@ -196,42 +189,28 @@ public class DatasetServiceImpl implements DatasetService {
     }
 
     @Override
-    public Set<DatasetTitle> getDatasetTitle(String datasetName) {
-        Dataset dataset = datasetRepository.findByDatasetName(datasetName);
-        Set<DatasetTitle> datasetTitleSet = dataset.getDatasetTitles();
-        return datasetTitleSet;
-    }
-
-    @Override
-    public void addDatasetTitle(String datasetName, DatasetTitle datasetTitle) {
-        Dataset dataset = datasetRepository.findByDatasetName(datasetName);
-        dataset.getDatasetTitles().add(datasetTitle);
-        datasetRepository.save(dataset);
-    }
-
-    @Override
-    public List<Dataer> getContribute(String datasetNsame) {
-        Dataset dataset = datasetRepository.findByDatasetName(datasetNsame);
-        List<PullRequest> pullRequests = dataset.getPullRequests();
+    public List<Dataer> getContribute(Long datasetId) {
+        PagedListHolder<PullRequest> pullRequests = pullRequestService.getDatasetPullRequestsByPage(datasetId, (short)0);
         List<Dataer> dataers = new ArrayList<>();
-        for (PullRequest pullRequest : pullRequests) {
+        for (PullRequest pullRequest : pullRequests.getPageList()) {
             dataers.add(pullRequest.getDataer());
         }
         return dataers;
     }
 
     @Override
-    public List<DataFile> getDatasetFile(String datasetName) {
-        Dataset dataset = datasetRepository.findByDatasetName(datasetName);
-        Set<DataFile> dataFiles = dataset.getFiles();
-        List<DataFile> dataFileList = new ArrayList<DataFile>(dataFiles);
+    public List<DataFile> getDatasetFiles(Long datasetId) {
+        PagedListHolder<PullRequest> pullRequests = pullRequestService.getDatasetPullRequestsByPage(datasetId, (short)0);
+        List<DataFile> dataFileList = new ArrayList<DataFile>();
+        for (PullRequest pullRequest : pullRequests.getPageList()) {
+            dataFileList.add(pullRequest.getDataFile());
+        }
         return dataFileList;
     }
 
     @Override
     public Dataset findByDatasetName(String datasetName) {
-        Dataset dataset = datasetRepository.findByDatasetName(datasetName);
-        return dataset;
+        return datasetRepository.findByDatasetName(datasetName);
     }
 
     @Override

@@ -27,15 +27,11 @@ public interface DatasetService {
 
     DatasetContent getDatasetContent(Long datasetId, Long dataerId);
 
-    Set<Dataset> searchDatasets(String username);
+    Set<Dataset> searchDatasets(String userName);
 
-    Set<DatasetTitle> getDatasetTitle(String datasetName);
+    List<Dataer> getContribute(Long datasetId);
 
-    void addDatasetTitle(String datasetName, DatasetTitle datasetTitle);
-
-    List<Dataer> getContribute(String datasetName);
-
-    List<DataFile> getDatasetFile(String datasetName);
+    List<DataFile> getDatasetFiles(Long datasetId);
 
     Dataset findByDatasetName(String datasetName);
 
