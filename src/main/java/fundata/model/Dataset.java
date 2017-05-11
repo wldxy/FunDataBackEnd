@@ -66,9 +66,6 @@ public class Dataset {
     @OneToMany(mappedBy = "dataset")
     private Set<DatasetTitle> datasetTitles = new HashSet<>();
 
-    @OneToMany
-    private Set<DataFile> files = new HashSet<>();
-
     @OneToOne
     private DataFile titleFile;
 
@@ -125,14 +122,6 @@ public class Dataset {
 
     public void setDataers(Set<Dataer> dataers) {
         dataers = dataers;
-    }
-
-    public Set<DataFile> getFiles() {
-        return files;
-    }
-
-    public void setFiles(Set<DataFile> files) {
-        this.files = files;
     }
 
     public List<PullRequest> getPullRequests() {
