@@ -1,6 +1,7 @@
 package fundata.control;
 
 import fundata.configure.Constants;
+import fundata.document.PullRequestDetail;
 import fundata.model.Dataset;
 import fundata.model.PullRequest;
 import fundata.service.DatasetService;
@@ -52,18 +53,25 @@ public class PullRequestController {
         return map;
     }
 
-    @RequestMapping(value = "/getDatasetPullRequest", method = RequestMethod.POST)
+    @RequestMapping(value = "/getDatasetPullRequest")
     public Map<String, Object> getPullRequest(@RequestParam(name = "datasetId") Long datasetId,
                                           @RequestParam(value = "curPage") short curPage) {
         PagedListHolder<PullRequest> pullRequests = pullRequestService.getDatasetPullRequestsByPage(datasetId, curPage);
         Map<String, Object> map = new HashMap<>();
         map.put("code", "200");
-        map.put("pullrequests", pullRequestService.assemblePullRequestInfo(pullRequests));
+        map.put("pullrequests", pullRequestService.assemblePullRequestInfos(pullRequests));
         map.put("total", pullRequests.getNrOfElements());
         return map;
     }
 
-
+    @RequestMapping(value = "/getPullRequestDetail")
+    public Map<String, Object> getPullRequestDetail(@RequestParam(name = "pullRequestId") Long pullRequestId) {
+        PullRequestDetail pullRequestDetail = pullRequestService.getPullRequestDetail(pullRequestId);
+        Map<String, Object> map = new HashMap<>();
+        map.put("code", "200");
+        map.put("detail", pullRequestDetail);
+        return map;
+    }
 
     @RequestMapping(value = "/confirmRequest", method = RequestMethod.POST)
     public Map<String, String> confirmRequest(@RequestParam(name = "isConfirm") short isConfirm,

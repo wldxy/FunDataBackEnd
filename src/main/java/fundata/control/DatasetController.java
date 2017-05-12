@@ -39,10 +39,6 @@ public class DatasetController {
     private DSCommentService dsCommentService;
 
     @Autowired
-    DatasetTitleService datasetTitleService;
-
-
-    @Autowired
     private PullRequestService pullRequestService;
 //
 //
@@ -125,7 +121,7 @@ public class DatasetController {
         Map map = new HashMap();
         PagedListHolder<PullRequest> result = pullRequestService.getUserPullRequestsByPage(userId, curPage);
         map.put("code", "200");
-        map.put("pullrequests", pullRequestService.assemblePullRequestInfo(result));
+        map.put("pullrequests", pullRequestService.assemblePullRequestInfos(result));
         map.put("total", result.getNrOfElements());
         return map;
     }
