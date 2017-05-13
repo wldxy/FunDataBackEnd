@@ -72,19 +72,32 @@ public class PullRequestController {
     }
 
     @RequestMapping(value = "/confirmRequest", method = RequestMethod.POST)
-    public Map<String, String> confirmRequest(@RequestParam(name = "isConfirm") short isConfirm,
-                                  @RequestParam(name = "requestId") Long requestId,
-                                  @RequestParam(name = "datasetId") Long datasetId) {
-        pullRequestService.setPullRequestStatus(requestId, isConfirm);
+    public Map<String, String> confirmRequest(@RequestParam(name = "pullRequestId") Long requestId) {
+        pullRequestService.setPullRequestStatus(requestId, (short)1);
         Map<String, String> map = new HashMap<>();
-        try {
-            datasetService.combineDataset(datasetId);
-            map.put("code", "200");
-        }
-        catch (FileNotFoundException e) {
-            e.printStackTrace();
-            map.put("code", "-1");
-        }
+//        try {
+//            //datasetService.combineDataset(datasetId);
+//            map.put("code", "200");
+//        }
+//        catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//            map.put("code", "-1");
+//        }
+        return map;
+    }
+
+    @RequestMapping(value = "/rejectRequest", method = RequestMethod.POST)
+    public Map<String, String> rejectRequest(@RequestParam(name = "pullRequestId") Long requestId) {
+        pullRequestService.setPullRequestStatus(requestId, (short)2);
+        Map<String, String> map = new HashMap<>();
+//        try {
+//            //datasetService.combineDataset(datasetId);
+//            map.put("code", "200");
+//        }
+//        catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//            map.put("code", "-1");
+//        }
         return map;
     }
 

@@ -29,5 +29,4 @@ public interface PullRequestService {
 
     PagedListHolder<PullRequest> findLatestPullRequest(Long userId, int curPage);
 
-    void save(PullRequest pullRequest);
 }

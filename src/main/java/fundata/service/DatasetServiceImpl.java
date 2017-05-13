@@ -120,7 +120,7 @@ public class DatasetServiceImpl implements DatasetService {
     public DatasetDetail getDatasetDetail(Long datasetId) {
         DataerDataset d = dataerDatasetRepository.findDatasetByDatasetId(datasetId);
         DatasetDetail datasetDetail = new DatasetDetail();
-        datasetDetail.setUrl(qiniuService.createDownloadUrl(d.getDataset()));
+        datasetDetail.setUrl(qiniuService.createDownloadUrl(d.getDataset().getAllFile().getUrl()));
         datasetDetail.setDatasetInfo(assembleDatasetInfo(d));
         datasetDetail.setColumns(getDatasetColumns(d.getDataset().getId()));
         return datasetDetail;

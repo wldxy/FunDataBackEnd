@@ -32,6 +32,9 @@ public class PullRequestServiceImpl implements PullRequestService {
     DataFileRepository dataFileRepository;
 
     @Autowired
+    QiniuService qiniuService;
+
+    @Autowired
     PullRequestDetailRepository pullRequestDetailRepository;
     @Autowired
     DatasetService datasetService;
@@ -51,8 +54,11 @@ public class PullRequestServiceImpl implements PullRequestService {
     public PullRequestDetail getPullRequestDetail(Long pullRequestId) {
         PullRequestDetail pullRequestDetail = new PullRequestDetail();
         PullRequestStatistics pullRequestStatistics = pullRequestDetailRepository.findByPullRequestId(pullRequestId);
-        pullRequestDetail.setColumns(datasetService.getDatasetColumns(pullRequestRepository.findOne(pullRequestId).getDataset().getId()));
+        PullRequest pullRequest = pullRequestRepository.findOne(pullRequestId);
+        pullRequestDetail.setColumns(datasetService.getDatasetColumns(pullRequest.getDataset().getId()));
         pullRequestDetail.setLimits(pullRequestStatistics.getLimits());
+        pullRequestDetail.setUrl(qiniuService.createDownloadUrl(pullRequest.getDataFile().getUrl()));
+        pullRequestDetail.setId(pullRequestId);
         return pullRequestDetail;
     }
 
@@ -134,10 +140,6 @@ public class PullRequestServiceImpl implements PullRequestService {
         }
     }
 
-
-
-
-
     @Override
     public PagedListHolder<PullRequest> findLatestPullRequest(Long userId, int curPage) {
 //        Specification<PullRequest> pullRequestSpecification = new Specification<PullRequest>() {
@@ -161,10 +163,4 @@ public class PullRequestServiceImpl implements PullRequestService {
         pullRequestPage.setPageSize(Constants.pageSize);
         return pullRequestPage;
     }
-
-    @Override
-    public void save(PullRequest pullRequest) {
-        pullRequestRepository.save(pullRequest);
-    }
-
 }
