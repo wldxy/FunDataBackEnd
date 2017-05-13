@@ -122,10 +122,15 @@ public class DatasetServiceImpl implements DatasetService {
         DatasetDetail datasetDetail = new DatasetDetail();
         datasetDetail.setUrl(qiniuService.createDownloadUrl(d.getDataset()));
         datasetDetail.setDatasetInfo(assembleDatasetInfo(d));
-        MetaData meta = metaDataRepository.findByDatasetId(d.getDataset().getId());
-        List<Field> fields = meta.getFields();
-        datasetDetail.setColumns(fields.toArray(new Field[fields.size()]));
+        datasetDetail.setColumns(getDatasetColumns(d.getDataset().getId()));
         return datasetDetail;
+    }
+
+    @Override
+    public Field[] getDatasetColumns(Long datasetId) {
+        MetaData meta = metaDataRepository.findByDatasetId(datasetId);
+        List<Field> fields = meta.getFields();
+        return fields.toArray(new Field[fields.size()]);
     }
 
     @Override

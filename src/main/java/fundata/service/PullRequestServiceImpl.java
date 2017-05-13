@@ -1,11 +1,11 @@
 package fundata.service;
 
 import fundata.configure.Constants;
+import fundata.document.Field;
 import fundata.model.*;
-import fundata.repository.DataFileRepository;
-import fundata.repository.DataerRepository;
-import fundata.repository.DatasetRepository;
-import fundata.repository.PullRequestRepository;
+import fundata.repository.*;
+import fundata.document.PullRequestStatistics;
+import fundata.viewmodel.PullRequestDetail;
 import fundata.viewmodel.PullRequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.support.MutableSortDefinition;
@@ -32,20 +32,33 @@ public class PullRequestServiceImpl implements PullRequestService {
     DataFileRepository dataFileRepository;
 
     @Autowired
+    PullRequestDetailRepository pullRequestDetailRepository;
+    @Autowired
     DatasetService datasetService;
 
+    private PullRequestInfo assemblePullRequestInfo(PullRequest pullRequest) {
+        PullRequestInfo pullRequestInfo = new PullRequestInfo();
+        Dataer dataer = pullRequest.getDataer();
+        pullRequestInfo.setUpdateTime(pullRequest.getUpdateTime());
+        pullRequestInfo.setPullDescription(pullRequest.getDescription());
+        pullRequestInfo.setDataerName(dataer.getName());
+        pullRequestInfo.setDataerUrl(dataer.getHead_href());
+        pullRequestInfo.setId(pullRequest.getId());
+        return pullRequestInfo;
+    }
+
     @Override
-    public List<Object> assemblePullRequestInfo(PagedListHolder<PullRequest> result) {
-        return Arrays.asList(result.getPageList().stream().map(p -> {
-            PullRequestInfo pullRequestInfo = new PullRequestInfo();
-            Dataer dataer = p.getDataer();
-            pullRequestInfo.setUpdateTime(p.getUpdateTime());
-            pullRequestInfo.setPullDescription(p.getDescription());
-            pullRequestInfo.setDataerName(dataer.getName());
-            pullRequestInfo.setDataerUrl(dataer.getHead_href());
-            pullRequestInfo.setId(p.getId());
-            return pullRequestInfo;
-        }).toArray());
+    public PullRequestDetail getPullRequestDetail(Long pullRequestId) {
+        PullRequestDetail pullRequestDetail = new PullRequestDetail();
+        PullRequestStatistics pullRequestStatistics = pullRequestDetailRepository.findByPullRequestId(pullRequestId);
+        pullRequestDetail.setColumns(datasetService.getDatasetColumns(pullRequestRepository.findOne(pullRequestId).getDataset().getId()));
+        pullRequestDetail.setLimits(pullRequestStatistics.getLimits());
+        return pullRequestDetail;
+    }
+
+    @Override
+    public List<Object> assemblePullRequestInfos(PagedListHolder<PullRequest> result) {
+        return Arrays.asList(result.getPageList().stream().map(this::assemblePullRequestInfo).toArray());
     }
 
     @Override
