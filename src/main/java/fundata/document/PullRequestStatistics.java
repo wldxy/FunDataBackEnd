@@ -11,7 +11,7 @@ import java.util.*;
  * Created by ocean on 16-12-6.
  */
 @Document
-public class PullRequestDetail {
+public class PullRequestStatistics {
     @Id
     private Long pullRequestId;
 

@@ -1,8 +1,7 @@
 package fundata.control;
 
 import fundata.configure.Constants;
-import fundata.document.PullRequestDetail;
-import fundata.model.Dataset;
+import fundata.document.PullRequestStatistics;
 import fundata.model.PullRequest;
 import fundata.service.DatasetService;
 import fundata.service.PullRequestService;
@@ -66,10 +65,9 @@ public class PullRequestController {
 
     @RequestMapping(value = "/getPullRequestDetail")
     public Map<String, Object> getPullRequestDetail(@RequestParam(name = "pullRequestId") Long pullRequestId) {
-        PullRequestDetail pullRequestDetail = pullRequestService.getPullRequestDetail(pullRequestId);
         Map<String, Object> map = new HashMap<>();
         map.put("code", "200");
-        map.put("detail", pullRequestDetail);
+        map.put("detail", pullRequestService.getPullRequestDetail(pullRequestId));
         return map;
     }
 

@@ -1,9 +1,11 @@
 package fundata.service;
 
 import fundata.configure.Constants;
+import fundata.document.Field;
 import fundata.model.*;
 import fundata.repository.*;
-import fundata.document.PullRequestDetail;
+import fundata.document.PullRequestStatistics;
+import fundata.viewmodel.PullRequestDetail;
 import fundata.viewmodel.PullRequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.support.MutableSortDefinition;
@@ -47,8 +49,10 @@ public class PullRequestServiceImpl implements PullRequestService {
 
     @Override
     public PullRequestDetail getPullRequestDetail(Long pullRequestId) {
-        PullRequestDetail pullRequestDetail = pullRequestDetailRepository.findByPullRequestId(pullRequestId);
-
+        PullRequestDetail pullRequestDetail = new PullRequestDetail();
+        PullRequestStatistics pullRequestStatistics = pullRequestDetailRepository.findByPullRequestId(pullRequestId);
+        pullRequestDetail.setColumns(datasetService.getDatasetColumns(pullRequestRepository.findOne(pullRequestId).getDataset().getId()));
+        pullRequestDetail.setLimits(pullRequestStatistics.getLimits());
         return pullRequestDetail;
     }
 

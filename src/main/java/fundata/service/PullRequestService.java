@@ -1,7 +1,8 @@
 package fundata.service;
 
 import fundata.model.PullRequest;
-import fundata.document.PullRequestDetail;
+import fundata.document.PullRequestStatistics;
+import fundata.viewmodel.PullRequestDetail;
 import org.springframework.beans.support.PagedListHolder;
 
 import java.util.List;
