@@ -6,7 +6,6 @@ import fundata.repository.DataFileRepository;
 import fundata.repository.DataerRepository;
 import fundata.repository.DatasetRepository;
 import fundata.configure.FileProperties;
-import fundata.service.DatasetTitleService;
 import fundata.service.QiniuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,10 +29,6 @@ public class TestController {
 
     @Autowired
     QiniuService qiniuService;
-
-    @Autowired
-    @Qualifier("datasetTitleServiceImpl")
-    DatasetTitleService datasetTitleService;
 
     @Autowired
     DataFileRepository dataFileRepository;

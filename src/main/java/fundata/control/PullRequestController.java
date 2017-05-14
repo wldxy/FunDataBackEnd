@@ -72,39 +72,30 @@ public class PullRequestController {
     }
 
     @RequestMapping(value = "/confirmRequest", method = RequestMethod.POST)
-    public Map<String, String> confirmRequest(@RequestParam(name = "pullRequestId") Long requestId) {
-        pullRequestService.setPullRequestStatus(requestId, (short)1);
+    public Map<String, String> confirmRequest(@RequestParam(name = "pullRequestId") Long pullRequestId,
+                                              @RequestParam(name = "tag") String tag) {
+        boolean flag = pullRequestService.mergePullRequest(pullRequestId, tag);
         Map<String, String> map = new HashMap<>();
-//        try {
-//            //datasetService.combineDataset(datasetId);
-//            map.put("code", "200");
-//        }
-//        catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//            map.put("code", "-1");
-//        }
+        if (flag) {
+            map.put("code", "200");
+        }
+        else {
+            map.put("code", "-1");
+        }
         return map;
     }
 
     @RequestMapping(value = "/rejectRequest", method = RequestMethod.POST)
-    public Map<String, String> rejectRequest(@RequestParam(name = "pullRequestId") Long requestId) {
-        pullRequestService.setPullRequestStatus(requestId, (short)2);
+    public Map<String, String> rejectRequest(@RequestParam(name = "pullRequestId") Long pullRequestId) {
+        boolean flag = pullRequestService.rejectPullRequest(pullRequestId);
         Map<String, String> map = new HashMap<>();
-//        try {
-//            //datasetService.combineDataset(datasetId);
-//            map.put("code", "200");
-//        }
-//        catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//            map.put("code", "-1");
-//        }
+        if (flag) {
+            map.put("code", "200");
+        }
+        else {
+            map.put("code", "-1");
+        }
         return map;
-    }
-
-    @RequestMapping(value = "/requestFileConfirm", method = RequestMethod.POST)
-    public void confirmRequestFileUpload(@RequestParam(name = "confirm") Integer confirm,
-                                         @RequestParam(name = "fileId") Integer fileId) {
-
     }
 
     @RequestMapping(value = "/getHotProject", method = RequestMethod.POST)

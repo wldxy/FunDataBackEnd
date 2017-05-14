@@ -25,7 +25,9 @@ public interface PullRequestService {
 
     boolean createPullRequest(Long dataerId, Long datasetId, String description, String fileUrl);
 
-    boolean setPullRequestStatus(Long id, short status);
+    boolean mergePullRequest(Long pullRequestId, String tag);
+
+    boolean rejectPullRequest(Long pullRequestId);
 
     PagedListHolder<PullRequest> findLatestPullRequest(Long userId, int curPage);
 

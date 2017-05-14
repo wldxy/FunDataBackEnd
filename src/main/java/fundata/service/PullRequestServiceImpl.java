@@ -128,10 +128,24 @@ public class PullRequestServiceImpl implements PullRequestService {
     }
 
     @Override
-    public boolean setPullRequestStatus(Long id, short status) {
-        PullRequest pullRequest = pullRequestRepository.findOne(id);
+    public boolean mergePullRequest(Long pullRequestId, String tag) {
+        PullRequest pullRequest = pullRequestRepository.findOne(pullRequestId);
         if (pullRequest != null) {
-            pullRequest.setStatus(status);
+            pullRequest.setStatus((short)0);
+            pullRequest.setTag(tag);
+            pullRequestRepository.save(pullRequest);
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean rejectPullRequest(Long pullRequestId) {
+        PullRequest pullRequest = pullRequestRepository.findOne(pullRequestId);
+        if (pullRequest != null) {
+            pullRequest.setStatus((short)1);
             pullRequestRepository.save(pullRequest);
             return true;
         }

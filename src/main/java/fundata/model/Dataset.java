@@ -62,13 +62,6 @@ public class Dataset {
     @Column(name = "format_description")
     private String formatDescription;
 
-
-    @OneToMany(mappedBy = "dataset")
-    private Set<DatasetTitle> datasetTitles = new HashSet<>();
-
-    @OneToOne
-    private DataFile titleFile;
-
     @OneToMany(mappedBy = "dataset")
     private List<PullRequest> pullRequests = new ArrayList<>();
 
@@ -76,20 +69,12 @@ public class Dataset {
     private Set<DSComment> dsComments = new HashSet<>();
 
     @OneToOne
-    private DataFile allFile;
+    private DataFile file;
 
     public Dataset() { }
 
     public Dataset(String name) {
         this.name = name;
-    }
-
-    public DataFile getTitleFile() {
-        return titleFile;
-    }
-
-    public void setTitleFile(DataFile titleFile) {
-        this.titleFile = titleFile;
     }
 
     public Long getId() {
@@ -108,12 +93,12 @@ public class Dataset {
         this.name = name;
     }
 
-    public DataFile getAllFile() {
-        return allFile;
+    public DataFile getFile() {
+        return file;
     }
 
-    public void setAllFile(DataFile allFile) {
-        this.allFile = allFile;
+    public void setFile(DataFile file) {
+        this.file = file;
     }
 
     public Set<DataerDataset> getDataers() {
@@ -138,14 +123,6 @@ public class Dataset {
 
     public void setDsDescription(String dsDescription) {
         this.dsDescription = dsDescription;
-    }
-
-    public Set<DatasetTitle> getDatasetTitles() {
-        return datasetTitles;
-    }
-
-    public void setDatasetTitles(Set<DatasetTitle> datasetTitles) {
-        this.datasetTitles = datasetTitles;
     }
 
     public Set<DSComment> getDsComments() {
