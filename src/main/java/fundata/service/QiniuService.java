@@ -23,7 +23,7 @@ public interface QiniuService {
 
     String downloadFile(DataFile dataFile, String dir);
 
-    String createDownloadUrl(Dataset dataset);
+    String createDownloadUrl(String url);
 
     void downloadFile(String url, String fileName, String dir);
 

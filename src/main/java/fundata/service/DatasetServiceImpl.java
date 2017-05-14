@@ -1,10 +1,7 @@
 package fundata.service;
 
-import com.csvreader.CsvReader;
-import com.csvreader.CsvWriter;
 import com.google.gson.Gson;
 import fundata.configure.Constants;
-import fundata.configure.FileProperties;
 import fundata.configure.QiniuProperties;
 import fundata.document.Field;
 import fundata.document.MetaData;
@@ -18,8 +15,6 @@ import org.springframework.beans.support.MutableSortDefinition;
 import org.springframework.beans.support.PagedListHolder;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.*;
 
 /**
@@ -50,8 +45,8 @@ public class DatasetServiceImpl implements DatasetService {
 
     private String getFileUrl(Dataset dataset) {
         String url = "";
-        if (dataset.getAllFile() != null) {
-            url = "http://".concat(qiniuProperties.getDomain_private()).concat("/").concat(dataset.getAllFile().getUrl());
+        if (dataset.getFile() != null) {
+            url = "http://".concat(qiniuProperties.getDomain_private()).concat("/").concat(dataset.getFile().getUrl());
         }
         return url;
     }
@@ -120,7 +115,7 @@ public class DatasetServiceImpl implements DatasetService {
     public DatasetDetail getDatasetDetail(Long datasetId) {
         DataerDataset d = dataerDatasetRepository.findDatasetByDatasetId(datasetId);
         DatasetDetail datasetDetail = new DatasetDetail();
-        datasetDetail.setUrl(qiniuService.createDownloadUrl(d.getDataset()));
+        datasetDetail.setUrl(qiniuService.createDownloadUrl(d.getDataset().getFile().getUrl()));
         datasetDetail.setDatasetInfo(assembleDatasetInfo(d));
         datasetDetail.setColumns(getDatasetColumns(d.getDataset().getId()));
         return datasetDetail;
@@ -179,12 +174,6 @@ public class DatasetServiceImpl implements DatasetService {
         datasetContent.setContribute(count);
         datasetContent.setDescription(dataset.getDsDescription());
 
-        Set<DatasetTitle> datasetTitles = dataset.getDatasetTitles();
-        for (DatasetTitle datasetTitle : datasetTitles) {
-            datasetContent.addContent(datasetTitle.getTitleName(),
-                    datasetTitle.getTitleType(), datasetTitle.getMeaning());
-        }
-
         return datasetContent;
     }
 
@@ -236,7 +225,7 @@ public class DatasetServiceImpl implements DatasetService {
 //        dataFile.setCreateTime(new Date());
 //        dataFileRepository.save(dataFile);
 //
-//        dataset.setAllFile(dataFile);
+//        dataset.setFile(dataFile);
 //        datasetRepository.save(dataset);
 //
 //        List<String> files = new ArrayList<>();

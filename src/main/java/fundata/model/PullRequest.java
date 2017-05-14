@@ -21,6 +21,17 @@ public class PullRequest {
     @Column(name = "status")
     private short status;
 
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
+    @Column(name = "tag")
+    private String tag;
+
     @Column(name = "update_time")
     @Temporal(TemporalType.DATE)
     private Date updateTime;

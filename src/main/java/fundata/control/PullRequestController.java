@@ -72,26 +72,30 @@ public class PullRequestController {
     }
 
     @RequestMapping(value = "/confirmRequest", method = RequestMethod.POST)
-    public Map<String, String> confirmRequest(@RequestParam(name = "isConfirm") short isConfirm,
-                                  @RequestParam(name = "requestId") Long requestId,
-                                  @RequestParam(name = "datasetId") Long datasetId) {
-        pullRequestService.setPullRequestStatus(requestId, isConfirm);
+    public Map<String, String> confirmRequest(@RequestParam(name = "pullRequestId") Long pullRequestId,
+                                              @RequestParam(name = "tag") String tag) {
+        boolean flag = pullRequestService.mergePullRequest(pullRequestId, tag);
         Map<String, String> map = new HashMap<>();
-        try {
-            datasetService.combineDataset(datasetId);
+        if (flag) {
             map.put("code", "200");
         }
-        catch (FileNotFoundException e) {
-            e.printStackTrace();
+        else {
             map.put("code", "-1");
         }
         return map;
     }
 
-    @RequestMapping(value = "/requestFileConfirm", method = RequestMethod.POST)
-    public void confirmRequestFileUpload(@RequestParam(name = "confirm") Integer confirm,
-                                         @RequestParam(name = "fileId") Integer fileId) {
-
+    @RequestMapping(value = "/rejectRequest", method = RequestMethod.POST)
+    public Map<String, String> rejectRequest(@RequestParam(name = "pullRequestId") Long pullRequestId) {
+        boolean flag = pullRequestService.rejectPullRequest(pullRequestId);
+        Map<String, String> map = new HashMap<>();
+        if (flag) {
+            map.put("code", "200");
+        }
+        else {
+            map.put("code", "-1");
+        }
+        return map;
     }
 
     @RequestMapping(value = "/getHotProject", method = RequestMethod.POST)

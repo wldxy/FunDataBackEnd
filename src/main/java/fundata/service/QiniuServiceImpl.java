@@ -61,9 +61,8 @@ public class QiniuServiceImpl implements QiniuService {
     }
 
     @Override
-    public String createDownloadUrl(Dataset dataset) {
-        DataFile file = dataset.getAllFile();
-        return file == null ? "" : auth.privateDownloadUrl(file.getUrl());
+    public String createDownloadUrl(String url) {
+        return auth.privateDownloadUrl(url);
     }
 
     @Override
