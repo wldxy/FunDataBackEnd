@@ -1,7 +1,6 @@
 package fundata.service;
 
 import fundata.configure.Constants;
-import fundata.document.Field;
 import fundata.model.*;
 import fundata.repository.*;
 import fundata.document.PullRequestStatistics;
@@ -55,7 +54,7 @@ public class PullRequestServiceImpl implements PullRequestService {
         PullRequestDetail pullRequestDetail = new PullRequestDetail();
         PullRequestStatistics pullRequestStatistics = pullRequestDetailRepository.findByPullRequestId(pullRequestId);
         PullRequest pullRequest = pullRequestRepository.findOne(pullRequestId);
-        pullRequestDetail.setColumns(datasetService.getDatasetColumns(pullRequest.getDataset().getId()));
+        pullRequestDetail.setColumns(datasetService.getDatasetTables(pullRequest.getDataset().getId()));
         pullRequestDetail.setLimits(pullRequestStatistics.getLimits());
         pullRequestDetail.setUrl(qiniuService.createDownloadUrl(pullRequest.getDataFile().getUrl()));
         pullRequestDetail.setId(pullRequestId);

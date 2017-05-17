@@ -3,8 +3,8 @@ package fundata.service;
 import com.google.gson.Gson;
 import fundata.configure.Constants;
 import fundata.configure.QiniuProperties;
-import fundata.document.Field;
-import fundata.document.MetaData;
+import fundata.document.DatasetMeta;
+import fundata.document.Table;
 import fundata.model.*;
 import fundata.repository.*;
 import fundata.viewmodel.DatasetContent;
@@ -26,7 +26,7 @@ public class DatasetServiceImpl implements DatasetService {
     DatasetRepository datasetRepository;
 
     @Autowired
-    MetaDataRepository metaDataRepository;
+    DatasetMetaRepository datasetMetaRepository;
 
     @Autowired
     DataerRepository dataerRepository;
@@ -52,9 +52,7 @@ public class DatasetServiceImpl implements DatasetService {
     }
 
     private List<DataerDataset> setDatasetOwner(List<DataerDataset> dataerDatasets) {
-        Object[] datasets = dataerDatasets.stream().map(d -> {
-            return d.getDataset();
-        }).toArray();
+        Object[] datasets = dataerDatasets.stream().map(DataerDataset::getDataset).toArray();
         return datasets.length == 0 ? new ArrayList<>() : dataerDatasetRepository.findDatasetOwner(datasets);
     }
 
@@ -117,19 +115,19 @@ public class DatasetServiceImpl implements DatasetService {
         DatasetDetail datasetDetail = new DatasetDetail();
         datasetDetail.setUrl(qiniuService.createDownloadUrl(d.getDataset().getFile().getUrl()));
         datasetDetail.setDatasetInfo(assembleDatasetInfo(d));
-        datasetDetail.setColumns(getDatasetColumns(d.getDataset().getId()));
+        datasetDetail.setTables(getDatasetTables(d.getDataset().getId()));
         return datasetDetail;
     }
 
     @Override
-    public Field[] getDatasetColumns(Long datasetId) {
-        MetaData meta = metaDataRepository.findByDatasetId(datasetId);
-        List<Field> fields = meta.getFields();
-        return fields.toArray(new Field[fields.size()]);
+    public Table[] getDatasetTables(Long datasetId) {
+        DatasetMeta meta = datasetMetaRepository.findByDatasetId(datasetId);
+        List<Table> tables = meta.getTables();
+        return tables.toArray(new Table[tables.size()]);
     }
 
     @Override
-    public void createNewDataset(Long id, String datasetName, String dsDesc, String formatDesc, String fieldsString, String coverUrl) {
+    public void createNewDataset(Long id, String datasetName, String dsDesc, String formatDesc, String tablesString, String coverUrl) {
         Dataer dataer = dataerRepository.findOne(id);
         System.out.println(dataer.getEmail());
         Dataset dataset = new Dataset(datasetName);
@@ -139,10 +137,10 @@ public class DatasetServiceImpl implements DatasetService {
         dataset.setCreateTime(new Date());
         datasetRepository.save(dataset);
         Gson gson = new Gson();
-        Field[] fields = gson.fromJson(fieldsString, Field[].class);
-        MetaData meta = new MetaData(dataset.getId(), Arrays.asList(fields));
+        Table[] tables = gson.fromJson(tablesString, Table[].class);
+        DatasetMeta meta = new DatasetMeta(dataset.getId(), Arrays.asList(tables));
         dataerDatasetRepository.save(new DataerDataset(dataer, dataset, (short)(0)));
-        metaDataRepository.save(meta);
+        datasetMetaRepository.save(meta);
         dataerRepository.save(dataer);
         System.out.println(datasetName + " success");
     }

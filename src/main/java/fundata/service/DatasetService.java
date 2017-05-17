@@ -1,6 +1,7 @@
 package fundata.service;
 
 import fundata.document.Field;
+import fundata.document.Table;
 import fundata.model.*;
 import fundata.viewmodel.DatasetContent;
 import fundata.viewmodel.DatasetDetail;
@@ -36,7 +37,7 @@ public interface DatasetService {
 
     Dataset findByDatasetName(String datasetName);
 
-    Field[] getDatasetColumns(Long datasetId);
+    Table[] getDatasetTables(Long datasetId);
 
     void save(Dataset dataset);
 

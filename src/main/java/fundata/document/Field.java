@@ -34,19 +34,8 @@ public class Field {
         this.colType = colType;
     }
 
-    public List<Short> getLimits() {
-        return limits;
-    }
-
-    public void setLimits(List<Short> limits) {
-        this.limits = limits;
-    }
-
-    private List<Short> limits = new LinkedList<>();
-
-    public Field(String colName, String colType, List<Short> limits) {
+    public Field(String colName, String colType) {
         this.colName = colName;
         this.colType = colType;
-        this.limits = limits;
     }
 }
