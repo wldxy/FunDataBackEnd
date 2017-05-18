@@ -183,13 +183,4 @@ public class Dataer {
         this.pullRequests = pullRequests;
     }
 
-    /*
-    public Set<Course> getCourses() {
-        return courses;
-    }
-
-    public void setCourses(Set<Course> courses) {
-        this.courses = courses;
-    }
-    */
 }

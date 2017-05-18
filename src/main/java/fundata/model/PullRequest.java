@@ -24,7 +24,7 @@ public class PullRequest {
     @Column(name = "tag")
     private String tag;
 
-    @Column(name = "table")
+    @Column(name = "_table")
     private String table;
 
     @Column(name = "update_time")

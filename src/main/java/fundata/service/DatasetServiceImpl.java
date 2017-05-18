@@ -129,7 +129,6 @@ public class DatasetServiceImpl implements DatasetService {
     @Override
     public void createNewDataset(Long id, String datasetName, String dsDesc, String formatDesc, String tablesString, String coverUrl) {
         Dataer dataer = dataerRepository.findOne(id);
-        System.out.println(dataer.getEmail());
         Dataset dataset = new Dataset(datasetName);
         dataset.setDsDescription(dsDesc);
         dataset.setCoverUrl(coverUrl);
@@ -141,7 +140,6 @@ public class DatasetServiceImpl implements DatasetService {
         DatasetMeta meta = new DatasetMeta(dataset.getId(), Arrays.asList(tables));
         dataerDatasetRepository.save(new DataerDataset(dataer, dataset, (short)(0)));
         datasetMetaRepository.save(meta);
-        dataerRepository.save(dataer);
         System.out.println(datasetName + " success");
     }
 

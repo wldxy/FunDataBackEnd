@@ -16,8 +16,6 @@ public interface DataerService {
 
     Dataer getUserById(Long id);
 
-    Dataer findByHostcompetition(Competition competition);
-
     Dataer findByDataerName(String dataerName);
 
     Dataer findByEmail(String email);
