@@ -111,8 +111,8 @@ public class DatasetController {
 
     @RequestMapping("/comment")
     public DSCommentView comment(@RequestParam(name = "username") String username,
-                           @RequestParam(name = "datasetname") String datasetname,
-                           @RequestParam(name = "content") String content) {
+                                 @RequestParam(name = "datasetname") String datasetname,
+                                 @RequestParam(name = "content") String content) {
         DSComment dsComment = dsCommentService.addComment(username, datasetname, content);
 
         DSCommentView dsCommentView = new DSCommentView();
