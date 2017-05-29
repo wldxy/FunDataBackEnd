@@ -1,6 +1,8 @@
 package fundata.service;
 
 import fundata.configure.Constants;
+import fundata.message.Producer;
+import fundata.message.PullRequestMessage;
 import fundata.model.*;
 import fundata.repository.*;
 import fundata.document.PullRequestStatistics;
@@ -19,24 +21,28 @@ import java.util.*;
 @Service
 public class PullRequestServiceImpl implements PullRequestService {
     @Autowired
-    PullRequestRepository pullRequestRepository;
+    private PullRequestRepository pullRequestRepository;
 
     @Autowired
-    DatasetRepository datasetRepository;
+    private DatasetRepository datasetRepository;
 
     @Autowired
-    DataerRepository dataerRepository;
+    private DataerRepository dataerRepository;
 
     @Autowired
-    DataFileRepository dataFileRepository;
+    private DataFileRepository dataFileRepository;
 
     @Autowired
-    QiniuService qiniuService;
+    private QiniuService qiniuService;
 
     @Autowired
-    PullRequestDetailRepository pullRequestDetailRepository;
+    private PullRequestDetailRepository pullRequestDetailRepository;
+
     @Autowired
-    DatasetService datasetService;
+    private DatasetService datasetService;
+
+    @Autowired
+    private Producer producer;
 
     private PullRequestInfo assemblePullRequestInfo(PullRequest pullRequest) {
         PullRequestInfo pullRequestInfo = new PullRequestInfo();
@@ -122,7 +128,7 @@ public class PullRequestServiceImpl implements PullRequestService {
         pullRequest.setDataFile(dataFile);
         pullRequest.setDescription(description);
         pullRequestRepository.save(pullRequest);
-
+        producer.send(new PullRequestMessage(pullRequest.getId(), datasetId, fileUrl));
         return true;
     }
 

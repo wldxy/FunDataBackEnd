@@ -13,6 +13,17 @@ import java.util.List;
 public class DatasetMeta {
 
     @Id
+    private String id;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    @Field("dataset_id")
     private Long datasetId;
 
     @Field("tables")

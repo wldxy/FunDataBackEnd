@@ -2,6 +2,7 @@ package fundata.control;
 
 import fundata.annotation.Authorization;
 import fundata.configure.Constants;
+import fundata.message.Producer;
 import fundata.model.*;
 import fundata.configure.FileProperties;
 import fundata.service.*;
@@ -23,7 +24,6 @@ import java.util.*;
 @RequestMapping("/dataset")
 public class DatasetController {
     @Autowired
-    @Qualifier("datasetServiceImpl")
     private DatasetService datasetService;
 
     @Autowired
@@ -87,13 +87,23 @@ public class DatasetController {
     @RequestMapping("/getMyContribute")
     public Map getMyContribute(@RequestAttribute(value = Constants.CURRENT_USER_ID) Long userId,
                                @RequestParam(value = "curPage") short curPage) {
-        Map map = new HashMap();
+        Map<String, Object> map = new HashMap<>();
         PagedListHolder<PullRequest> result = pullRequestService.getUserPullRequestsByPage(userId, curPage);
         map.put("code", "200");
         map.put("pullrequests", pullRequestService.assemblePullRequestInfos(result));
         map.put("total", result.getNrOfElements());
         return map;
     }
+
+    @RequestMapping("/addExpressions")
+    public Map<String, Object> addTableRestricts(@RequestParam(value = "datasetId") Long datasetId,
+                                                 @RequestParam(value = "expressions") String expressions) {
+        datasetService.addTableExpressions(datasetId, expressions);
+        Map<String, Object> map = new HashMap<>();
+        map.put("code", "200");
+        return map;
+    }
+
 
     @RequestMapping("/getDemoContent")
     public DatasetContent getDatasetTitle(@RequestAttribute(value = Constants.CURRENT_USER_ID) Long userId,

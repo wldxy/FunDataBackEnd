@@ -2,6 +2,7 @@ package fundata.control;
 
 import com.csvreader.CsvReader;
 import com.csvreader.CsvWriter;
+import fundata.message.Producer;
 import fundata.repository.DataFileRepository;
 import fundata.repository.DataerRepository;
 import fundata.repository.DatasetRepository;
@@ -28,6 +29,9 @@ public class TestController {
     DatasetRepository datasetRepository;
 
     @Autowired
+    private Producer producer;
+
+    @Autowired
     QiniuService qiniuService;
 
     @Autowired
@@ -38,42 +42,42 @@ public class TestController {
 
     @RequestMapping(value = "/test")
     public boolean Test() throws IOException {
-
-        List<String> list = new ArrayList<>();
-        list.add("/home/ocean/tmp/t1.csv");
-        list.add("/home/ocean/tmp/t2.csv");
-
-        String writeUrl = fileProperties.getDatasetPath() + "haha" + ".csv";
-        CsvWriter csvWriter = new CsvWriter(writeUrl, ',', Charset.forName("UTF-8"));
-
-        List<String> titles = new ArrayList<>();
-        titles.add("hhh");
-        titles.add("hhhhh");
-
-        String[] tt = new String[titles.size()];
-        titles.toArray(tt);
-        try {
-            csvWriter.writeRecord(tt);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        for (String path : list) {
-            CsvReader csvReader = null;
-            try {
-                csvReader = new CsvReader(path, ',', Charset.forName("UTF-8"));
-                csvReader.readRecord();
-                while (csvReader.readRecord()) {
-                    String[] temp = csvReader.getValues();
-                    csvWriter.writeRecord(temp);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            csvReader.close();
-        }
-        csvWriter.close();
-        qiniuService.uploadFile(writeUrl, "haha" + ".csv");
+//        List<String> list = new ArrayList<>();
+//        list.add("/home/ocean/tmp/t1.csv");
+//        list.add("/home/ocean/tmp/t2.csv");
+//
+//        String writeUrl = fileProperties.getDatasetPath() + "haha" + ".csv";
+//        CsvWriter csvWriter = new CsvWriter(writeUrl, ',', Charset.forName("UTF-8"));
+//
+//        List<String> titles = new ArrayList<>();
+//        titles.add("hhh");
+//        titles.add("hhhhh");
+//
+//        String[] tt = new String[titles.size()];
+//        titles.toArray(tt);
+//        try {
+//            csvWriter.writeRecord(tt);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        for (String path : list) {
+//            CsvReader csvReader = null;
+//            try {
+//                csvReader = new CsvReader(path, ',', Charset.forName("UTF-8"));
+//                csvReader.readRecord();
+//                while (csvReader.readRecord()) {
+//                    String[] temp = csvReader.getValues();
+//                    csvWriter.writeRecord(temp);
+//                }
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            csvReader.close();
+//        }
+//        csvWriter.close();
+//        qiniuService.uploadFile(writeUrl, "haha" + ".csv");
+//        producer.send();
 
         return true;
     }

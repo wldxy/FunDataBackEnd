@@ -27,6 +27,8 @@ public interface DatasetService {
 
     DatasetDetail getDatasetDetail(Long datasetId);
 
+    void addTableExpressions(Long datasetId, String expressionsStrings);
+
     DatasetContent getDatasetContent(Long datasetId, Long dataerId);
 
     Set<Dataset> searchDatasets(String userName);
