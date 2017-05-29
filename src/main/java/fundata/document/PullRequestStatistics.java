@@ -1,8 +1,6 @@
 package fundata.document;
 
-import fundata.model.PullRequest;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.stereotype.Component;
 
 import javax.persistence.Id;
 import java.util.*;

@@ -20,9 +20,9 @@ import javax.jms.Queue;
 @SpringBootApplication
 @EnableMongoRepositories({"fundata.repository"})
 public class Application {
-    @Bean
-    public Queue queue() {
-        return new ActiveMQQueue("sample.queue");
+    @Bean(name = "pullrequest")
+    public Queue pullRequestQueue() {
+        return new ActiveMQQueue("pullrequest.queue");
     }
 
     @Bean

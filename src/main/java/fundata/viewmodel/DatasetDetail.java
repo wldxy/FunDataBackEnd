@@ -1,12 +1,15 @@
 package fundata.viewmodel;
 
-import fundata.document.Field;
+import fundata.document.Table;
 
 /**
  * Created by huang on 17-5-4.
  */
 public class DatasetDetail {
+
     private String url;
+    private DatasetInfo datasetInfo;
+    private Table[] tables;
 
     public String getUrl() {
         return url;
@@ -24,14 +27,11 @@ public class DatasetDetail {
         this.datasetInfo = datasetInfo;
     }
 
-    public Field[] getColumns() {
-        return columns;
+    public Table[] getTables() {
+        return tables;
     }
 
-    public void setColumns(Field[] columns) {
-        this.columns = columns;
+    public void setTables(Table[] tables) {
+        this.tables = tables;
     }
-
-    private DatasetInfo datasetInfo;
-    private Field[] columns;
 }

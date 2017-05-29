@@ -21,16 +21,11 @@ public class PullRequest {
     @Column(name = "status")
     private short status;
 
-    public String getTag() {
-        return tag;
-    }
-
-    public void setTag(String tag) {
-        this.tag = tag;
-    }
-
     @Column(name = "tag")
     private String tag;
+
+    @Column(name = "_table")
+    private String table;
 
     @Column(name = "update_time")
     @Temporal(TemporalType.DATE)
@@ -44,6 +39,22 @@ public class PullRequest {
 
     @ManyToOne
     private Dataset dataset;
+
+    public String getTag() {
+        return tag;
+    }
+
+    public String getTable() {
+        return table;
+    }
+
+    public void setTable(String table) {
+        this.table = table;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
 
     public Date getUpdateTime() {
         return updateTime;

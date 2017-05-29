@@ -2,6 +2,7 @@ package fundata.control;
 
 import fundata.annotation.Authorization;
 import fundata.configure.Constants;
+import fundata.message.Producer;
 import fundata.model.*;
 import fundata.configure.FileProperties;
 import fundata.service.*;
@@ -23,54 +24,22 @@ import java.util.*;
 @RequestMapping("/dataset")
 public class DatasetController {
     @Autowired
-    @Qualifier("datasetServiceImpl")
     private DatasetService datasetService;
-
-    @Autowired
-    private DataerService dataerService;
-
-    @Autowired
-    private FileProperties fileProperties;
-
-    @Autowired
-    private QiniuService qiniuService;
 
     @Autowired
     private DSCommentService dsCommentService;
 
     @Autowired
     private PullRequestService pullRequestService;
-//
-//
-//    @RequestMapping(value = "/uploadCover", method = RequestMethod.POST)
-//    public Map<String, String> getUploadCSV(HttpServletRequest req, MultipartHttpServletRequest multiReq) throws IOException {
-//        String name = multiReq.getFile("file").getOriginalFilename();
-//        String coverUrl = Thread.currentThread().getContextClassLoader().getResource("files").toString().concat("/").concat(name);
-//        File f = new File(coverUrl);
-//        f.createNewFile();
-//        FileOutputStream fos=new FileOutputStream(f);
-//        FileInputStream fis=(FileInputStream) multiReq.getFile("file").getInputStream();
-//        byte[] buffer=new byte[2048];
-//        int len;
-//        while((len=fis.read(buffer))!=-1){
-//            fos.write(buffer, 0, len);
-//        }
-//        fos.close();
-//        fis.close();
-//        Map<String, String> map = new HashMap<>();
-//        map.put("url", coverUrl);
-//        map.put("code", "200");
-//        return map;
-//    }
 
     @RequestMapping("/createDataset")
     @Authorization
     public Map<String, String> createDataset(@RequestAttribute(value = Constants.CURRENT_USER_ID) Long userId,
-                                 @RequestParam(value = "ds_name") String datasetName,
-                                 @RequestParam(value = "ds_desc") String dsDesc,
-                                 @RequestParam(value = "cover_url") String coverUrl,
-                                 @RequestParam(value = "format_desc") String formatDesc,
-                                 @RequestParam(value = "columns") String fieldsString) {
+                                             @RequestParam(value = "ds_name") String datasetName,
+                                             @RequestParam(value = "ds_desc") String dsDesc,
+                                             @RequestParam(value = "cover_url") String coverUrl,
+                                             @RequestParam(value = "format_desc") String formatDesc,
+                                             @RequestParam(value = "tables") String tablesString) {
         Map<String, String> map = new HashMap<>();
         Dataset dataset = datasetService.findByDatasetName(datasetName);
         if (dataset != null) {
@@ -78,7 +47,7 @@ public class DatasetController {
             return map;
         }
 
-        datasetService.createNewDataset(userId, datasetName, dsDesc, formatDesc, fieldsString, coverUrl);
+        datasetService.createNewDataset(userId, datasetName, dsDesc, formatDesc, tablesString, coverUrl);
         map.put("code", "200");
         return map;
     }
@@ -118,13 +87,23 @@ public class DatasetController {
     @RequestMapping("/getMyContribute")
     public Map getMyContribute(@RequestAttribute(value = Constants.CURRENT_USER_ID) Long userId,
                                @RequestParam(value = "curPage") short curPage) {
-        Map map = new HashMap();
+        Map<String, Object> map = new HashMap<>();
         PagedListHolder<PullRequest> result = pullRequestService.getUserPullRequestsByPage(userId, curPage);
         map.put("code", "200");
         map.put("pullrequests", pullRequestService.assemblePullRequestInfos(result));
         map.put("total", result.getNrOfElements());
         return map;
     }
+
+    @RequestMapping("/addExpressions")
+    public Map<String, Object> addTableRestricts(@RequestParam(value = "datasetId") Long datasetId,
+                                                 @RequestParam(value = "expressions") String expressions) {
+        datasetService.addTableExpressions(datasetId, expressions);
+        Map<String, Object> map = new HashMap<>();
+        map.put("code", "200");
+        return map;
+    }
+
 
     @RequestMapping("/getDemoContent")
     public DatasetContent getDatasetTitle(@RequestAttribute(value = Constants.CURRENT_USER_ID) Long userId,
@@ -142,8 +121,8 @@ public class DatasetController {
 
     @RequestMapping("/comment")
     public DSCommentView comment(@RequestParam(name = "username") String username,
-                           @RequestParam(name = "datasetname") String datasetname,
-                           @RequestParam(name = "content") String content) {
+                                 @RequestParam(name = "datasetname") String datasetname,
+                                 @RequestParam(name = "content") String content) {
         DSComment dsComment = dsCommentService.addComment(username, datasetname, content);
 
         DSCommentView dsCommentView = new DSCommentView();

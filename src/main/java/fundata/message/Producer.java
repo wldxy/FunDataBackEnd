@@ -1,6 +1,7 @@
 package fundata.message;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -19,11 +20,12 @@ public class Producer {
 
 //    public void send(SprayE)
     @Autowired
+    @Qualifier("pullrequest")
     private Queue queue;
 
 //    @Scheduled(fixedDelay=3000)//每3s执行1次
-    public void send() {
-        this.jmsTemplate.convertAndSend(this.queue, new Email("1@1", "2@2@"));
+    public void send(PullRequestMessage pullRequestMessage) {
+        this.jmsTemplate.convertAndSend(this.queue, pullRequestMessage);
     }
 
 }
