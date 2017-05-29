@@ -98,16 +98,5 @@ public class PullRequestController {
         return map;
     }
 
-    @RequestMapping(value = "/getHotProject", method = RequestMethod.POST)
-    public HotProject getFreshDataset(@RequestAttribute(value = Constants.CURRENT_USER_ID) Long userId,
-                                      int curPage) {
-        PagedListHolder<PullRequest> result = pullRequestService.findLatestPullRequest(userId, curPage);
-        List<PullRequest> pullRequests = result.getPageList();
-        HotProject hotProject = new HotProject();
-        for (PullRequest pullRequest : pullRequests) {
-            hotProject.addInfo(pullRequest.getDataset().getName(), pullRequest.getDataer().getName(), 1);
-        }
-        return hotProject;
-    }
 }
 
