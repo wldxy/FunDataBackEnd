@@ -1,9 +1,7 @@
 package fundata.viewmodel;
 
-import fundata.document.Field;
 import fundata.document.Table;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,7 +19,7 @@ public class PullRequestDetail {
     }
 
     private Table[] columns;
-    private List<Map<String, Double>> limits;
+    private Map<String, String> limits;
     private String url;
 
     public String getUrl() {
@@ -40,11 +38,11 @@ public class PullRequestDetail {
         this.columns = columns;
     }
 
-    public List<Map<String, Double>> getLimits() {
+    public Map<String, String> getLimits() {
         return limits;
     }
 
-    public void setLimits(List<Map<String, Double>> limits) {
+    public void setLimits(Map<String, String> limits) {
         this.limits = limits;
     }
 }

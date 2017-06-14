@@ -61,7 +61,9 @@ public class PullRequestServiceImpl implements PullRequestService {
         PullRequestStatistics pullRequestStatistics = pullRequestDetailRepository.findByPullRequestId(pullRequestId);
         PullRequest pullRequest = pullRequestRepository.findOne(pullRequestId);
         pullRequestDetail.setColumns(datasetService.getDatasetTables(pullRequest.getDataset().getId()));
-        pullRequestDetail.setLimits(pullRequestStatistics.getLimits());
+        if (pullRequestStatistics != null) {
+            pullRequestDetail.setLimits(pullRequestStatistics.getLimits());
+        }
         pullRequestDetail.setUrl(qiniuService.createDownloadUrl(pullRequest.getDataFile().getUrl()));
         pullRequestDetail.setId(pullRequestId);
         return pullRequestDetail;
