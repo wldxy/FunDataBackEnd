@@ -27,7 +27,7 @@ public interface DatasetService {
 
     DatasetDetail getDatasetDetail(Long datasetId);
 
-    void addTableExpressions(Long datasetId, String expressionsStrings);
+    void addTableExpressions(Long datasetId, String expressionsStrings, String foreignsString);
 
     boolean enterJupyter(Long user_id, Long dataset_id);
 

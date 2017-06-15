@@ -111,8 +111,9 @@ public class DatasetController {
 
     @RequestMapping("/addExpressions")
     public Map<String, Object> addTableRestricts(@RequestParam(value = "datasetId") Long datasetId,
-                                                 @RequestParam(value = "expressions") String expressions) {
-        datasetService.addTableExpressions(datasetId, expressions);
+                                                 @RequestParam(value = "expressions") String expressions,
+                                                 @RequestParam(value = "foreigns") String foreign_keys) {
+        datasetService.addTableExpressions(datasetId, expressions, foreign_keys);
         Map<String, Object> map = new HashMap<>();
         map.put("code", "200");
         return map;

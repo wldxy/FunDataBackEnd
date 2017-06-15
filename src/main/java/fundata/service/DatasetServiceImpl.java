@@ -159,11 +159,13 @@ public class DatasetServiceImpl implements DatasetService {
         System.out.println(datasetName + " success");
     }
 
-    public void addTableExpressions(Long datasetId, String expressionsStrings) {
+    public void addTableExpressions(Long datasetId, String expressionsStrings, String foreignsString) {
         Gson gson = new Gson();
         String[] expressions = gson.fromJson(expressionsStrings, String[].class);
+        String[] foreigns = gson.fromJson(foreignsString, String[].class);
         DatasetMeta meta = datasetMetaRepository.findByDatasetId(datasetId);
         meta.setExpressions(Arrays.asList(expressions));
+        meta.setForeigns(Arrays.asList(foreigns));
         datasetMetaRepository.save(meta);
     }
 
