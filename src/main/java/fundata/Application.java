@@ -25,6 +25,12 @@ public class Application {
         return new ActiveMQQueue("pullrequest.queue");
     }
 
+    @Bean(name = "terminalrequest")
+    public Queue terminalRequestQueue() {
+        return new ActiveMQQueue("terminalrequest.queue");
+    }
+
+
     @Bean
     public MessageConverter jacksonJmsMessageConverter() {
         MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();

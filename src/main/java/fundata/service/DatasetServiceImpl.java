@@ -5,6 +5,8 @@ import fundata.configure.Constants;
 import fundata.configure.QiniuProperties;
 import fundata.document.DatasetMeta;
 import fundata.document.Table;
+import fundata.message.Producer;
+import fundata.message.TerminalMessage;
 import fundata.model.*;
 import fundata.repository.*;
 import fundata.viewmodel.DatasetContent;
@@ -39,6 +41,9 @@ public class DatasetServiceImpl implements DatasetService {
 
     @Autowired
     PullRequestService pullRequestService;
+
+    @Autowired
+    private Producer producer;
 
     @Autowired
     QiniuService qiniuService;
@@ -99,6 +104,17 @@ public class DatasetServiceImpl implements DatasetService {
     }
 
     @Override
+    public boolean enterJupyter(Long user_id, Long dataset_id) {
+        try {
+            producer.open_terminal(new TerminalMessage(user_id, dataset_id));
+            return true;
+        }
+        catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
     public PagedListHolder<DataerDataset> getAllDatasetsByPage(int curPage) {
         List<DataerDataset> datasets = getAllDatasets();
         PagedListHolder<DataerDataset> datasetPage = new PagedListHolder<>(datasets);
@@ -143,11 +159,13 @@ public class DatasetServiceImpl implements DatasetService {
         System.out.println(datasetName + " success");
     }
 
-    public void addTableExpressions(Long datasetId, String expressionsStrings) {
+    public void addTableExpressions(Long datasetId, String expressionsStrings, String foreignsString) {
         Gson gson = new Gson();
         String[] expressions = gson.fromJson(expressionsStrings, String[].class);
+        String[] foreigns = gson.fromJson(foreignsString, String[].class);
         DatasetMeta meta = datasetMetaRepository.findByDatasetId(datasetId);
         meta.setExpressions(Arrays.asList(expressions));
+        meta.setForeigns(Arrays.asList(foreigns));
         datasetMetaRepository.save(meta);
     }
 

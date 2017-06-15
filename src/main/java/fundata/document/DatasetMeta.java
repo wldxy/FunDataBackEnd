@@ -32,6 +32,17 @@ public class DatasetMeta {
     @Field("expressions")
     private List<String> expressions;
 
+    public List<String> getForeigns() {
+        return foreigns;
+    }
+
+    public void setForeigns(List<String> foreigns) {
+        this.foreigns = foreigns;
+    }
+
+    @Field("foreigns")
+    private List<String> foreigns;
+
     public List<String> getExpressions() {
         return expressions;
     }

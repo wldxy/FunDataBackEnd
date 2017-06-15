@@ -13,7 +13,15 @@ public class PullRequestStatistics {
     @Id
     private Long pullRequestId;
 
-    private List<Map<String, Double>> limits;
+    public Map<String, String> getLimits() {
+        return limits;
+    }
+
+    public void setLimits(Map<String, String> limits) {
+        this.limits = limits;
+    }
+
+    private Map<String, String> limits;
 
     public Long getPullRequestId() {
         return pullRequestId;
@@ -23,11 +31,4 @@ public class PullRequestStatistics {
         this.pullRequestId = pullRequestId;
     }
 
-    public List<Map<String, Double>> getLimits() {
-        return limits;
-    }
-
-    public void setLimits(List<Map<String, Double>> limits) {
-        this.limits = limits;
-    }
 }
