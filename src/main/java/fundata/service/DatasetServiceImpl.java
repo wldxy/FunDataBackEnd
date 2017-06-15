@@ -164,8 +164,8 @@ public class DatasetServiceImpl implements DatasetService {
         String[] expressions = gson.fromJson(expressionsStrings, String[].class);
         String[] foreigns = gson.fromJson(foreignsString, String[].class);
         DatasetMeta meta = datasetMetaRepository.findByDatasetId(datasetId);
-        meta.setExpressions(Arrays.asList(expressions));
-        meta.setForeigns(Arrays.asList(foreigns));
+        meta.getExpressions().addAll(Arrays.asList(expressions));
+        meta.getForeigns().addAll(Arrays.asList(foreigns));
         datasetMetaRepository.save(meta);
     }
 
