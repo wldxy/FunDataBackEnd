@@ -1,5 +1,8 @@
 package fundata.message;
 
+import fundata.model.PullRequest;
+import fundata.repository.PullRequestRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
@@ -8,9 +11,14 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class Receiver {
-    @JmsListener(destination = "sample.queue")
-    public void receiveMessage(Email email) {
-        System.out.println(email.getBody());
+    @Autowired
+    private PullRequestRepository pullRequestRepository;
+
+    @JmsListener(destination = "mergeresult.queue")
+    public void receiveMessage(ResultMessage result) {
+        PullRequest pullRequest = pullRequestRepository.findOne(result.getPullrequest_id());
+        pullRequest.setStatus((short) 1);
+        pullRequestRepository.save(pullRequest);
     }
 
 }
