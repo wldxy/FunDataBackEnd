@@ -6,7 +6,6 @@ import fundata.configure.QiniuProperties;
 import fundata.document.DatasetMeta;
 import fundata.document.Table;
 import fundata.message.Producer;
-import fundata.message.TerminalMessage;
 import fundata.model.*;
 import fundata.repository.*;
 import fundata.viewmodel.DatasetContent;
@@ -101,17 +100,6 @@ public class DatasetServiceImpl implements DatasetService {
         datasetPage.setPage(curPage);
         datasetPage.setPageSize(Constants.pageSize);
         return datasetPage;
-    }
-
-    @Override
-    public boolean enterJupyter(Long user_id, Long dataset_id) {
-        try {
-            producer.open_terminal(new TerminalMessage(user_id, dataset_id));
-            return true;
-        }
-        catch (Exception e) {
-            return false;
-        }
     }
 
     @Override

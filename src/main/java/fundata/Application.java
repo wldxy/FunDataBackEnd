@@ -25,11 +25,15 @@ public class Application {
         return new ActiveMQQueue("pullrequest.queue");
     }
 
-    @Bean(name = "terminalrequest")
-    public Queue terminalRequestQueue() {
-        return new ActiveMQQueue("terminalrequest.queue");
+    @Bean(name = "mergerequest")
+    public Queue mergeRequestQueue() {
+        return new ActiveMQQueue("mergerequest.queue");
     }
 
+    @Bean(name = "mergeresult")
+    public Queue mergeResultQueue() {
+        return new ActiveMQQueue("mergeresult.queue");
+    }
 
     @Bean
     public MessageConverter jacksonJmsMessageConverter() {

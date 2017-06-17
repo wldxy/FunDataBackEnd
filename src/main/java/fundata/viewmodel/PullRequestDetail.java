@@ -19,7 +19,7 @@ public class PullRequestDetail {
     }
 
     private Table[] columns;
-    private Map<String, String> limits;
+    private Map<String, Boolean> limits;
     private String url;
 
     public String getUrl() {
@@ -38,11 +38,11 @@ public class PullRequestDetail {
         this.columns = columns;
     }
 
-    public Map<String, String> getLimits() {
+    public Map<String, Boolean> getLimits() {
         return limits;
     }
 
-    public void setLimits(Map<String, String> limits) {
+    public void setLimits(Map<String, Boolean> limits) {
         this.limits = limits;
     }
 }

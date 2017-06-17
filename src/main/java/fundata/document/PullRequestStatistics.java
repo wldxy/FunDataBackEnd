@@ -1,6 +1,7 @@
 package fundata.document;
 
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.*;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.persistence.Id;
 import java.util.*;
@@ -10,18 +11,31 @@ import java.util.*;
  */
 @Document
 public class PullRequestStatistics {
+
     @Id
+    private String id;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    @Field("pullrequest_id")
     private Long pullRequestId;
 
-    public Map<String, String> getLimits() {
-        return limits;
+    public Map<String, Boolean> getResult() {
+        return result;
     }
 
-    public void setLimits(Map<String, String> limits) {
-        this.limits = limits;
+    public void setResult(Map<String, Boolean> result) {
+        this.result = result;
     }
 
-    private Map<String, String> limits;
+    @Field("result")
+    private Map<String, Boolean> result;
 
     public Long getPullRequestId() {
         return pullRequestId;

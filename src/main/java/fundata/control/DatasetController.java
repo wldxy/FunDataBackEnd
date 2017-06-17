@@ -74,20 +74,6 @@ public class DatasetController {
         return map;
     }
 
-    @RequestMapping("/toTerminal")
-    public Map enterTerminal(@RequestAttribute(value = Constants.CURRENT_USER_ID) Long userId,
-                             @RequestParam(value = "dataset_id") Long dataset_id) {
-        boolean isSuccess = datasetService.enterJupyter(userId, dataset_id);
-        Map<String, Object> map = new HashMap<>();
-        if (isSuccess) {
-            map.put("code", "200");
-        }
-        else {
-            map.put("code", "-1");
-        }
-        return map;
-    }
-
     @RequestMapping("/getAllDatasets")
     public Map getAllDatasets(@RequestParam(value = "curPage") short curPage) {
         PagedListHolder<DataerDataset> result = datasetService.getAllDatasetsByPage(curPage);

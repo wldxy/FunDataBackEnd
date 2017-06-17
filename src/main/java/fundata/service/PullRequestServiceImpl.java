@@ -1,6 +1,7 @@
 package fundata.service;
 
 import fundata.configure.Constants;
+import fundata.message.MergeRequestMessage;
 import fundata.message.Producer;
 import fundata.message.PullRequestMessage;
 import fundata.model.*;
@@ -62,7 +63,7 @@ public class PullRequestServiceImpl implements PullRequestService {
         PullRequest pullRequest = pullRequestRepository.findOne(pullRequestId);
         pullRequestDetail.setColumns(datasetService.getDatasetTables(pullRequest.getDataset().getId()));
         if (pullRequestStatistics != null) {
-            pullRequestDetail.setLimits(pullRequestStatistics.getLimits());
+            pullRequestDetail.setLimits(pullRequestStatistics.getResult());
         }
         pullRequestDetail.setUrl(qiniuService.createDownloadUrl(pullRequest.getDataFile().getUrl()));
         pullRequestDetail.setId(pullRequestId);
@@ -137,10 +138,16 @@ public class PullRequestServiceImpl implements PullRequestService {
     @Override
     public boolean mergePullRequest(Long pullRequestId, String tag) {
         PullRequest pullRequest = pullRequestRepository.findOne(pullRequestId);
+        Dataset dataset = pullRequest.getDataset();
         if (pullRequest != null) {
             pullRequest.setStatus((short)0);
             pullRequest.setTag(tag);
             pullRequestRepository.save(pullRequest);
+            String main_url = dataset.getFile() == null ? "" : dataset.getFile().getUrl();
+            producer.send(new MergeRequestMessage(pullRequest.getDataFile().getUrl(), main_url, dataset.getId()));
+            if (main_url.equals("")) {
+                dataset.setFile(pullRequest.getDataFile());
+            }
             return true;
         }
         else {

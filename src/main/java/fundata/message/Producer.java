@@ -22,15 +22,15 @@ public class Producer {
     private Queue pullQueue;
 
     @Autowired
-    @Qualifier("terminalrequest")
-    private Queue terminalQueue;
+    @Qualifier("mergerequest")
+    private Queue mergeQueue;
 
 //    @Scheduled(fixedDelay=3000)//每3s执行1次
     public void send(PullRequestMessage pullRequestMessage) {
         this.jmsTemplate.convertAndSend(this.pullQueue, pullRequestMessage);
     }
 
-    public void open_terminal(TerminalMessage terminalMessage) {
-        this.jmsTemplate.convertAndSend(this.terminalQueue, terminalMessage);
+    public void send(MergeRequestMessage mergeRequestMessage) {
+        this.jmsTemplate.convertAndSend(this.pullQueue, mergeRequestMessage);
     }
 }
