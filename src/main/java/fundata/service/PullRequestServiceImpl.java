@@ -144,7 +144,7 @@ public class PullRequestServiceImpl implements PullRequestService {
             pullRequest.setTag(tag);
             pullRequestRepository.save(pullRequest);
             String main_url = dataset.getFile() == null ? "" : dataset.getFile().getUrl();
-            producer.send(new MergeRequestMessage(pullRequest.getDataFile().getUrl(), main_url, dataset.getId()));
+            producer.send(new MergeRequestMessage(pullRequest.getDataFile().getUrl(), main_url, dataset.getId(), pullRequestId));
             if (main_url.equals("")) {
                 dataset.setFile(pullRequest.getDataFile());
             }
