@@ -8,6 +8,16 @@ public class MergeRequestMessage {
     private String mainUrl;
     private Long datasetId;
 
+    public Long getPullRequestId() {
+        return pullRequestId;
+    }
+
+    public void setPullRequestId(Long pullRequestId) {
+        this.pullRequestId = pullRequestId;
+    }
+
+    private Long pullRequestId;
+
     public MergeRequestMessage() {}
 
     public Long getDatasetId() {
@@ -18,10 +28,11 @@ public class MergeRequestMessage {
         this.datasetId = datasetId;
     }
 
-    public MergeRequestMessage(String newUrl, String mainUrl, Long datasetId) {
+    public MergeRequestMessage(String newUrl, String mainUrl, Long datasetId, Long pullRequestId) {
         this.newUrl = newUrl;
-        this.datasetId = datasetId;
         this.mainUrl = mainUrl;
+        this.datasetId = datasetId;
+        this.pullRequestId = pullRequestId;
     }
 
     public String getNewUrl() {
