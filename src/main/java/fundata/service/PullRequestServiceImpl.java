@@ -113,7 +113,7 @@ public class PullRequestServiceImpl implements PullRequestService {
     }
 
     @Override
-    public boolean createPullRequest(Long dataerId, Long datasetId, String description, String fileUrl) {
+    public boolean createPullRequest(Long dataerId, Long datasetId, String description, String fileUrl, String tableName) {
         Dataset dataset = datasetRepository.findOne(datasetId);
         Dataer dataer = dataerRepository.findOne(dataerId);
 
@@ -130,8 +130,9 @@ public class PullRequestServiceImpl implements PullRequestService {
         pullRequest.setUpdateTime(new Date());
         pullRequest.setDataFile(dataFile);
         pullRequest.setDescription(description);
+        pullRequest.setTableName(tableName);
         pullRequestRepository.save(pullRequest);
-        producer.send(new PullRequestMessage(pullRequest.getId(), datasetId, fileUrl));
+        producer.send(new PullRequestMessage(pullRequest.getId(), datasetId, fileUrl, tableName));
         return true;
     }
 

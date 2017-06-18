@@ -14,6 +14,17 @@ public class PullRequest {
     @Column(name = "id")
     private Long id;
 
+    public String getTableName() {
+        return tableName;
+    }
+
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
+    }
+
+    @Column(name = "table_name")
+    private String tableName;
+
     @Column(name = "description")
     private String description;
 
@@ -23,9 +34,6 @@ public class PullRequest {
 
     @Column(name = "tag")
     private String tag;
-
-    @Column(name = "_table")
-    private String table;
 
     @Column(name = "update_time")
     @Temporal(TemporalType.DATE)
@@ -42,14 +50,6 @@ public class PullRequest {
 
     public String getTag() {
         return tag;
-    }
-
-    public String getTable() {
-        return table;
-    }
-
-    public void setTable(String table) {
-        this.table = table;
     }
 
     public void setTag(String tag) {

@@ -5,6 +5,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.persistence.Id;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by huang on 17-4-19.
@@ -30,7 +31,7 @@ public class DatasetMeta {
     private List<Table> tables;
     
     @Field("expressions")
-    private List<String> expressions;
+    private Map<String, List<String>> expressions;
 
     public List<String> getForeigns() {
         return foreigns;
@@ -43,11 +44,11 @@ public class DatasetMeta {
     @Field("foreigns")
     private List<String> foreigns;
 
-    public List<String> getExpressions() {
+    public Map<String, List<String>> getExpressions() {
         return expressions;
     }
 
-    public void setExpressions(List<String> expressions) {
+    public void setExpressions(Map<String, List<String>> expressions) {
         this.expressions = expressions;
     }
 

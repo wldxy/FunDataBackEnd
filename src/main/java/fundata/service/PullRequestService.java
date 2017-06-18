@@ -22,7 +22,7 @@ public interface PullRequestService {
 
     List<PullRequest> getUserPullRequests(Long datasetId);
 
-    boolean createPullRequest(Long dataerId, Long datasetId, String description, String fileUrl);
+    boolean createPullRequest(Long dataerId, Long datasetId, String description, String fileUrl, String tableName);
 
     boolean mergePullRequest(Long pullRequestId, String tag);
 
