@@ -1,6 +1,7 @@
 package fundata.service;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import fundata.configure.Constants;
 import fundata.configure.QiniuProperties;
 import fundata.document.DatasetMeta;
@@ -149,10 +150,15 @@ public class DatasetServiceImpl implements DatasetService {
 
     public void addTableExpressions(Long datasetId, String expressionsStrings, String foreignsString) {
         Gson gson = new Gson();
-        String[] expressions = gson.fromJson(expressionsStrings, String[].class);
+        Map<String, List<String>> expressions = gson.fromJson(expressionsStrings, new TypeToken<Map<String, List<String>>>(){}.getType());
         String[] foreigns = gson.fromJson(foreignsString, String[].class);
         DatasetMeta meta = datasetMetaRepository.findByDatasetId(datasetId);
-        meta.getExpressions().addAll(Arrays.asList(expressions));
+        Map<String, List<String>> e = meta.getExpressions();
+        for (String s : e.keySet()) {
+            if (expressions.containsKey(s)) {
+                e.get(s).addAll(expressions.get(s));
+            }
+        }
         meta.getForeigns().addAll(Arrays.asList(foreigns));
         datasetMetaRepository.save(meta);
     }
